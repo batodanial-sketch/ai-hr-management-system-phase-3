@@ -355,10 +355,11 @@ export function recruitmentSignals(pipeline: PipelineInput[], ctx: SignalContext
       byJob.set(s.jobId, entry);
     }
     const worst = [...byJob.values()].sort((a, b) => b.rows.length - a.rows.length)[0];
-    const scope: InsightScope = { type: "job", label: worst.title, ref: stalled[0].jobId };
+    const worstJobId = [...byJob.entries()].sort((a, b) => b[1].rows.length - a[1].rows.length)[0][0];
+    const scope: InsightScope = { type: "job", label: worst.title, ref: worstJobId };
     const oldestDays = Math.max(...worst.rows.map((r) => daysBetween(r.stageChangedAt, ctx.now)));
     out.push({
-      ...base("recruitment", "stalled-pipeline", scope, stalled[0].jobId),
+      ...base("recruitment", "stalled-pipeline", scope, worstJobId),
       title: `Stalled pipeline: ${stalled.length} candidate${stalled.length === 1 ? "" : "s"} past stage SLA${byJob.size > 1 ? ` across ${byJob.size} jobs` : ""}`,
       detail: `Oldest stall is ${oldestDays} days (${worst.rows[0].candidateName}, ${worst.rows[0].stage}, ${worst.title}).`,
       severity: "warning",

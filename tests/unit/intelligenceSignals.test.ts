@@ -137,6 +137,19 @@ describe("recruitment signals", () => {
     expect(stalled?.recommendedAction.requiresApproval).toBe(true);
     expectEnvelope(out);
   });
+  it("uses the worst job as the stable scope for multi-job stalls", () => {
+    const out = recruitmentSignals(
+      [
+        { jobId: "j1", jobTitle: "Platform", stage: "screening", stageChangedAt: "2026-08-01T00:00:00Z", candidateName: "A" },
+        { jobId: "j2", jobTitle: "Data", stage: "screening", stageChangedAt: "2026-08-01T00:00:00Z", candidateName: "B" },
+        { jobId: "j2", jobTitle: "Data", stage: "screening", stageChangedAt: "2026-08-01T00:00:00Z", candidateName: "C" },
+      ],
+      CTX,
+    );
+    const stalled = out.find((i) => i.id.startsWith("recruitment:stalled-pipeline:"));
+    expect(stalled?.id).toBe("recruitment:stalled-pipeline:j2");
+    expect(stalled?.scope.ref).toBe("j2");
+  });
   it("flags a swollen stage bottleneck and celebrates hires", () => {
     const rows = Array.from({ length: 6 }, (_, k) => ({
       jobId: "j1",
