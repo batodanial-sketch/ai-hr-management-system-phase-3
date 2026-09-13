@@ -74,7 +74,7 @@ const toolCallConfig = z.object({
 });
 
 const waitUntilConfig = z.object({
-  /** ISO timestamp ≤ 30 days out; resume is operator-driven in v1. */
+  /** ISO timestamp; resume is operator-driven in v1. Runtime compares it with the injected clock. */
   until: z.string().datetime(),
 });
 
@@ -109,10 +109,13 @@ export const workflowStepSchema = z
     }
     if (step.type === "wait_until") {
       const until = Date.parse(String((step.config as { until?: unknown }).until ?? ""));
-      if (Number.isNaN(until)) return;
-      const horizon = Date.now() + 30 * 24 * 3600 * 1000;
-      if (until > horizon || until < Date.now() - 24 * 3600 * 1000) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "config.until: must be within the last day and the next 30 days." });
+      if (!Number.isNaN(until)) {
+        // Past timestamps are valid and resume immediately under the executor's
+        // injected clock; only cap future scheduling to 30 days.
+        const horizon = Date.now() + 30 * 24 * 3600 * 1000;
+        if (until > horizon) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "config.until: must be no more than 30 days in the future." });
+        }
       }
     }
   })
