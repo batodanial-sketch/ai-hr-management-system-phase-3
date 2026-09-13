@@ -51,4 +51,4 @@ The external outbound trigger, webhook subscription delivery, custom memory adap
 
 ## Integration conclusion
 
-Integration code is present and several controls are CODE-VERIFIED, but no external system is operationally verified. The previous GraphQL, custom endpoint/SSRF, and webhook tenant-binding source gaps are remediated; live GraphQL, provider/egress, migration, replay, and external callback verification remain required before production activation.
+Integration code is present and several controls are CODE-VERIFIED, but no external system is operationally verified. H5 attempted live verification and remained BLOCKED_EXTERNAL because no deployment, provider, bridge, n8n, SCIM, storage, scheduler, or database target was available. The previous GraphQL, custom endpoint/SSRF, and webhook tenant-binding source gaps remain remediated; live verification artifacts are under `docs/audit/H5_*`.

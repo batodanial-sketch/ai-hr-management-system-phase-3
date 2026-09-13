@@ -1,0 +1,15 @@
+{
+  "evidenceStatus": "BLOCKED-EXTERNAL",
+  "capturedAt": "2026-09-13",
+  "repositoryCommit": "0b7111e",
+  "migrationFilesExpected": 39,
+  "staticInventory": {
+    "tablesDeclared": 124,
+    "rlsEnabledTables": 90,
+    "policies": 174
+  },
+  "liveCatalog": null,
+  "command": "DATABASE_URL=<approved-disposable-db> node scripts/verify_rls_catalog.mjs",
+  "observedBlocker": "DATABASE_URL is not configured; current sandbox also does not have the pg runtime dependency available to execute the catalog collector.",
+  "noLiveClaim": true
+}

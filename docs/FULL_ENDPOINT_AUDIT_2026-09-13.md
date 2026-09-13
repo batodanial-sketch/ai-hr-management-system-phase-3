@@ -74,3 +74,7 @@ The matrix records source, discovered auth/RBAC tokens, referenced tables, mutat
 3. **Outbound webhook P1:** confirmed and remediated with shared safe outbound fetch, redirect blocking, HTTPS/host/IP policy, and no raw-secret persistence. Live DNS-rebinding/firewall verification remains BLOCKED_EXTERNAL.
 4. **n8n/Python bridge P1:** confirmed and remediated with timestamped signatures, tenant-scoped API keys, resource ownership checks, bounded payloads and atomic replay claims. Migration and live callback verification remain BLOCKED_EXTERNAL.
 5. Remaining runtime claims are not fabricated; see `docs/audit/*.md` and the production readiness report.
+
+## H5 live verification update — 2026-09-13
+
+H5 attempted to convert blocked claims into live evidence. No deployed target, Supabase/Postgres URL, provider credentials, or local Node dependency installation was available. Therefore H5 produced **0 LIVE-VERIFIED** results. Deterministic GraphQL, AI authorization, SSRF, outbound webhook-policy and existing Copilot evidence remains TEST-VERIFIED. See [`docs/audit/H5_LIVE_VERIFICATION_MATRIX.md`](audit/H5_LIVE_VERIFICATION_MATRIX.md) and the H5 result artifacts. The prior remediation remains code/test verified; no live endpoint claim has been upgraded.

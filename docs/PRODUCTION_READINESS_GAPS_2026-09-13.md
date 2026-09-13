@@ -89,6 +89,14 @@ n8n/Python bridge callbacks now require timestamped HMAC, event IDs, tenant-scop
 
 **Final decision: H4 CONDITIONALLY READY.**
 
+## H5 live verification update — 2026-09-13
+
+**H5 STATUS: CONDITIONALLY VERIFIED**
+
+H5 produced no `LIVE-VERIFIED` results. The current sandbox had no `DATABASE_URL`, deployed target, external provider credentials, or local Node dependency/toolchain available. The live schema collector returned `BLOCKED_EXTERNAL`; the existing RLS suite could not load `pg`; Jest, TypeScript, ESLint and production build commands could not execute because the local Node packages were absent. Python compilation and `git diff --check` did pass.
+
+The code-level remediation and deterministic tests remain valid from commit `0b7111e`; H5 does not upgrade them to live evidence. See `docs/audit/H5_LIVE_VERIFICATION_MATRIX.md`, `H5_LIVE_SCHEMA_VERIFICATION.*`, `H5_RLS_RESULTS.md`, `H5_GRAPHQL_RESULTS.md`, `H5_WEBHOOK_RESULTS.md`, `H5_SSRF_RESULTS.md`, `H5_STORAGE_RESULTS.md`, and `H5_DATA_INTEGRITY_RESULTS.md`.
+
 ## Audit artifact change policy
 
-No application architecture or security behavior was changed for this audit. Only audit artifacts and the static inventory generator were added. Do not treat this report as evidence that the listed gaps are fixed.
+H5 added verification evidence and harness documentation only. An existing user modification to `scripts/zero-downtime-migrate.sh` was preserved and not staged. No application architecture was redesigned during H5.

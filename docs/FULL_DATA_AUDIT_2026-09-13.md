@@ -76,4 +76,4 @@ Unproven or failing gates: GraphQL now has an HR_ADMIN/SUPER_ADMIN trust-boundar
 5. Replay webhook payloads and retry every multi-write path.
 6. Verify deletion/cascade and retention behavior with synthetic PII fixtures.
 
-Overall data isolation gate: **BLOCKED_EXTERNAL** for live RLS/database evidence. The prior GraphQL P0 source finding is remediated in code; conditional H4 still depends on applying and executing the migration/RLS verification matrix.
+Overall data isolation gate: **BLOCKED_EXTERNAL** for live RLS/database evidence. The prior GraphQL P0 source finding is remediated in code; H5 could not obtain a database target. The executable RLS/catalog harnesses and exact next commands are recorded in `docs/audit/H5_RLS_RESULTS.md`, `docs/audit/H5_LIVE_SCHEMA_VERIFICATION.md`, and `docs/audit/H5_LIVE_VERIFICATION_MATRIX.md`.
