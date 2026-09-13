@@ -8,6 +8,9 @@ import {
 } from "@/lib/ai-providers";
 import { getLicenseState } from "@/lib/license";
 import { readSettings } from "@/lib/settings/config";
+import { getRbacContext, rbacErrorResponse } from "@/lib/rbac";
+import { roleAtLeast } from "@/lib/auth";
+import { assertSafeOutboundUrl, UnsafeOutboundUrlError } from "@/lib/security/outbound";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,6 +35,15 @@ const testConnectionSchema = z.object({
  * accepted from the request body.
  */
 export async function POST(request: Request): Promise<Response> {
+  try {
+    const context = await getRbacContext();
+    if (!roleAtLeast(context.role, "HR_ADMIN")) {
+      return Response.json({ ok: false, error: "HR_ADMIN role required.", code: "RBAC_FORBIDDEN" }, { status: 403 });
+    }
+  } catch (error) {
+    return rbacErrorResponse(error) ?? Response.json({ ok: false, error: "Unauthorized.", code: "UNAUTHORIZED" }, { status: 401 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -115,6 +127,12 @@ export async function POST(request: Request): Promise<Response> {
         },
         { status: 400 },
       );
+    }
+    try {
+      await assertSafeOutboundUrl(`${normalizedBaseUrl}/chat/completions`);
+    } catch (error) {
+      const message = error instanceof UnsafeOutboundUrlError ? error.message : "Custom provider endpoint is not safe.";
+      return Response.json({ ok: false, error: message, code: "UNSAFE_BASE_URL" }, { status: 400 });
     }
   }
 

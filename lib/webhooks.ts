@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
+import { assertSafeOutboundUrl, safeOutboundFetch } from "@/lib/security/outbound";
 
 /**
  * Webhook system — subscription registry + signed dispatch.
@@ -70,6 +71,7 @@ export async function createWebhook(input: {
   events: WebhookEvent[];
   secret?: string;
 }): Promise<string> {
+  await assertSafeOutboundUrl(input.url);
   const user = await getCurrentUser();
   if (!hasSupabaseEnv() || !user.organizationId) {
     return `wh-${Date.now()}`;
@@ -153,7 +155,7 @@ export async function dispatchWebhooks(
       if (sub.secret) {
         headers["X-Fluxentiq-Signature"] = `sha256=${signPayload(sub.secret, body)}`;
       }
-      const response = await fetch(sub.url, {
+      const response = await safeOutboundFetch(sub.url, {
         method: "POST",
         headers,
         body,

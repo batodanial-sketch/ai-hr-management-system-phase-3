@@ -4,7 +4,7 @@
 
 This is a source/migration/test audit of checkpoint `53e7ce9`. No live Supabase project, production database, RLS session matrix, production data, or authenticated deployment was available. Therefore database behavior is `CODE-VERIFIED` or `BLOCKED_EXTERNAL`, never claimed `VERIFIED` from SQL text alone.
 
-Structured migration inventory: [`docs/audit/audit-schema.json`](audit/audit-schema.json). It parsed 38 migration files, 123 table declarations (including one parser artifact `IF`), 89 RLS-enabled table names, and 174 policy declarations. These counts are static inventory counts, not a live schema census.
+Structured migration inventory: [`docs/audit/audit-schema.json`](audit/audit-schema.json). It parsed 39 migration files, 124 table declarations (including one parser artifact `IF`), 90 RLS-enabled table names, and 174 policy declarations. These counts are static inventory counts, not a live schema census.
 
 ## Tenant model
 
@@ -27,7 +27,7 @@ Historical migrations still contain legacy references and older policy/function 
 
 ### Policy coverage
 
-The parsed inventory reports 89 RLS-enabled tables and 174 policy declarations. The SQL contains tenant policies across core HR, recruiting, payroll, workflow, documents, knowledge, AI usage, webhooks and operational tables. The final canonical migration adds a restrictive leave-decision role guard. This is CODE-VERIFIED from migration text.
+The parsed inventory reports 90 RLS-enabled tables and 174 policy declarations. The SQL contains tenant policies across core HR, recruiting, payroll, workflow, documents, knowledge, AI usage, webhooks and operational tables. The final canonical migration adds a restrictive leave-decision role guard. This is CODE-VERIFIED from migration text.
 
 Potential policy risks requiring live checks:
 
@@ -53,7 +53,7 @@ Potential policy risks requiring live checks:
 
 Positive evidence: explicit projections and bounded reads in H3 intelligence paths; bridge timeouts/rate limits; bounded n8n payload snapshot; no API key acceptance in the AI connection test body; server-side service-role keys; document and module RBAC helpers. These are CODE-VERIFIED.
 
-Unproven or failing gates: GraphQL has broad resolver getters without a visible auth boundary (P0 endpoint finding); live provider redaction/retention is not tested; outbound webhook payload policy is not live tested; audit logs may receive bounded but still sensitive payload previews; storage bucket policy and signed URL expiry are unknown. Statuses: CODE-VERIFIED findings / BLOCKED_EXTERNAL runtime.
+Unproven or failing gates: GraphQL now has an HR_ADMIN/SUPER_ADMIN trust-boundary gate, but live resolver tenant behavior is not tested; live provider redaction/retention is not tested; outbound webhook egress and replay migration are not live tested; audit logs may receive bounded but still sensitive payload previews; storage bucket policy and signed URL expiry are unknown. Statuses: CODE-VERIFIED remediation / BLOCKED_EXTERNAL runtime.
 
 ## Data integrity and mutation review
 
@@ -76,4 +76,4 @@ Unproven or failing gates: GraphQL has broad resolver getters without a visible 
 5. Replay webhook payloads and retry every multi-write path.
 6. Verify deletion/cascade and retention behavior with synthetic PII fixtures.
 
-Overall data isolation gate: **BLOCKED_EXTERNAL**. The GraphQL P0 source finding prevents a conditional H4 readiness decision even before live RLS verification.
+Overall data isolation gate: **BLOCKED_EXTERNAL** for live RLS/database evidence. The prior GraphQL P0 source finding is remediated in code; conditional H4 still depends on applying and executing the migration/RLS verification matrix.

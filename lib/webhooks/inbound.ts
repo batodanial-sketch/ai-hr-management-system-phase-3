@@ -359,13 +359,33 @@ async function processWorkflowCompleted(payload: WorkflowPayload): Promise<Proce
 
   try {
     let organizationId = payload.organizationId ?? null;
-    if (!organizationId && payload.workflowId) {
-      const { data } = await adminClient()
+    const db = adminClient();
+    if (payload.runId) {
+      const { data: existingRun } = await db
+        .from("workflow_runs")
+        .select("id, organization_id, workflow_id")
+        .eq("id", payload.runId)
+        .maybeSingle();
+      const runOrganizationId = existingRun?.organization_id ? String(existingRun.organization_id) : null;
+      if (!runOrganizationId || (organizationId && organizationId !== runOrganizationId)) {
+        return { ok: false, event: "n8n.workflow_completed", provider: "n8n", message: "Workflow run does not belong to the supplied organization." };
+      }
+      organizationId = runOrganizationId;
+      if (payload.workflowId && existingRun?.workflow_id && String(existingRun.workflow_id) !== payload.workflowId) {
+        return { ok: false, event: "n8n.workflow_completed", provider: "n8n", message: "Workflow run does not belong to the supplied workflow." };
+      }
+    }
+    if (payload.workflowId) {
+      const { data: workflow } = await db
         .from("workflows")
-        .select("organization_id")
+        .select("id, organization_id")
         .eq("id", payload.workflowId)
         .maybeSingle();
-      organizationId = data?.organization_id ? String(data.organization_id) : null;
+      const workflowOrganizationId = workflow?.organization_id ? String(workflow.organization_id) : null;
+      if (!workflowOrganizationId || (organizationId && organizationId !== workflowOrganizationId)) {
+        return { ok: false, event: "n8n.workflow_completed", provider: "n8n", message: "Workflow does not belong to the supplied organization." };
+      }
+      organizationId = workflowOrganizationId;
     }
 
     // Prefer updating an existing run; tolerate creation for new runs.
@@ -376,12 +396,15 @@ async function processWorkflowCompleted(payload: WorkflowPayload): Promise<Proce
     update.finished_at = new Date().toISOString();
 
     let upserted = false;
-    if (payload.runId) {
-      const { error } = await adminClient()
+    if (payload.runId && organizationId) {
+      const { data, error } = await db
         .from("workflow_runs")
         .update(update)
-        .eq("id", payload.runId);
-      upserted = !error;
+        .eq("id", payload.runId)
+        .eq("organization_id", organizationId)
+        .select("id")
+        .maybeSingle();
+      upserted = !error && Boolean(data);
     }
     if (!upserted && payload.workflowId && organizationId) {
       const { error } = await adminClient()

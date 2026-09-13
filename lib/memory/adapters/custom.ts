@@ -1,6 +1,7 @@
 import "server-only";
 import type { MemoryAdapter } from "../interface";
 import type { MemoryTestResult, Row, RowFilter } from "../types";
+import { assertSafeOutboundUrl } from "@/lib/security/outbound";
 
 /**
  * Wall-clock bound for each buyer-configured PostgREST/memory request. A
@@ -52,6 +53,7 @@ export class CustomRestAdapter implements MemoryAdapter {
     if (!this.baseUrl) {
       throw new Error("Custom endpoint base URL is not configured.");
     }
+    await assertSafeOutboundUrl(`${this.baseUrl}${path}`);
     const response = await fetch(`${this.baseUrl}${path}`, {
       ...init,
       headers: this.headers(),

@@ -28,16 +28,16 @@ The matrix records source, discovered auth/RBAC tokens, referenced tables, mutat
 | Path / family | Validation | Auth/RBAC / tenant evidence | Mutation / PII / integration | Status and finding |
 |---|---|---|---|---|
 | `/api/ai/*` bridge proxies and `/api/ai/engine/*` | Proxy forwards request body; feature-specific handlers add schemas where present. | `proxyToBridge()` resolves canonical `getRbacContext()` and forwards canonical organization; rate limit and pilot gate are present. | Python AI bridge, usage/telemetry, candidate/employee data possible. | CODE-VERIFIED. Live bridge and PII redaction remain BLOCKED_EXTERNAL. |
-| `/api/ai/test-connection` | Zod provider/model/base URL validation. | No route-level authenticated context was found before settings/provider test. | Makes outbound bridge/provider connection test; request can select custom endpoint. | CODE-VERIFIED finding: unauthenticated provider-test/possible SSRF or abuse surface; live exploitability NOT_TESTED. Treat as P1 until authenticated and egress-tested. |
-| `/api/graphql` | GraphQL schema validation. | Route and resolvers contain no `getRbacContext`, membership, or role gate; resolvers call broad domain getters directly. | Exposes employee, candidate, lead, payroll, expense, benefit, equity, document, audit and screening query fields. | CODE-VERIFIED P0 access-control finding: anonymous/client access is not proven denied. Live response test BLOCKED_EXTERNAL. |
+| `/api/ai/test-connection` | Zod provider/model/base URL validation. | Remediated: canonical RBAC context and HR_ADMIN+ gate before provider test. | Makes outbound bridge/provider connection test; custom endpoint passes shared HTTPS/private-destination policy. | TEST-VERIFIED policy primitives; live provider/egress verification BLOCKED_EXTERNAL. Previous P1 is CODE-VERIFIED remediated. |
+| `/api/graphql` | GraphQL schema validation. | Remediated: both methods call `requireGraphqlContext()` before Yoga; canonical RBAC and HR_ADMIN/SUPER_ADMIN gate. | Exposes employee, candidate, lead, payroll, expense, benefit, equity, document, audit and screening query fields. | TEST-VERIFIED mocked trust boundary; live anonymous/cross-tenant resolver test BLOCKED_EXTERNAL. Previous P0 is CODE-VERIFIED remediated. |
 | `/api/employees`, `/api/employees/[id]` | Zod route schemas; action layer validates/authorizes. | Server actions are the authorization boundary; source inspection shows this is not visible in route file. | Employee PII and compensation mutations. | CODE-VERIFIED for route-to-action delegation; IDOR and tenant behavior BLOCKED_EXTERNAL. |
 | Module CRUD families (`benefits`, `equity`, `expenses`, `surveys`, `planning`, `contractors`, `offboarding`, `assets`, `documents`, `screening`) | Shared `handleModule*` plus Zod schemas. | Shared handler resolves RBAC, applies role/employee scope, then RLS-bound client. | HR/financial/PII mutations and reads. | CODE-VERIFIED defense-in-depth design; live tenant/RLS proof BLOCKED_EXTERNAL. |
 | Document upload/content/file/download | Shared RBAC context in file handlers; module route uses shared CRUD. | HR/admin gates are present in source paths examined. | Storage keys, files, document content. | CODE-VERIFIED source controls; storage bucket policy and cross-tenant download NOT_TESTED. |
 | `/api/scim/v2/[tenantId]/[...segments]` | Segment parsing and SCIM handler validation. | Bearer token and tenant path checks are present. | Provision/deprovision membership and user data. | CODE-VERIFIED token gate; live SCIM identity/tenant binding BLOCKED_EXTERNAL. |
 | `/api/webhooks/external/inbound-lead` | Zod payload; API-key hash, expiry and scope lookup. | Organization comes from resolved API key, not request body. | Service-role upserts candidate/application and writes webhook log; candidate PII. | CODE-VERIFIED source; duplicate/idempotency and live key behavior BLOCKED_EXTERNAL. |
-| `/api/webhooks/n8n-trigger` | HMAC over raw body; Zod payload; bounded payload snapshot. | Shared secret authenticates sender; organization/workflow IDs are accepted from signed payload and written with service role. | Workflow run and audit writes. | CODE-VERIFIED. Secret is global in route design; cross-tenant sender authorization and workflow/org foreign-key consistency are NOT_TESTED; P1 review item. |
-| `/api/webhooks/python-bridge` and alias callback | Constant-time shared-secret check; Zod payload. | Organization existence checked; service role used. | Notifications, workflow runs, audit logs; payload may contain PII. | CODE-VERIFIED source; replay/idempotency and event-to-org authorization BLOCKED_EXTERNAL. |
-| `/api/webhooks/outbound` and external outbound trigger | Payload validation; HMAC for n8n path. | RBAC on outbound route; external-trigger route uses admin organization context. | User-supplied URL and secret are sent server-side. | CODE-VERIFIED P1 SSRF/secret-forwarding review finding: no visible destination allowlist/private-network denial in external-trigger path. Live exploitability NOT_TESTED. |
+| `/api/webhooks/n8n-trigger` | Timestamped HMAC; Zod payload; bounded payload snapshot; atomic replay claim. | Tenant-scoped `workflows:write` API key must match organization; workflow ownership is checked before service-role writes. | Workflow run and audit writes. | CODE-VERIFIED remediation; live migration, duplicate, wrong-tenant and scheduler tests BLOCKED_EXTERNAL. |
+| `/api/webhooks/python-bridge` and alias callback | Timestamped HMAC; Zod payload; bounded payload snapshot; atomic replay claim. | Tenant-scoped `bridge:write` API key plus organization/resource ownership checks. | Notifications, workflow runs, audit logs; payload is bounded before persistence. | CODE-VERIFIED remediation; live duplicate/provider callback tests BLOCKED_EXTERNAL. |
+| `/api/webhooks/outbound` and external outbound trigger | Payload validation; HMAC/API key for machine path; shared safe outbound fetch. | Canonical session RBAC or tenant-scoped `webhooks:write` API key; external trigger uses admin organization context. | User-supplied URL is HTTPS/private-destination validated; redirects are not followed; raw secret is not persisted. | TEST-VERIFIED URL policy and CODE-VERIFIED integration; live egress verification BLOCKED_EXTERNAL. Previous P1 is CODE-VERIFIED remediated. |
 | `/api/cron/*`, `/api/system/cron` | Secret comparison and fail-closed missing-secret behavior. | Cron secret, service role, per-org filtering in daily workflow path. | Scheduled workflow mutations and audit logs. | CODE-VERIFIED protection; scheduler activation and replay/concurrency behavior BLOCKED_EXTERNAL. |
 | `/api/account/delete` | Authenticated user lookup. | Service-role deletion after current-user check. | Deletes employee/membership/profile/user records; irreversible PII mutation. | CODE-VERIFIED source boundary; cascade completeness and live authorization BLOCKED_EXTERNAL. |
 | `/api/metrics` | Bearer token constant-time compare. | Metrics backend must be enabled plus token. | Bounded metrics only. | CODE-VERIFIED; live exposure/config NOT_TESTED. |
@@ -48,7 +48,7 @@ The matrix records source, discovered auth/RBAC tokens, referenced tables, mutat
 - The canonical application boundary is `lib/auth.ts`, `lib/rbac.ts`, `lib/authz/`, `app/actions/_shared.ts`; `memberships` is the canonical membership table in the final migration.
 - AI proxy authorization inherits canonical RBAC rather than trusting `X-Organization-Id`; this is CODE-VERIFIED.
 - Shared module CRUD documents app-layer role/employee scope plus RLS-bound access; this is CODE-VERIFIED, not live verified.
-- Demo/seed fallback code exists in domain/data paths. Anonymous fallback behavior is not uniformly live-tested. The GraphQL route is an explicit P0 source finding because it bypasses the shared route gate.
+- Demo/seed fallback code exists in domain/data paths. Anonymous fallback behavior is not uniformly live-tested. GraphQL now has an explicit HR_ADMIN/SUPER_ADMIN route gate; local demo-mode behavior remains distinct from configured production auth.
 - IDOR attempts across employee, document, workflow, SCIM tenant, webhook and organization IDs were not run: BLOCKED_EXTERNAL.
 - Ordinary employee versus HR-admin matrices were covered by selected unit/RBAC tests, but not by authenticated endpoint execution: CODE-VERIFIED tests / BLOCKED_EXTERNAL runtime.
 
@@ -60,17 +60,17 @@ The matrix records source, discovered auth/RBAC tokens, referenced tables, mutat
 
 ## Validation executed
 
-- Jest: 31 suites, 292 tests passed — CODE-VERIFIED.
+- Jest: 34 suites, 311 tests passed — CODE-VERIFIED; 3 security/remediation suites were added.
 - TypeScript: `npm run typecheck` passed — CODE-VERIFIED.
 - ESLint: passed with no warnings/errors; Next.js deprecation notice only — CODE-VERIFIED.
 - Python compileall and Electron typecheck passed — CODE-VERIFIED.
 - Production build: passed (`next build`, Next.js 15.5.25; Supabase Node 20 deprecation warnings only) — CODE-VERIFIED.
 - Live endpoint/auth matrix: BLOCKED_EXTERNAL; build success does not establish live endpoint behavior.
 
-## Priority conclusions
+## Remediation conclusions
 
-1. **P0 — `/api/graphql` has no visible authentication/RBAC gate and exposes broad HR/financial/PII getters.** Must be denied or explicitly authorized before H4.
-2. **P1 — `/api/ai/test-connection` is not visibly authenticated and accepts custom endpoint input.** Confirm authorization and egress policy before production.
-3. **P1 — external outbound trigger accepts a user-supplied destination and secret.** Confirm SSRF controls and secret handling before production.
-4. **P1 — globally signed n8n/bridge callbacks rely on sender secret for tenant authority.** Confirm per-tenant sender binding, replay protection, and workflow/org consistency.
-5. All runtime claims above remain subject to authenticated live verification, which is BLOCKED_EXTERNAL.
+1. **GraphQL P0:** confirmed and remediated with a canonical HR_ADMIN/SUPER_ADMIN trust-boundary gate; mocked regression tests pass. Live anonymous/cross-tenant resolver verification remains BLOCKED_EXTERNAL.
+2. **AI connection P1:** confirmed and remediated with canonical RBAC plus shared HTTPS/private-destination egress policy; URL policy tests pass. Live provider/egress verification remains BLOCKED_EXTERNAL.
+3. **Outbound webhook P1:** confirmed and remediated with shared safe outbound fetch, redirect blocking, HTTPS/host/IP policy, and no raw-secret persistence. Live DNS-rebinding/firewall verification remains BLOCKED_EXTERNAL.
+4. **n8n/Python bridge P1:** confirmed and remediated with timestamped signatures, tenant-scoped API keys, resource ownership checks, bounded payloads and atomic replay claims. Migration and live callback verification remain BLOCKED_EXTERNAL.
+5. Remaining runtime claims are not fabricated; see `docs/audit/*.md` and the production readiness report.

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { createHash } from "node:crypto";
 import {
   INBOUND_EVENTS,
   INBOUND_PROVIDERS,
@@ -11,6 +12,7 @@ import {
   type VerificationResult,
 } from "@/lib/webhooks/inbound";
 import { adminClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { claimWebhookReplay } from "@/lib/security/webhook-replay";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,6 +37,17 @@ export const dynamic = "force-dynamic";
  *   - Every receipt is stored in `inbound_webhook_events` for replay/diagnosis
  *     and every state change lands in `audit_logs` as actor_type SYSTEM.
  */
+
+const MAX_INBOUND_BODY_BYTES = 1_000_000;
+
+function boundedPayload(payload: Record<string, unknown>): Record<string, unknown> {
+  try {
+    const serialized = JSON.stringify(payload);
+    return serialized.length <= 8_000 ? payload : { truncated: true, preview: serialized.slice(0, 8_000) };
+  } catch {
+    return { truncated: true };
+  }
+}
 
 const jsonError = (message: string, code: string, status: number): Response => {
   return Response.json({ ok: false, error: message, code }, { status });
@@ -149,6 +162,29 @@ export async function GET(
   });
 }
 
+async function resolveInboundOrganization(event: string, payload: Record<string, unknown>): Promise<string | null> {
+  if (!hasSupabaseEnv()) return null;
+  const db = adminClient();
+  const id = (key: string) => typeof payload[key] === "string" ? payload[key] as string : null;
+  if (event === "candidate.whatsapp_reply" || event === "screening.external_score") {
+    const { data } = await db.from("candidates").select("organization_id").eq("id", id("candidateId")).maybeSingle();
+    return data?.organization_id ? String(data.organization_id) : null;
+  }
+  if (event === "n8n.workflow_completed") {
+    const runId = id("runId");
+    if (runId) {
+      const { data } = await db.from("workflow_runs").select("organization_id").eq("id", runId).maybeSingle();
+      return data?.organization_id ? String(data.organization_id) : null;
+    }
+    const workflowId = id("workflowId");
+    if (workflowId) {
+      const { data } = await db.from("workflows").select("organization_id").eq("id", workflowId).maybeSingle();
+      return data?.organization_id ? String(data.organization_id) : null;
+    }
+  }
+  return null;
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ provider: string }> },
@@ -160,6 +196,7 @@ export async function POST(
   }
 
   const rawBody = await request.text();
+  if (Buffer.byteLength(rawBody, "utf8") > MAX_INBOUND_BODY_BYTES) return jsonError("Webhook body is too large.", "BODY_TOO_LARGE", 413);
 
   // ── 1. Signature verification (fail closed in production) ──────────────
   const verification = verificationFor(provider as InboundProvider, request, rawBody);
@@ -191,12 +228,21 @@ export async function POST(
       ? (body.payload as Record<string, unknown>)
       : {};
 
-  // ── 3. Persist receipt → process → mark processed ─────────────────────
-  const organizationId = typeof body.organizationId === "string" ? body.organizationId : null;
+  // ── 3. Derive tenant from the referenced resource, claim delivery, then process ──
+  const organizationId = await resolveInboundOrganization(event, payload);
+  if (hasSupabaseEnv() && !organizationId) {
+    return jsonError("Webhook resource organization could not be resolved.", "TENANT_NOT_RESOLVED", 403);
+  }
+  const eventId = request.headers.get("x-fluxentiq-delivery-id")?.trim() || (typeof body.eventId === "string" ? body.eventId : null) || createHash("sha256").update(rawBody).digest("hex");
+  if (organizationId) {
+    const claim = await claimWebhookReplay({ provider, eventId, organizationId, rawBody });
+    if (claim === "duplicate") return Response.json({ ok: true, duplicate: true, event, provider }, { status: 200 });
+    if (claim !== "claimed") return jsonError("Webhook replay protection is unavailable.", "REPLAY_GUARD_UNAVAILABLE", 503);
+  }
   const receiptId = await recordReceipt({
     provider,
     event,
-    payload,
+    payload: boundedPayload(payload),
     verification,
     organizationId,
   });

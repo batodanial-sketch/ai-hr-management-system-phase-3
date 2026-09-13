@@ -1,6 +1,7 @@
 {
   "supabase": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
@@ -9,7 +10,8 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "pythonBridge": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "AI_BRIDGE_URL",
       "BRIDGE_SECRET_KEY"
@@ -17,7 +19,8 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "llmProviders": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "LLM_PROVIDER",
       "LLM_API_KEY",
@@ -26,7 +29,8 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "email": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "EMAIL_PROVIDER",
       "RESEND_API_KEY",
@@ -35,7 +39,8 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "webhooks": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "CRON_SECRET",
       "N8N_WEBHOOK_SECRET",
@@ -45,7 +50,8 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "observability": {
-    "code": true,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [
       "ERROR_TRACKING_DSN",
       "OTEL_EXPORTER_OTLP_ENDPOINT"
@@ -53,8 +59,9 @@
     "live": "BLOCKED_EXTERNAL"
   },
   "billing": {
-    "code": false,
+    "evidenceStatus": "STATIC_SOURCE_EVIDENCE",
+    "testStatus": "NOT_TESTED",
     "env": [],
-    "live": "NOT_IMPLEMENTED"
+    "live": "NOT_TESTED"
   }
 }

@@ -1,6 +1,6 @@
 {
   "generatedFrom": "supabase/migrations/*.sql",
-  "migrationCount": 38,
+  "migrationCount": 39,
   "tablesDeclared": [
     "IF",
     "access_requests",
@@ -112,6 +112,7 @@
     "users",
     "webhook_deliveries",
     "webhook_endpoints",
+    "webhook_replay_nonces",
     "webhook_subscriptions",
     "workflow_approvals",
     "workflow_executions",
@@ -203,6 +204,7 @@
     "users",
     "webhook_deliveries",
     "webhook_endpoints",
+    "webhook_replay_nonces",
     "webhook_subscriptions",
     "workflow_approvals",
     "workflow_executions",

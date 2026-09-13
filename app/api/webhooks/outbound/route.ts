@@ -2,6 +2,7 @@ import { z } from "zod";
 import { dispatchWebhooks, verifyDispatchSignature, type WebhookEvent } from "@/lib/webhooks";
 import { getRbacContext } from "@/lib/rbac";
 import { roleAtLeast } from "@/lib/auth";
+import { resolveExternalApiKey } from "@/src/lib/security/webhookAuth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,6 +75,10 @@ export async function POST(request: Request): Promise<Response> {
         { ok: false, error: "organizationId is required for machine-to-machine broadcasts." },
         { status: 400 },
       );
+    }
+    const machineKey = await resolveExternalApiKey(request, "webhooks:write");
+    if (!machineKey.success || machineKey.data.organization_id !== parsed.data.organizationId) {
+      return Response.json({ ok: false, error: "Webhook tenant authorization failed." }, { status: 403 });
     }
     const deliveries = await dispatchWebhooks(
       parsed.data.event as WebhookEvent,
