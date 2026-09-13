@@ -1,0 +1,3470 @@
+{
+  "generated": "2026-09-13",
+  "routeFileCount": 112,
+  "methodCount": 147,
+  "routes": [
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/account/delete",
+      "source": "app/api/account/delete/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [
+        "employees",
+        "memberships",
+        "profiles",
+        "users"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "adminClient(",
+        "serverClient("
+      ],
+      "testReferences": [
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/admin-copilot",
+      "source": "app/api/ai/admin-copilot/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireOrganizationContext",
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "requireOrganizationContext",
+        "RLS"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/copilot",
+      "source": "app/api/ai/copilot/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST",
+        "GET"
+      ],
+      "route": "/api/ai/engine/[...path]",
+      "source": "app/api/ai/engine/[...path]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/evaluate-candidate",
+      "source": "app/api/ai/evaluate-candidate/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/evaluate-pto",
+      "source": "app/api/ai/evaluate-pto/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/insights",
+      "source": "app/api/ai/insights/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/interview-report",
+      "source": "app/api/ai/interview-report/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/ai/jobs/[jobId]",
+      "source": "app/api/ai/jobs/[jobId]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/match-candidate",
+      "source": "app/api/ai/match-candidate/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRecruitmentRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/parse-resume",
+      "source": "app/api/ai/parse-resume/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/rank-candidates",
+      "source": "app/api/ai/rank-candidates/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/semantic-search",
+      "source": "app/api/ai/semantic-search/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRecruitmentRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/ai/status",
+      "source": "app/api/ai/status/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/test",
+      "source": "app/api/ai/test/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/employeeService.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/ai/test-connection",
+      "source": "app/api/ai/test-connection/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST",
+        "PATCH"
+      ],
+      "route": "/api/assets/assign",
+      "source": "app/api/assets/assign/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/assets",
+      "source": "app/api/assets/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/attendance/check-in",
+      "source": "app/api/attendance/check-in/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/attendance/check-out",
+      "source": "app/api/attendance/check-out/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/auth/login",
+      "source": "app/api/auth/login/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [
+        "serverClient("
+      ],
+      "testReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/auth/signup",
+      "source": "app/api/auth/signup/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [
+        "RLS"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "adminClient(",
+        "serverClient("
+      ],
+      "testReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/auth/sso/callback",
+      "source": "app/api/auth/sso/callback/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/auth/sso/initiate",
+      "source": "app/api/auth/sso/initiate/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/benefits/enroll",
+      "source": "app/api/benefits/enroll/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/observability.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/benefits",
+      "source": "app/api/benefits/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/candidates",
+      "source": "app/api/candidates/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRecruitmentRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/contractors/invoices",
+      "source": "app/api/contractors/invoices/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireOrganizationContext"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId",
+        "requireOrganizationContext"
+      ],
+      "tablesReferenced": [
+        "contractor_invoices"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/contractors",
+      "source": "app/api/contractors/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/cron/daily-workflows",
+      "source": "app/api/cron/daily-workflows/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "CRON_SECRET",
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId",
+        "RLS"
+      ],
+      "tablesReferenced": [
+        "audit_logs",
+        "daily_employee_tasks",
+        "employees",
+        "organizations",
+        "workflow_executions",
+        "workflow_templates"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "adminClient("
+      ],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/desktop/auth-sync",
+      "source": "app/api/desktop/auth-sync/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/httpLimit.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/documents/[id]/content",
+      "source": "app/api/documents/[id]/content/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/documents/[id]/download",
+      "source": "app/api/documents/[id]/download/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "DELETE"
+      ],
+      "route": "/api/documents/[id]/file",
+      "source": "app/api/documents/[id]/file/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowMigration.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/documents",
+      "source": "app/api/documents/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/documents/upload",
+      "source": "app/api/documents/upload/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "PATCH"
+      ],
+      "route": "/api/employees/[id]",
+      "source": "app/api/employees/[id]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/employees",
+      "source": "app/api/employees/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/equity/grants",
+      "source": "app/api/equity/grants/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/equity",
+      "source": "app/api/equity/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/expenses/receipt-scan",
+      "source": "app/api/expenses/receipt-scan/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/expenses",
+      "source": "app/api/expenses/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/expenses/submit",
+      "source": "app/api/expenses/submit/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/graphql",
+      "source": "app/api/graphql/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/health",
+      "source": "app/api/health/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/intelligence/alerts",
+      "source": "app/api/intelligence/alerts/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireIntelligenceRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/intelligence/briefing",
+      "source": "app/api/intelligence/briefing/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireIntelligenceRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/intelligence/insights",
+      "source": "app/api/intelligence/insights/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireIntelligenceRole"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST",
+        "DELETE"
+      ],
+      "route": "/api/knowledge",
+      "source": "app/api/knowledge/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/knowledge/search",
+      "source": "app/api/knowledge/search/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST",
+        "PATCH"
+      ],
+      "route": "/api/leave/request",
+      "source": "app/api/leave/request/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/license/activate",
+      "source": "app/api/license/activate/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/license/status",
+      "source": "app/api/license/status/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/license/sync",
+      "source": "app/api/license/sync/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/license/trial",
+      "source": "app/api/license/trial/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [
+        "serverClient("
+      ],
+      "testReferences": [
+        "tests/unit/copilotAgentParam.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/lms/certifications",
+      "source": "app/api/lms/certifications/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/lms/courses",
+      "source": "app/api/lms/courses/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/metrics",
+      "source": "app/api/metrics/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/notifications",
+      "source": "app/api/notifications/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/notifications/stream",
+      "source": "app/api/notifications/stream/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "route": "/api/offboarding",
+      "source": "app/api/offboarding/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "PATCH"
+      ],
+      "route": "/api/onboarding/tasks",
+      "source": "app/api/onboarding/tasks/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST",
+        "PATCH"
+      ],
+      "route": "/api/payroll/calculate",
+      "source": "app/api/payroll/calculate/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/payroll/global-run",
+      "source": "app/api/payroll/global-run/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/payroll/tax-forms",
+      "source": "app/api/payroll/tax-forms/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/performance/ai-summarize",
+      "source": "app/api/performance/ai-summarize/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "route": "/api/performance/cycles",
+      "source": "app/api/performance/cycles/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/performance/reviews",
+      "source": "app/api/performance/reviews/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/planning",
+      "source": "app/api/planning/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/predictive/forecast",
+      "source": "app/api/predictive/forecast/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/recruitment/ai-screen",
+      "source": "app/api/recruitment/ai-screen/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/recruitment/match",
+      "source": "app/api/recruitment/match/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRecruitmentRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "PATCH"
+      ],
+      "route": "/api/recruitment/update-stage",
+      "source": "app/api/recruitment/update-stage/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/reports",
+      "source": "app/api/reports/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
+      "route": "/api/scim/v2/[tenantId]/[...segments]",
+      "source": "app/api/scim/v2/[tenantId]/[...segments]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/screening",
+      "source": "app/api/screening/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/screeningService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/search",
+      "source": "app/api/search/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext"
+      ],
+      "organizationScopeEvidence": [
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "PATCH"
+      ],
+      "route": "/api/settings/ai-budget",
+      "source": "app/api/settings/ai-budget/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext",
+        "getCurrentUser"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/settings/memory/test",
+      "source": "app/api/settings/memory/test/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/employeeService.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "PUT"
+      ],
+      "route": "/api/settings",
+      "source": "app/api/settings/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/surveys/ai-analysis",
+      "source": "app/api/surveys/ai-analysis/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/surveys",
+      "source": "app/api/surveys/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/surveys/submit",
+      "source": "app/api/surveys/submit/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/system/cron",
+      "source": "app/api/system/cron/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "CRON_SECRET"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/system/error-test",
+      "source": "app/api/system/error-test/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/system/health",
+      "source": "app/api/system/health/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/system/ready",
+      "source": "app/api/system/ready/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [
+        "organizations"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch(",
+        "adminClient("
+      ],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/team/capacity",
+      "source": "app/api/team/capacity/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "PATCH"
+      ],
+      "route": "/api/tenant/settings",
+      "source": "app/api/tenant/settings/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "DELETE"
+      ],
+      "route": "/api/webhooks/[id]",
+      "source": "app/api/webhooks/[id]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/external/inbound-lead",
+      "source": "app/api/webhooks/external/inbound-lead/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organization_id"
+      ],
+      "tablesReferenced": [
+        "applications",
+        "candidates",
+        "external_webhook_logs"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowMachine.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/external/outbound-trigger",
+      "source": "app/api/webhooks/external/outbound-trigger/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireOrganizationContext"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId",
+        "requireOrganizationContext"
+      ],
+      "tablesReferenced": [
+        "external_webhook_logs"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "fetch("
+      ],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowMachine.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/webhooks/inbound/[provider]",
+      "source": "app/api/webhooks/inbound/[provider]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "N8N_WEBHOOK_SECRET",
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId"
+      ],
+      "tablesReferenced": [
+        "inbound_webhook_events"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "adminClient("
+      ],
+      "testReferences": [
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/n8n-trigger",
+      "source": "app/api/webhooks/n8n-trigger/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "N8N_WEBHOOK_SECRET"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId"
+      ],
+      "tablesReferenced": [
+        "audit_logs",
+        "workflow_runs"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/outbound",
+      "source": "app/api/webhooks/outbound/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "getRbacContext",
+        "N8N_WEBHOOK_SECRET"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId",
+        "getRbacContext"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/python-bridge",
+      "source": "app/api/webhooks/python-bridge/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "PYTHON_BRIDGE_WEBHOOK_SECRET"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId"
+      ],
+      "tablesReferenced": [
+        "audit_logs",
+        "notifications",
+        "organizations",
+        "workflow_runs"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [],
+      "route": "/api/webhooks/python-callback",
+      "source": "app/api/webhooks/python-callback/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/webhooks",
+      "source": "app/api/webhooks/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/webhooks/slack/events",
+      "source": "app/api/webhooks/slack/events/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "route": "/api/workflows/[id]",
+      "source": "app/api/workflows/[id]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/[id]/run",
+      "source": "app/api/workflows/[id]/run/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/[id]/versions",
+      "source": "app/api/workflows/[id]/versions/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/approvals/[id]/approve",
+      "source": "app/api/workflows/approvals/[id]/approve/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/approvals/[id]/deny",
+      "source": "app/api/workflows/approvals/[id]/deny/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/workflows/approvals",
+      "source": "app/api/workflows/approvals/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/workflows",
+      "source": "app/api/workflows/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "requireRole"
+      ],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/runs/[runId]/cancel",
+      "source": "app/api/workflows/runs/[runId]/cancel/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/runs/[runId]/retry",
+      "source": "app/api/workflows/runs/[runId]/retry/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/workflows/runs/[runId]",
+      "source": "app/api/workflows/runs/[runId]/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET"
+      ],
+      "route": "/api/workflows/runs",
+      "source": "app/api/workflows/runs/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [
+        "organizationId"
+      ],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "POST"
+      ],
+      "route": "/api/workflows/trigger",
+      "source": "app/api/workflows/trigger/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [],
+      "organizationScopeEvidence": [],
+      "tablesReferenced": [],
+      "mutationEvidence": false,
+      "externalEvidence": [],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    },
+    {
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "route": "/api/workflows/webhooks",
+      "source": "app/api/workflows/webhooks/route.ts",
+      "purpose": "Requires source-specific review; static inventory only.",
+      "authEvidence": [
+        "WORKFLOW_WEBHOOK_SECRET",
+        "adminClient"
+      ],
+      "organizationScopeEvidence": [
+        "organization_id",
+        "organizationId"
+      ],
+      "tablesReferenced": [
+        "inbound_webhook_events"
+      ],
+      "mutationEvidence": true,
+      "externalEvidence": [
+        "adminClient("
+      ],
+      "testReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "status": "CODE-VERIFIED (static inventory only)",
+      "liveStatus": "BLOCKED_EXTERNAL"
+    }
+  ]
+}

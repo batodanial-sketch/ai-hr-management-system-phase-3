@@ -1,0 +1,921 @@
+{
+  "generatedFrom": "supabase/migrations/*.sql",
+  "migrationCount": 38,
+  "tablesDeclared": [
+    "IF",
+    "access_requests",
+    "access_revocation_records",
+    "ai_budget_settings",
+    "ai_interview_kits",
+    "ai_token_usage",
+    "ai_usage",
+    "api_keys",
+    "applications",
+    "asset_assignments",
+    "assets",
+    "assistant_conversations",
+    "assistant_messages",
+    "attendance_events",
+    "attendance_policies",
+    "attendance_records",
+    "audit_logs",
+    "benefit_dependents",
+    "benefit_enrollments",
+    "benefit_plans",
+    "bonus_awards",
+    "candidate_ai_assessments",
+    "candidate_communications",
+    "candidate_evaluations",
+    "candidates",
+    "certification_definitions",
+    "company_knowledge",
+    "compensation_bands",
+    "compensation_packages",
+    "compliance_assignments",
+    "compliance_requirements",
+    "contractor_invoices",
+    "contractors",
+    "copilot_proposals",
+    "currency_rates",
+    "daily_employee_tasks",
+    "dashboard_metrics",
+    "deals",
+    "departments",
+    "document_files",
+    "document_templates",
+    "documents",
+    "employee_certifications",
+    "employee_files",
+    "employees",
+    "employment_history",
+    "equity_grants",
+    "equity_vesting_events",
+    "expense_reports",
+    "external_webhook_logs",
+    "feedback_notes",
+    "goal_check_ins",
+    "goals",
+    "inbound_webhook_events",
+    "interview_feedback",
+    "interview_participants",
+    "interviews",
+    "ip_restrictions",
+    "job_openings",
+    "job_postings",
+    "job_titles",
+    "lead_activities",
+    "leads",
+    "learning_courses",
+    "learning_enrollments",
+    "learning_lesson_progress",
+    "learning_lessons",
+    "learning_quiz_attempts",
+    "learning_quiz_questions",
+    "learning_quizzes",
+    "leave_balances",
+    "leave_requests",
+    "leave_types",
+    "locations",
+    "memberships",
+    "notifications",
+    "offboarding_cases",
+    "offboarding_tasks",
+    "onboarding_document_signing_requests",
+    "onboarding_enrollments",
+    "onboarding_programs",
+    "onboarding_tasks",
+    "organization_configs",
+    "organization_domain_whitelists",
+    "organization_memberships",
+    "organizations",
+    "payroll_cycles",
+    "payroll_entries",
+    "payroll_line_items",
+    "payroll_runs",
+    "performance_calibration_records",
+    "performance_cycles",
+    "performance_feedback_requests",
+    "performance_feedback_responses",
+    "performance_review_answers",
+    "performance_reviews",
+    "policy_acknowledgements",
+    "profiles",
+    "pulse_questions",
+    "pulse_responses",
+    "pulse_surveys",
+    "report_exports",
+    "resumes",
+    "roles",
+    "scheduled_jobs",
+    "sso_configurations",
+    "talent_assessments",
+    "users",
+    "webhook_deliveries",
+    "webhook_endpoints",
+    "webhook_subscriptions",
+    "workflow_approvals",
+    "workflow_executions",
+    "workflow_nodes",
+    "workflow_runs",
+    "workflow_templates",
+    "workflow_versions",
+    "workflows",
+    "workforce_forecasts",
+    "workforce_scenarios",
+    "workspace_domains",
+    "workspace_invites",
+    "workspace_memberships"
+  ],
+  "rlsEnabledTables": [
+    "access_requests",
+    "access_revocation_records",
+    "ai_budget_settings",
+    "ai_interview_kits",
+    "ai_token_usage",
+    "ai_usage",
+    "asset_assignments",
+    "assets",
+    "audit_logs",
+    "benefit_dependents",
+    "benefit_enrollments",
+    "benefit_plans",
+    "bonus_awards",
+    "candidate_communications",
+    "candidate_evaluations",
+    "candidates",
+    "certification_definitions",
+    "company_knowledge",
+    "compensation_bands",
+    "compliance_assignments",
+    "compliance_requirements",
+    "contractor_invoices",
+    "contractors",
+    "copilot_proposals",
+    "currency_rates",
+    "daily_employee_tasks",
+    "dashboard_metrics",
+    "deals",
+    "document_files",
+    "employee_certifications",
+    "employees",
+    "equity_grants",
+    "equity_vesting_events",
+    "expense_reports",
+    "external_webhook_logs",
+    "goal_check_ins",
+    "inbound_webhook_events",
+    "ip_restrictions",
+    "job_postings",
+    "lead_activities",
+    "leads",
+    "learning_courses",
+    "learning_enrollments",
+    "learning_lesson_progress",
+    "learning_lessons",
+    "learning_quiz_attempts",
+    "learning_quiz_questions",
+    "learning_quizzes",
+    "leave_balances",
+    "leave_requests",
+    "memberships",
+    "notifications",
+    "offboarding_cases",
+    "offboarding_tasks",
+    "onboarding_document_signing_requests",
+    "organization_configs",
+    "organization_domain_whitelists",
+    "organization_memberships",
+    "organizations",
+    "payroll_line_items",
+    "payroll_runs",
+    "performance_calibration_records",
+    "performance_feedback_requests",
+    "performance_feedback_responses",
+    "policy_acknowledgements",
+    "profiles",
+    "pulse_questions",
+    "pulse_responses",
+    "pulse_surveys",
+    "roles",
+    "scheduled_jobs",
+    "sso_configurations",
+    "talent_assessments",
+    "users",
+    "webhook_deliveries",
+    "webhook_endpoints",
+    "webhook_subscriptions",
+    "workflow_approvals",
+    "workflow_executions",
+    "workflow_nodes",
+    "workflow_runs",
+    "workflow_templates",
+    "workflow_versions",
+    "workflows",
+    "workforce_forecasts",
+    "workforce_scenarios",
+    "workspace_domains",
+    "workspace_invites",
+    "workspace_memberships"
+  ],
+  "policyCount": 174,
+  "policies": [
+    {
+      "policy": "organizations_select_for_members",
+      "table": "organizations"
+    },
+    {
+      "policy": "users_select_own_profile",
+      "table": "users"
+    },
+    {
+      "policy": "users_update_own_profile",
+      "table": "users"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "public"
+    },
+    {
+      "policy": "memberships_select_self_or_org_member",
+      "table": "organization_memberships"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "ai_interview_kits"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "performance_feedback_requests"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "performance_feedback_responses"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "goal_check_ins"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "talent_assessments"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "performance_calibration_records"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "assets"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "asset_assignments"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "onboarding_document_signing_requests"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "offboarding_cases"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "offboarding_tasks"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "access_revocation_records"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_courses"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_lessons"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_quizzes"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_quiz_questions"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_enrollments"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_lesson_progress"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "learning_quiz_attempts"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "certification_definitions"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "employee_certifications"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "compliance_requirements"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "compliance_assignments"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "policy_acknowledgements"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "benefit_plans"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "benefit_enrollments"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "benefit_dependents"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "equity_grants"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "equity_vesting_events"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "compensation_bands"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "bonus_awards"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "sso_configurations"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "organization_domain_whitelists"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "ip_restrictions"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "webhook_endpoints"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "workflow_versions"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "workflow_approvals"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "currency_rates"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "contractors"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "contractor_invoices"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "pulse_surveys"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "pulse_questions"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "pulse_responses"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "expense_reports"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "workforce_scenarios"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "workforce_forecasts"
+    },
+    {
+      "policy": "tenant_isolation",
+      "table": "external_webhook_logs"
+    },
+    {
+      "policy": "org_select",
+      "table": "organizations"
+    },
+    {
+      "policy": "org_update",
+      "table": "organizations"
+    },
+    {
+      "policy": "profiles_select_self",
+      "table": "profiles"
+    },
+    {
+      "policy": "profiles_select_org",
+      "table": "profiles"
+    },
+    {
+      "policy": "profiles_update_self",
+      "table": "profiles"
+    },
+    {
+      "policy": "memberships_select",
+      "table": "memberships"
+    },
+    {
+      "policy": "memberships_insert",
+      "table": "memberships"
+    },
+    {
+      "policy": "memberships_delete",
+      "table": "memberships"
+    },
+    {
+      "policy": "ws_domains_select",
+      "table": "workspace_domains"
+    },
+    {
+      "policy": "ws_domains_all",
+      "table": "workspace_domains"
+    },
+    {
+      "policy": "ws_memberships_select",
+      "table": "workspace_memberships"
+    },
+    {
+      "policy": "ws_invites_select",
+      "table": "workspace_invites"
+    },
+    {
+      "policy": "access_requests_select",
+      "table": "access_requests"
+    },
+    {
+      "policy": "employees_select",
+      "table": "employees"
+    },
+    {
+      "policy": "employees_insert",
+      "table": "employees"
+    },
+    {
+      "policy": "employees_update",
+      "table": "employees"
+    },
+    {
+      "policy": "employees_delete",
+      "table": "employees"
+    },
+    {
+      "policy": "job_postings_select",
+      "table": "job_postings"
+    },
+    {
+      "policy": "job_postings_insert",
+      "table": "job_postings"
+    },
+    {
+      "policy": "job_postings_update",
+      "table": "job_postings"
+    },
+    {
+      "policy": "job_postings_delete",
+      "table": "job_postings"
+    },
+    {
+      "policy": "candidates_select",
+      "table": "candidates"
+    },
+    {
+      "policy": "candidates_insert",
+      "table": "candidates"
+    },
+    {
+      "policy": "candidates_update",
+      "table": "candidates"
+    },
+    {
+      "policy": "candidates_delete",
+      "table": "candidates"
+    },
+    {
+      "policy": "candidate_evals_select",
+      "table": "candidate_evaluations"
+    },
+    {
+      "policy": "candidate_evals_insert",
+      "table": "candidate_evaluations"
+    },
+    {
+      "policy": "leave_requests_select",
+      "table": "leave_requests"
+    },
+    {
+      "policy": "leave_requests_insert",
+      "table": "leave_requests"
+    },
+    {
+      "policy": "leave_requests_update",
+      "table": "leave_requests"
+    },
+    {
+      "policy": "leave_balances_select",
+      "table": "leave_balances"
+    },
+    {
+      "policy": "leave_balances_insert",
+      "table": "leave_balances"
+    },
+    {
+      "policy": "leave_balances_update",
+      "table": "leave_balances"
+    },
+    {
+      "policy": "payroll_runs_select",
+      "table": "payroll_runs"
+    },
+    {
+      "policy": "payroll_runs_insert",
+      "table": "payroll_runs"
+    },
+    {
+      "policy": "payroll_runs_update",
+      "table": "payroll_runs"
+    },
+    {
+      "policy": "payroll_lines_select",
+      "table": "payroll_line_items"
+    },
+    {
+      "policy": "payroll_lines_insert",
+      "table": "payroll_line_items"
+    },
+    {
+      "policy": "workflows_select",
+      "table": "workflows"
+    },
+    {
+      "policy": "workflows_all",
+      "table": "workflows"
+    },
+    {
+      "policy": "workflow_nodes_select",
+      "table": "workflow_nodes"
+    },
+    {
+      "policy": "workflow_nodes_all",
+      "table": "workflow_nodes"
+    },
+    {
+      "policy": "workflow_runs_select",
+      "table": "workflow_runs"
+    },
+    {
+      "policy": "workflow_runs_insert",
+      "table": "workflow_runs"
+    },
+    {
+      "policy": "leads_select",
+      "table": "leads"
+    },
+    {
+      "policy": "leads_insert",
+      "table": "leads"
+    },
+    {
+      "policy": "leads_update",
+      "table": "leads"
+    },
+    {
+      "policy": "leads_delete",
+      "table": "leads"
+    },
+    {
+      "policy": "lead_activities_select",
+      "table": "lead_activities"
+    },
+    {
+      "policy": "lead_activities_insert",
+      "table": "lead_activities"
+    },
+    {
+      "policy": "deals_select",
+      "table": "deals"
+    },
+    {
+      "policy": "deals_insert",
+      "table": "deals"
+    },
+    {
+      "policy": "deals_update",
+      "table": "deals"
+    },
+    {
+      "policy": "notifications_select",
+      "table": "notifications"
+    },
+    {
+      "policy": "notifications_insert",
+      "table": "notifications"
+    },
+    {
+      "policy": "notifications_update",
+      "table": "notifications"
+    },
+    {
+      "policy": "audit_logs_select",
+      "table": "audit_logs"
+    },
+    {
+      "policy": "audit_logs_insert",
+      "table": "audit_logs"
+    },
+    {
+      "policy": "ai_usage_select",
+      "table": "ai_usage"
+    },
+    {
+      "policy": "ai_usage_insert",
+      "table": "ai_usage"
+    },
+    {
+      "policy": "dashboard_metrics_select",
+      "table": "dashboard_metrics"
+    },
+    {
+      "policy": "dashboard_metrics_all",
+      "table": "dashboard_metrics"
+    },
+    {
+      "policy": "webhook_subs_select",
+      "table": "webhook_subscriptions"
+    },
+    {
+      "policy": "webhook_subs_all",
+      "table": "webhook_subscriptions"
+    },
+    {
+      "policy": "webhook_deliveries_select",
+      "table": "webhook_deliveries"
+    },
+    {
+      "policy": "scheduled_jobs_select",
+      "table": "scheduled_jobs"
+    },
+    {
+      "policy": "scheduled_jobs_all",
+      "table": "scheduled_jobs"
+    },
+    {
+      "policy": "organization_configs_select_member",
+      "table": "organization_configs"
+    },
+    {
+      "policy": "organization_configs_insert_admin",
+      "table": "organization_configs"
+    },
+    {
+      "policy": "organization_configs_update_admin",
+      "table": "organization_configs"
+    },
+    {
+      "policy": "organization_configs_delete_admin",
+      "table": "organization_configs"
+    },
+    {
+      "policy": "workflow_templates_select_member",
+      "table": "workflow_templates"
+    },
+    {
+      "policy": "workflow_templates_insert_admin",
+      "table": "workflow_templates"
+    },
+    {
+      "policy": "workflow_templates_update_admin",
+      "table": "workflow_templates"
+    },
+    {
+      "policy": "workflow_templates_delete_admin",
+      "table": "workflow_templates"
+    },
+    {
+      "policy": "daily_tasks_select_member",
+      "table": "daily_employee_tasks"
+    },
+    {
+      "policy": "daily_tasks_insert_admin",
+      "table": "daily_employee_tasks"
+    },
+    {
+      "policy": "daily_tasks_update_member",
+      "table": "daily_employee_tasks"
+    },
+    {
+      "policy": "daily_tasks_delete_admin",
+      "table": "daily_employee_tasks"
+    },
+    {
+      "policy": "workflow_executions_select_member",
+      "table": "workflow_executions"
+    },
+    {
+      "policy": "workflow_executions_insert_member",
+      "table": "workflow_executions"
+    },
+    {
+      "policy": "workflow_executions_update_admin",
+      "table": "workflow_executions"
+    },
+    {
+      "policy": "workflow_executions_delete_admin",
+      "table": "workflow_executions"
+    },
+    {
+      "policy": "expense_reports_scope",
+      "table": "expense_reports"
+    },
+    {
+      "policy": "offboarding_cases_scope",
+      "table": "offboarding_cases"
+    },
+    {
+      "policy": "offboarding_tasks_scope",
+      "table": "offboarding_tasks"
+    },
+    {
+      "policy": "asset_assignments_scope",
+      "table": "asset_assignments"
+    },
+    {
+      "policy": "assets_scope",
+      "table": "assets"
+    },
+    {
+      "policy": "benefit_plans_scope",
+      "table": "benefit_plans"
+    },
+    {
+      "policy": "equity_grants_scope",
+      "table": "equity_grants"
+    },
+    {
+      "policy": "pulse_surveys_scope",
+      "table": "pulse_surveys"
+    },
+    {
+      "policy": "workforce_scenarios_scope",
+      "table": "workforce_scenarios"
+    },
+    {
+      "policy": "documents_scope",
+      "table": "documents"
+    },
+    {
+      "policy": "contractor_invoices_scope",
+      "table": "contractor_invoices"
+    },
+    {
+      "policy": "audit_logs_governance_select",
+      "table": "audit_logs"
+    },
+    {
+      "policy": "audit_logs_governance_insert",
+      "table": "audit_logs"
+    },
+    {
+      "policy": "inbound_webhook_select_org",
+      "table": "inbound_webhook_events"
+    },
+    {
+      "policy": "candidate_communications_select_org",
+      "table": "candidate_communications"
+    },
+    {
+      "policy": "candidate_communications_insert_org",
+      "table": "candidate_communications"
+    },
+    {
+      "policy": "ai_token_usage_select_org",
+      "table": "ai_token_usage"
+    },
+    {
+      "policy": "ai_token_usage_insert_org",
+      "table": "ai_token_usage"
+    },
+    {
+      "policy": "ai_budget_settings_select_org",
+      "table": "ai_budget_settings"
+    },
+    {
+      "policy": "ai_budget_settings_insert_org",
+      "table": "ai_budget_settings"
+    },
+    {
+      "policy": "ai_budget_settings_update_org",
+      "table": "ai_budget_settings"
+    },
+    {
+      "policy": "memberships_select",
+      "table": "memberships"
+    },
+    {
+      "policy": "memberships_insert",
+      "table": "memberships"
+    },
+    {
+      "policy": "memberships_update",
+      "table": "memberships"
+    },
+    {
+      "policy": "memberships_delete",
+      "table": "memberships"
+    },
+    {
+      "policy": "legacy_org_memberships_read_only",
+      "table": "organization_memberships"
+    },
+    {
+      "policy": "legacy_roles_read_only",
+      "table": "roles"
+    },
+    {
+      "policy": "leave_requests_decision_role_guard",
+      "table": "leave_requests"
+    },
+    {
+      "policy": "copilot_proposals_select",
+      "table": "copilot_proposals"
+    },
+    {
+      "policy": "document_files_select",
+      "table": "document_files"
+    },
+    {
+      "policy": "document_files_insert",
+      "table": "document_files"
+    },
+    {
+      "policy": "document_files_update",
+      "table": "document_files"
+    },
+    {
+      "policy": "document_files_delete",
+      "table": "document_files"
+    },
+    {
+      "policy": "document_files_status_transitions",
+      "table": "document_files"
+    },
+    {
+      "policy": "company_knowledge_select",
+      "table": "company_knowledge"
+    },
+    {
+      "policy": "company_knowledge_insert",
+      "table": "company_knowledge"
+    },
+    {
+      "policy": "company_knowledge_update",
+      "table": "company_knowledge"
+    },
+    {
+      "policy": "company_knowledge_delete",
+      "table": "company_knowledge"
+    },
+    {
+      "policy": "workflow_runs_update",
+      "table": "workflow_runs"
+    }
+  ],
+  "status": "CODE-VERIFIED (migration text parsed; live schema not connected)",
+  "liveStatus": "BLOCKED_EXTERNAL"
+}

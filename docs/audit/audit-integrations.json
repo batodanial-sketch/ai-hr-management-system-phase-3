@@ -1,0 +1,60 @@
+{
+  "supabase": {
+    "code": true,
+    "env": [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "SUPABASE_SECRET_KEY"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "pythonBridge": {
+    "code": true,
+    "env": [
+      "AI_BRIDGE_URL",
+      "BRIDGE_SECRET_KEY"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "llmProviders": {
+    "code": true,
+    "env": [
+      "LLM_PROVIDER",
+      "LLM_API_KEY",
+      "GROQ_API_KEY"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "email": {
+    "code": true,
+    "env": [
+      "EMAIL_PROVIDER",
+      "RESEND_API_KEY",
+      "SMTP_HOST"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "webhooks": {
+    "code": true,
+    "env": [
+      "CRON_SECRET",
+      "N8N_WEBHOOK_SECRET",
+      "PYTHON_BRIDGE_WEBHOOK_SECRET",
+      "WORKFLOW_WEBHOOK_SECRET"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "observability": {
+    "code": true,
+    "env": [
+      "ERROR_TRACKING_DSN",
+      "OTEL_EXPORTER_OTLP_ENDPOINT"
+    ],
+    "live": "BLOCKED_EXTERNAL"
+  },
+  "billing": {
+    "code": false,
+    "env": [],
+    "live": "NOT_IMPLEMENTED"
+  }
+}
