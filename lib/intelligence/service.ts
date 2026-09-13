@@ -19,6 +19,7 @@ export type IntelligenceTenantTable =
   | "candidates"
   | "applications"
   | "interviews"
+  | "job_openings"
   | "daily_employee_tasks";
 
 interface QueryResult<T = unknown> {
@@ -102,6 +103,11 @@ export async function pinIntelligenceOrganization(
   if (!verified) throw new Error("Organization is not eligible for intelligence evaluation.");
 
   const readRows = async (table: IntelligenceTenantTable, columns: string, limit?: number): Promise<Record<string, unknown>[]> => {
+    const requestedColumns = columns.split(",").map((column) => column.trim()).filter(Boolean);
+    const forbiddenColumns = new Set(["email", "phone", "resume_url", "linkedin_url", "portfolio_url", "private_notes"]);
+    if (requestedColumns.length === 0 || requestedColumns.includes("*") || requestedColumns.some((column) => forbiddenColumns.has(column))) {
+      throw new Error("Intelligence projection is not allowed.");
+    }
     const result = await (options.db ?? serviceDb())
       .from(table)
       .select(columns)
@@ -116,13 +122,29 @@ export async function pinIntelligenceOrganization(
   return Object.freeze({ organizationId, actor: INTELLIGENCE_INFRASTRUCTURE_ACTOR, readRows });
 }
 
+/** Evaluates the canonical detector set through the pinned tenant adapter. */
+export async function evaluateOrganizationIntelligence(
+  context: IntelligenceTenantContext,
+  generatedAt?: string,
+): Promise<InsightSet> {
+  // Keep the service-boundary module free of session-loader imports at module
+  // initialization time. The canonical evaluator is loaded only when a
+  // trusted tenant evaluation is explicitly invoked.
+  const [{ getInsightSet }, { createTenantIntelligenceDataAdapter }] = await Promise.all([
+    import("./aggregator"),
+    import("./data"),
+  ]);
+  return getInsightSet({ adapter: createTenantIntelligenceDataAdapter(context), generatedAt });
+}
+
 /**
  * Runs the existing H1 sweep with a trusted discovery/pinning boundary.
  * The evaluator receives only the pinned context; it cannot select another
- * organization during this invocation.
+ * organization during this invocation. Callers may inject a test evaluator;
+ * production callers use the canonical evaluator by default.
  */
 export async function runTrustedIntelligenceSweep(
-  evaluateOrganization: (context: IntelligenceTenantContext) => Promise<InsightSet>,
+  evaluateOrganization: (context: IntelligenceTenantContext) => Promise<InsightSet> = (context) => evaluateOrganizationIntelligence(context),
   options: { organizationLimit?: number; now?: () => Date; db?: ServiceRoleDb } = {},
 ): Promise<IntelligenceSweepReport> {
   const deps: IntelligenceSweepDeps = {

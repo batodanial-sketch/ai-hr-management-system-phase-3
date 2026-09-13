@@ -45,6 +45,7 @@ describe("sessionless intelligence service boundary", () => {
     expect(Object.isFrozen(context)).toBe(true);
     expect(context).toMatchObject({ organizationId: "org-a", actor: INTELLIGENCE_INFRASTRUCTURE_ACTOR });
     expect(context.readRows).toBeDefined();
+    await expect(context.readRows("candidates", "email", 10)).rejects.toThrow(/projection/);
   });
 
   it("runs H1 orchestration through discovery and pinning without switching tenants", async () => {
