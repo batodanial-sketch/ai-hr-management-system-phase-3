@@ -93,9 +93,9 @@ n8n/Python bridge callbacks now require timestamped HMAC, event IDs, tenant-scop
 
 **H5 STATUS: CONDITIONALLY VERIFIED**
 
-H5 produced no `LIVE-VERIFIED` results. The current sandbox had no `DATABASE_URL`, deployed target, external provider credentials, or local Node dependency/toolchain available. The live schema collector returned `BLOCKED_EXTERNAL`; the existing RLS suite could not load `pg`; Jest, TypeScript, ESLint and production build commands could not execute because the local Node packages were absent. Python compilation and `git diff --check` did pass.
+H5 produced no `LIVE-VERIFIED` results. The local Node toolchain was restored with deterministic `npm ci`, and the full local regression baseline passed: 34 Jest suites/311 tests, TypeScript, ESLint, Electron typecheck, Python compilation, production build, and `git diff --check`. The live schema collector and RLS suite remain `BLOCKED_EXTERNAL` because `DATABASE_URL` and approved database infrastructure are unavailable.
 
-The code-level remediation and deterministic tests remain valid from commit `0b7111e`; H5 does not upgrade them to live evidence. See `docs/audit/H5_LIVE_VERIFICATION_MATRIX.md`, `H5_LIVE_SCHEMA_VERIFICATION.*`, `H5_RLS_RESULTS.md`, `H5_GRAPHQL_RESULTS.md`, `H5_WEBHOOK_RESULTS.md`, `H5_SSRF_RESULTS.md`, `H5_STORAGE_RESULTS.md`, and `H5_DATA_INTEGRITY_RESULTS.md`.
+The code-level remediation and deterministic tests remain valid from commit `0b7111e`; H5 does not upgrade them to live evidence. See `docs/audit/H5_TOOLCHAIN_RESULTS.md`, `docs/audit/H5_LIVE_VERIFICATION_MATRIX.md`, `H5_LIVE_SCHEMA_VERIFICATION.*`, `H5_RLS_RESULTS.md`, `H5_GRAPHQL_RESULTS.md`, `H5_WEBHOOK_RESULTS.md`, `H5_SSRF_RESULTS.md`, `H5_STORAGE_RESULTS.md`, and `H5_DATA_INTEGRITY_RESULTS.md`.
 
 ## Audit artifact change policy
 

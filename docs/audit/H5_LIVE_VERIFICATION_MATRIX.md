@@ -10,7 +10,7 @@ Evidence rule: live infrastructure is never inferred from source or mocked tests
 |---|---|---|
 | Working tree | `NOT-TESTED` as a clean-state claim; an existing user modification is present | `scripts/zero-downtime-migrate.sh` mode is `100644` versus committed `100755`; preserved and not changed |
 | Supabase/Postgres URL | `BLOCKED-EXTERNAL` | `DATABASE_URL` is not configured |
-| Node PostgreSQL runtime dependency | `BLOCKED-EXTERNAL` | `node scripts/db/authz-rls-suite.mjs` could not load `pg` in the current sandbox |
+| Node PostgreSQL runtime dependency | `RESTORED` | `npm ci` restored `pg`; live suite remains blocked only by missing `DATABASE_URL` |
 | Hosted deployment URL | `BLOCKED-EXTERNAL` | No deployment target supplied |
 | Provider/n8n/bridge/storage/SCIM credentials | `BLOCKED-EXTERNAL` | No relevant runtime credentials were available |
 
@@ -49,16 +49,16 @@ Evidence rule: live infrastructure is never inferred from source or mocked tests
 | PII leakage | Synthetic live deployment/provider | `BLOCKED-EXTERNAL` | Synthetic PII response/log/provider/audit inspection |
 | Copilot regression | Jest | `TEST-VERIFIED` | Existing agent/tool/authority suites remain part of full suite; no H5 bypass added |
 | Migration repeatability | Clean disposable database | `BLOCKED-EXTERNAL` | Apply 39 migrations from zero and repeat supported migration command |
-| Production build/regression | Local repository | `BLOCKED-EXTERNAL` | H5 commands were attempted but local Node toolchain was unavailable (`next`, `tsc`, Jest `ts-jest`); prior evidence was `TEST-VERIFIED` |
+| Production build/regression | Local repository | `TEST-VERIFIED` | Toolchain restored with `npm ci`; 34 Jest suites/311 tests, TypeScript, ESLint, Electron typecheck, Python compilation, production build and diff check passed |
 
 ## H5 status counts
 
 These counts describe this H5 execution, not production behavior:
 
 - `LIVE-VERIFIED`: **0**
-- `TEST-VERIFIED`: **5** matrix domains (GraphQL gate, AI auth, SSRF policy, outbound webhook policy, Copilot regression evidence)
+- `TEST-VERIFIED`: **6** matrix domains (GraphQL gate, AI auth, SSRF policy, outbound webhook policy, Copilot regression evidence, restored local regression)
 - `CODE-VERIFIED`: **2** matrix domains (service-role inventory, replay migration schema)
-- `BLOCKED-EXTERNAL`: **25** matrix domains
+- `BLOCKED-EXTERNAL`: **24** matrix domains
 - `FAILED`: **0** security-control failures exercised live
 - `NOT-TESTED`: **0**
 
