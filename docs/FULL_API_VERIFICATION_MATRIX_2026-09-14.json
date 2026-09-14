@@ -1,9 +1,9 @@
 {
   "generated": "2026-09-14",
-  "repositoryHead": "bbcb48d",
+  "repositoryHead": "c1ffbfc",
   "scope": "static route inventory; not live verification",
-  "routeCount": 112,
-  "methodCount": 147,
+  "routeCount": 113,
+  "methodCount": 148,
   "routes": [
     {
       "route": "/api/account/delete",
@@ -681,12 +681,14 @@
         "tests/unit/knowledge.test.ts",
         "tests/unit/next15AsyncParams.test.ts",
         "tests/unit/observability.test.ts",
+        "tests/unit/productionConfiguration.test.ts",
         "tests/unit/proposalLifecycle.test.ts",
         "tests/unit/recruitmentMatching.test.ts",
         "tests/unit/recruitmentRoutes.test.ts",
         "tests/unit/scimProvisioning.test.ts",
         "tests/unit/search.test.ts",
         "tests/unit/securityRemediation.test.ts",
+        "tests/unit/slackSecurity.test.ts",
         "tests/unit/storagePipeline.test.ts",
         "tests/unit/workflowBridge.test.ts",
         "tests/unit/workflowExecutor.test.ts",
@@ -939,7 +941,9 @@
       ],
       "dbSignals": false,
       "externalSignals": false,
-      "localTestReferences": [],
+      "localTestReferences": [
+        "tests/unit/slackSecurity.test.ts"
+      ],
       "evidenceStatus": "CODE-VERIFIED"
     },
     {
@@ -1515,6 +1519,30 @@
         "tests/unit/workflowRoutes.test.ts",
         "tests/unit/workflowTools.test.ts",
         "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/health/db",
+      "source": "app/api/health/db/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/workflowMigration.test.ts"
       ],
       "evidenceStatus": "CODE-VERIFIED"
     },
@@ -2479,9 +2507,11 @@
         "tests/unit/knowledge.test.ts",
         "tests/unit/next15AsyncParams.test.ts",
         "tests/unit/observability.test.ts",
+        "tests/unit/productionConfiguration.test.ts",
         "tests/unit/proposalLifecycle.test.ts",
         "tests/unit/recruitmentRoutes.test.ts",
         "tests/unit/securityRemediation.test.ts",
+        "tests/unit/slackSecurity.test.ts",
         "tests/unit/storagePipeline.test.ts",
         "tests/unit/workflowExecutor.test.ts",
         "tests/unit/workflowRoutes.test.ts",
@@ -2953,11 +2983,12 @@
       "authSignals": [],
       "tenantSignals": [],
       "validationSignals": [],
-      "dbSignals": true,
+      "dbSignals": false,
       "externalSignals": false,
       "localTestReferences": [
         "tests/e2e/copilot-agent.spec.ts",
         "tests/unit/observability.test.ts",
+        "tests/unit/slackSecurity.test.ts",
         "tests/unit/workflowWebhooks.test.ts"
       ],
       "evidenceStatus": "CODE-VERIFIED"

@@ -48,6 +48,7 @@ Generated 2026-09-14. Static source inventory only; live behavior is never infer
 | `/api/expenses` | GET, POST | none observed | organizationId | yes | no | no | CODE-VERIFIED |
 | `/api/expenses/submit` | POST | none observed | none observed | yes | no | no | CODE-VERIFIED |
 | `/api/graphql` | GET, POST | none observed | none observed | not observed | no | no | CODE-VERIFIED |
+| `/api/health/db` | GET | adminClient | none observed | not observed | yes | no | CODE-VERIFIED |
 | `/api/health` | GET | none observed | none observed | not observed | no | no | CODE-VERIFIED |
 | `/api/intelligence/alerts` | GET | none observed | none observed | not observed | no | no | CODE-VERIFIED |
 | `/api/intelligence/briefing` | GET | none observed | none observed | not observed | no | no | CODE-VERIFIED |
@@ -102,7 +103,7 @@ Generated 2026-09-14. Static source inventory only; live behavior is never infer
 | `/api/webhooks/python-bridge` | POST | verifyTimestampedHmac, resolveExternalApiKey | organizationId, organization_id | yes | yes | no | CODE-VERIFIED |
 | `/api/webhooks/python-callback` | none | none observed | none observed | not observed | no | no | CODE-VERIFIED |
 | `/api/webhooks` | GET, POST | none observed | none observed | yes | no | no | CODE-VERIFIED |
-| `/api/webhooks/slack/events` | POST | none observed | none observed | not observed | yes | no | CODE-VERIFIED |
+| `/api/webhooks/slack/events` | POST | none observed | none observed | not observed | no | no | CODE-VERIFIED |
 | `/api/workflows/[id]` | GET, PATCH, DELETE | requireRole | organizationId | yes | yes | no | CODE-VERIFIED |
 | `/api/workflows/[id]/run` | POST | none observed | organizationId | yes | no | no | CODE-VERIFIED |
 | `/api/workflows/[id]/versions` | POST | requireRole | organizationId | yes | yes | no | CODE-VERIFIED |
