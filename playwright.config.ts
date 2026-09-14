@@ -25,6 +25,7 @@ const BRIDGE_URL = process.env.E2E_BRIDGE_URL ?? "http://localhost:8000";
 const CI = Boolean(process.env.CI);
 
 const STORAGE_STATE = path.join(process.cwd(), "e2e", ".auth", "storageState.json");
+const SKIP_BRIDGE = process.env.E2E_BRIDGE_COMMAND === "true";
 
 export default defineConfig({
   testDir: ".",
@@ -79,16 +80,18 @@ export default defineConfig({
       stdout: "pipe",
       stderr: "pipe",
     },
-    {
-      // Python AI bridge (reads .env.local for BRIDGE_SECRET_KEY + scrape hosts).
-      // E2E_BRIDGE_COMMAND overrides the launch command — hermetic suites
-      // (tests/e2e) that mock the AI endpoints can pass `true` to skip it.
-      command: process.env.E2E_BRIDGE_COMMAND ?? "python3 -m uvicorn server:app --host 0.0.0.0 --port 8000",
-      url: `${BRIDGE_URL}/health`,
-      reuseExistingServer: !CI,
-      timeout: 120_000,
-      stdout: "pipe",
-      stderr: "pipe",
-    },
+    ...(SKIP_BRIDGE
+      ? []
+      : [
+          {
+            // Python AI bridge (reads .env.local for BRIDGE_SECRET_KEY + scrape hosts).
+            command: process.env.E2E_BRIDGE_COMMAND ?? "python3 -m uvicorn server:app --host 0.0.0.0 --port 8000",
+            url: `${BRIDGE_URL}/health`,
+            reuseExistingServer: !CI,
+            timeout: 120_000,
+            stdout: "pipe" as const,
+            stderr: "pipe" as const,
+          },
+        ]),
   ],
 });

@@ -1,0 +1,38 @@
+{
+  "service": "pre-live-infrastructure-gap-audit",
+  "timestamp": "2026-09-14T15:11:51.441794Z",
+  "verdict": "PRE-LIVE READY \u2014 EXTERNAL ACTIVATION REQUIRED",
+  "localValidation": {
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "unit": "PASS \u2014 38 suites / 329 tests",
+    "build": "PASS",
+    "securityScan": "PASS",
+    "gitDiffCheck": "PASS",
+    "authzDuplicateCheck": "PASS",
+    "pythonCompile": "PASS",
+    "npmAuditProduction": "PASS"
+  },
+  "codeSideFixes": [
+    "Production email no longer treats console logging as delivery.",
+    "SMTP mode no longer silently falls back to console when relay configuration is absent.",
+    "Production Storage no longer silently falls back to local filesystem storage.",
+    "Production scheduler enqueue no longer silently drops jobs when Supabase is unavailable.",
+    "Privileged SCIM and legacy candidate SECURITY DEFINER RPCs are service-role-only.",
+    "Readiness endpoint now returns dependency readiness semantics instead of a configuration-only 200 response.",
+    "Environment example includes deployment, email, SCIM, project reference, and direct database verification variables.",
+    "Case-insensitive canonical production environment detection covers production/Production/PRODUCTION.",
+    "AI usage logs are now included in the migration chain.",
+    "SCIM tenant lookup avoids filter-expression interpolation.",
+    "Scheduler claim failures propagate instead of returning a false zero-job success."
+  ],
+  "externalBlockers": [
+    "Supabase URL and keys are unavailable.",
+    "AI provider credentials are unavailable.",
+    "Production deployment URL is unavailable.",
+    "Storage, email, n8n, SCIM, telemetry, scheduler, and managed backup environments are unavailable."
+  ],
+  "rpo": "UNMEASURED \u2014 managed backup/restore environment unavailable",
+  "rto": "UNMEASURED \u2014 managed backup/restore environment unavailable",
+  "liveVerification": "BLOCKED-EXTERNAL"
+}

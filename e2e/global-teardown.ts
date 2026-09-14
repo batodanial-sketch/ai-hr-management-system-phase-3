@@ -12,13 +12,21 @@ import {
  * generated storageState file so no authenticated artifact lingers locally.
  */
 export default async function globalTeardown(): Promise<void> {
+  const hasSupabaseEnv = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
+  );
   const email = process.env.E2E_TEST_USER_EMAIL;
-  const admin = createAdminClient();
 
-  await cleanupBaselineData(admin);
+  // Match global setup's hermetic mode: no credentials means no cleanup client
+  // can be created. Never invent credentials just to make teardown succeed.
+  if (hasSupabaseEnv) {
+    const admin = createAdminClient();
+    await cleanupBaselineData(admin);
 
-  if (email) {
-    await deleteTestUser(admin, email);
+    if (email) {
+      await deleteTestUser(admin, email);
+    }
   }
 
   await rm(path.join(process.cwd(), "e2e", ".auth"), {

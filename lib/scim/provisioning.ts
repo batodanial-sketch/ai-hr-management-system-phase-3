@@ -92,16 +92,42 @@ export function verifyScimBearer(
 }
 
 async function resolveOrganization(tenantId: string): Promise<{ id: string; slug: string }> {
-  const { data, error } = await adminClient()
+  const normalized = tenantId.trim();
+  if (!normalized || normalized.length > 120) {
+    throw new ScimErrorResponse(404, "Tenant was not found.", "invalidValue");
+  }
+
+  // Do not interpolate the route segment into a PostgREST `.or()` expression:
+  // tenant identifiers are attacker-controlled path input. Separate equality
+  // queries keep filter syntax out of the value and preserve tenant pinning.
+  const client = adminClient();
+  const bySlug = await client
     .from("organizations")
     .select("id, slug")
-    .or(`slug.eq.${tenantId},id.eq.${tenantId}`)
+    .eq("slug", normalized)
     .limit(1)
     .maybeSingle();
-  if (error || !data) {
-    throw new ScimErrorResponse(404, `Tenant '${tenantId}' was not found.`, "invalidValue");
+  if (bySlug.error) {
+    throw new ScimErrorResponse(503, "Unable to resolve the SCIM tenant.");
   }
-  return { id: String(data.id), slug: String(data.slug ?? tenantId) };
+
+  let data = bySlug.data;
+  if (!data && /^[0-9a-f-]{36}$/i.test(normalized)) {
+    const byId = await client
+      .from("organizations")
+      .select("id, slug")
+      .eq("id", normalized)
+      .limit(1)
+      .maybeSingle();
+    if (byId.error) {
+      throw new ScimErrorResponse(503, "Unable to resolve the SCIM tenant.");
+    }
+    data = byId.data;
+  }
+  if (!data) {
+    throw new ScimErrorResponse(404, "Tenant was not found.", "invalidValue");
+  }
+  return { id: String(data.id), slug: String(data.slug ?? normalized) };
 }
 
 /* ── User lifecycle ─────────────────────────────────────────────────────── */

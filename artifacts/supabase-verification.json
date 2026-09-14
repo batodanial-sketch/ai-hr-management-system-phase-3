@@ -1,0 +1,14 @@
+{
+  "service": "supabase",
+  "timestamp": "2026-09-14T15:27:22.707Z",
+  "status": "BLOCKED-EXTERNAL",
+  "checks": [
+    {
+      "test": "credentials",
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "Required environment variables are missing.",
+      "error": "NEXT_PUBLIC_SUPABASE_URL and a server Supabase key are required."
+    }
+  ],
+  "error": "NEXT_PUBLIC_SUPABASE_URL and a server Supabase key are required."
+}

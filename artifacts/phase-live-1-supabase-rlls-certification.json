@@ -1,0 +1,65 @@
+{
+  "phase": "LIVE-1",
+  "timestamp": "2026-09-14T15:24:23.541071Z",
+  "branch": "arena/01a07c94-ai-hr-management-system",
+  "head": "6ee4ca7d866e71a2bb3098ab8b702c334c7b3793",
+  "environment_classification": "LOCAL_ONLY_NO_SUPABASE_CREDENTIALS",
+  "decision": "BLOCKED-EXTERNAL",
+  "supabase": "BLOCKED-EXTERNAL",
+  "migrations": "BLOCKED-EXTERNAL",
+  "schema": "BLOCKED-EXTERNAL",
+  "auth": "BLOCKED-EXTERNAL",
+  "rls": "BLOCKED-EXTERNAL",
+  "two_tenant_isolation": "BLOCKED-EXTERNAL",
+  "rpc_security": "BLOCKED-EXTERNAL",
+  "knowledge_isolation": "BLOCKED-EXTERNAL",
+  "copilot_isolation": "BLOCKED-EXTERNAL",
+  "storage": "BLOCKED-EXTERNAL",
+  "audit": "BLOCKED-EXTERNAL",
+  "p0": 0,
+  "p1": 0,
+  "p2": 1,
+  "p3": 0,
+  "local_regression": {
+    "npm_ci": "PASS_WITH_LOCAL_NODE20_ENGINE_WARNING",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "unit": "PASS \u2014 38 suites / 329 tests",
+    "build": "PASS",
+    "security_scan": "PASS",
+    "authz_duplicate_check": "PASS \u2014 21/21",
+    "python_compile": "PASS",
+    "npm_audit_production": "PASS \u2014 0 vulnerabilities",
+    "git_diff_check": "PASS"
+  },
+  "external_blockers": [
+    "NEXT_PUBLIC_SUPABASE_URL missing",
+    "SUPABASE_SECRET_KEY missing",
+    "SUPABASE_PROJECT_REF missing",
+    "DATABASE_URL/POSTGRES_URL missing",
+    "no approved target project",
+    "no live Auth project",
+    "no live Storage project"
+  ],
+  "tenant_a": "NOT_CREATED_LIVE",
+  "tenant_b": "NOT_CREATED_LIVE",
+  "production_certification": "NOT_PRODUCTION_READY",
+  "activationAttempt": {
+    "timestamp": "2026-09-14T15:27:11.476475Z",
+    "environmentVariables": {
+      "NEXT_PUBLIC_SUPABASE_URL": "MISSING",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "MISSING",
+      "SUPABASE_SECRET_KEY": "MISSING",
+      "SUPABASE_PROJECT_REF": "MISSING",
+      "DATABASE_URL": "MISSING",
+      "POSTGRES_URL": "MISSING"
+    },
+    "commands": {
+      "npm run verify:environment": "BLOCKED-EXTERNAL",
+      "npm run verify:supabase": "BLOCKED-EXTERNAL",
+      "npm run db:verify": "BLOCKED-EXTERNAL"
+    },
+    "liveTenantA": "NOT_CREATED",
+    "liveTenantB": "NOT_CREATED"
+  }
+}

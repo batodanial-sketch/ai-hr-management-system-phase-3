@@ -57,5 +57,6 @@ export function supabaseSecretKey(): string {
 
 /** Explicit deployment boundary used to prevent production demo fallback. */
 export function isProductionRuntime(env: NodeJS.ProcessEnv = process.env): boolean {
-  return (env.APP_ENV ?? env.NODE_ENV) === "production";
+  const runtime = env.APP_ENV?.trim() || env.NODE_ENV?.trim();
+  return runtime?.toLowerCase() === "production";
 }

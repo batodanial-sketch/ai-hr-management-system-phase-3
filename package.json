@@ -18,7 +18,13 @@
     "test:ai": "node tests/engine-smoke-test.cjs",
     "test:e2e:report": "playwright show-report",
     "preflight": "bash scripts/preflight.sh",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "verify:supabase": "node scripts/verify-supabase.mjs",
+    "db:verify": "node scripts/verify-supabase.mjs",
+    "verify:infrastructure": "node scripts/verify-infrastructure.mjs",
+    "verify:production": "node scripts/verify-production.mjs",
+    "verify:environment": "node scripts/verify-environment.mjs",
+    "security:scan": "node scripts/security-scan.mjs"
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.1.0",
@@ -83,7 +89,7 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "overrides": {
     "js-yaml": "^4.3.2",

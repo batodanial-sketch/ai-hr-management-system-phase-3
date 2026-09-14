@@ -97,6 +97,7 @@ const canonicalTableReaders = matches(/\.from\(\s*["'`]memberships["'`]\s*\)/, {
       "lib/scim/provisioning.ts", // IdP provisioning writes (service role)
       "app/api/account/delete/route.ts", // account erasure
       "middleware.ts", // rate-limit bucketing only
+      "lib/workflows/store.ts", // service-role membership existence oracle, not role resolution
     ].includes(file),
 });
 check(
@@ -115,7 +116,7 @@ check(
   "no-default-member-fallback",
   "no `roleCode = 'member'` / `|| 'member'` / `?? 'member'` default in authorization code",
   matches(/(roleCode\s*=\s*['"]member['"]|\|\|\s*['"]member['"]|\?\?\s*['"]member['"]|['"]member['"]\)\s*\.toLowerCase)/, {
-    allow: (file) => file === "lib/scim/provisioning.ts", // IdP provisioning default for a NEW assignment, audited above
+    allow: (file) => file === "lib/scim/provisioning.ts" || file === "lib/scim/roles.ts", // IdP provisioning defaults to least privilege, audited above
   }),
 );
 check(

@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { mkdir, readFile, rm, writeFile, stat } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
 import { adminClient } from "@/lib/supabase/server";
-import { supabaseSecretKey, supabaseUrl } from "@/lib/supabase/env";
+import { isProductionRuntime, supabaseSecretKey, supabaseUrl } from "@/lib/supabase/env";
 import { keyBelongsToTenant } from "./validate";
 
 /**
@@ -43,7 +43,9 @@ export function storageProviderName(env: NodeJS.ProcessEnv = process.env): Stora
 
 export function storageConfigured(env: NodeJS.ProcessEnv = process.env): boolean {
   if (storageProviderName(env) === "supabase") return Boolean(supabaseUrl() && supabaseSecretKey());
-  return true;
+  // Local filesystem storage is for development/tests only. Production HR
+  // documents must never silently fall back to the local disk.
+  return !isProductionRuntime(env);
 }
 
 function assertTenantKey(key: string, organizationId: string) {
@@ -143,6 +145,9 @@ const supabaseProvider: StorageProvider = {
 };
 
 export function getStorageProvider(): StorageProvider {
+  if (isProductionRuntime() && storageProviderName() !== "supabase") {
+    throw new Error("Supabase Storage is required for production HR documents.");
+  }
   return storageProviderName() === "supabase" ? supabaseProvider : localProvider;
 }
 

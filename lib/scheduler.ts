@@ -1,5 +1,6 @@
 import "server-only";
 import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
+import { isProductionRuntime } from "@/lib/supabase/env";
 import { getCurrentUser } from "@/lib/auth";
 import { getLicenseState } from "@/lib/license";
 import { daysRemaining } from "@/lib/license-format";
@@ -29,7 +30,10 @@ export async function enqueueJob(input: {
   payload?: Record<string, unknown>;
 }): Promise<void> {
   if (!hasSupabaseEnv()) {
-    console.info(`[scheduler] enqueue ${input.jobType} at ${input.runAt.toISOString()}`);
+    if (isProductionRuntime()) {
+      throw new Error("Supabase is required for scheduled jobs in production.");
+    }
+    console.info(`[scheduler] development enqueue skipped (Supabase unavailable): ${input.jobType}`);
     return;
   }
   const user = await getCurrentUser();
@@ -66,7 +70,13 @@ export async function runDueJobs(): Promise<number> {
     .select("id, job_type, payload")
     .limit(50);
 
-  if (error || !data || data.length === 0) {
+  if (error) {
+    // A database claim failure must reach the cron caller as a failure. A
+    // successful 200 with `executed: 0` would hide scheduler outages and can
+    // cause operators to assume the queue is healthy.
+    throw new Error(`Unable to claim scheduled jobs: ${error.message}`);
+  }
+  if (!data || data.length === 0) {
     return 0;
   }
 

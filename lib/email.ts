@@ -1,5 +1,7 @@
 import "server-only";
 
+import { isProductionRuntime } from "@/lib/supabase/env";
+
 /**
  * Email delivery service — provider-agnostic.
  *
@@ -61,9 +63,15 @@ export async function sendEmail(message: EmailMessage): Promise<void> {
     return;
   }
 
-  // console — deterministic dev fallback. Never log the recipient address or
-  // message body: both can contain personal data (names, emails, PII).
-  console.info(`[email] dispatched (recipient redacted, subject="${message.subject}")`);
+  // Console delivery is explicitly development-only. Production must fail
+  // closed rather than treating a log line as an email delivery.
+  if (isProductionRuntime()) {
+    throw new Error("Email delivery is not configured in production.");
+  }
+
+  // Never log the recipient address or message body: both can contain
+  // personal data (names, emails, PII).
+  console.info(`[email] development dispatch (recipient redacted, subject="${message.subject}")`);
 }
 
 async function sendSmtp(message: EmailMessage): Promise<void> {
@@ -73,11 +81,7 @@ async function sendSmtp(message: EmailMessage): Promise<void> {
   // relay (EMAIL_HTTP_URL) — documented in README_ENTERPRISE.
   const url = process.env.EMAIL_HTTP_URL;
   if (!url) {
-    console.warn(
-      "[email] SMTP mode requires EMAIL_HTTP_URL (relay). Falling back to console.",
-    );
-    console.info(`[email] dispatched (recipient redacted, subject="${message.subject}")`);
-    return;
+    throw new Error("SMTP mode requires EMAIL_HTTP_URL or a configured SMTP relay.");
   }
   const response = await fetch(url, {
     method: "POST",

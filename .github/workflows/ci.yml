@@ -23,10 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Setup Python 3.11
@@ -44,6 +44,9 @@ jobs:
 
       - name: Preflight (8-gate validation suite)
         run: bash scripts/preflight.sh
+
+      - name: Secret and server-boundary scan
+        run: npm run security:scan
 
   e2e-tests:
     name: Playwright E2E
@@ -71,10 +74,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Setup Python 3.11

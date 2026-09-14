@@ -1,0 +1,143 @@
+{
+  "service": "infrastructure",
+  "timestamp": "2026-09-14T15:24:27.642Z",
+  "status": "NOT PRODUCTION READY",
+  "results": [
+    {
+      "service": "Supabase DB",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No Supabase credentials are present in the execution environment."
+    },
+    {
+      "service": "Supabase Auth",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "Real sign-up, sign-in, refresh, and invalid-session flows require a configured Supabase project."
+    },
+    {
+      "service": "PostgreSQL RLS",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "RLS cannot be certified without two live authenticated tenant identities and direct database evidence."
+    },
+    {
+      "service": "AI provider",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No provider credential is present; mocked Copilot tests are not live provider evidence."
+    },
+    {
+      "service": "Embeddings",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No embedding provider credential or live knowledge-ingestion run is available."
+    },
+    {
+      "service": "Supabase Storage",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "Private-bucket upload/download/cross-tenant verification requires a live Supabase project."
+    },
+    {
+      "service": "Scheduler",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "Cron code is fail-closed, but no real scheduler invocation and mutation evidence is available."
+    },
+    {
+      "service": "SCIM",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "SCIM endpoints exist, but no configured enterprise IdP or live provisioning test is available."
+    },
+    {
+      "service": "n8n",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No n8n endpoint/secret is present and no workflow callback has been observed."
+    },
+    {
+      "service": "Email",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No transactional email credentials or real delivery evidence is available."
+    },
+    {
+      "service": "Deployment",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No deployment target URL is present; local build is not deployment verification."
+    },
+    {
+      "service": "Telemetry",
+      "implemented": true,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "No telemetry endpoint/DSN is present and no live event has been observed."
+    },
+    {
+      "service": "Backups",
+      "implemented": false,
+      "configured": false,
+      "reachable": false,
+      "functional": false,
+      "liveVerified": false,
+      "status": "BLOCKED-EXTERNAL",
+      "evidence": "Managed backup configuration and a controlled restore test require access to the production project."
+    }
+  ],
+  "localChecks": {
+    "typecheck": "run separately",
+    "lint": "run separately",
+    "unit": "run separately",
+    "build": "run separately"
+  }
+}

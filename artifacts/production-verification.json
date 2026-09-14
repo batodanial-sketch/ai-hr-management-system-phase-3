@@ -1,0 +1,35 @@
+{
+  "service": "production",
+  "timestamp": "2026-09-14T14:52:52.129Z",
+  "status": "NOT PRODUCTION READY",
+  "checks": [
+    {
+      "check": "typecheck",
+      "status": "PASS"
+    },
+    {
+      "check": "lint",
+      "status": "PASS"
+    },
+    {
+      "check": "unit",
+      "status": "PASS"
+    },
+    {
+      "check": "security",
+      "status": "PASS"
+    },
+    {
+      "check": "build",
+      "status": "PASS"
+    },
+    {
+      "check": "environment",
+      "status": "FAIL"
+    },
+    {
+      "check": "infrastructure",
+      "status": "FAIL"
+    }
+  ]
+}
