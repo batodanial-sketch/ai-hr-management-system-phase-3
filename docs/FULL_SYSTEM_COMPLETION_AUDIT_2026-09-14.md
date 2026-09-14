@@ -83,12 +83,16 @@ Provisioning now records create versus update based on whether the Auth user exi
 
 ## Tests executed in this pass
 
-- targeted security/regression tests: 49 passed;
-- TypeScript: passed;
-- prior full baseline: 34 suites / 311 tests passed;
-- prior ESLint, Electron, Python compilation, production build and diff-check: passed.
+- targeted security/regression tests: 49 passed before the final full run;
+- final Jest: 36 suites / 322 tests passed;
+- TypeScript: passed after the production build generated `.next/types`;
+- ESLint: passed;
+- Electron typecheck: passed;
+- Python compilation: passed;
+- production build: passed;
+- `git diff --check`: passed.
 
-A full post-change baseline remains required after the focused fixes and is recorded in the final continuation state.
+The final full local baseline passed after the focused fixes.
 
 ## Remaining risks
 
