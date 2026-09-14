@@ -2,7 +2,7 @@
 
 Date: 2026-09-14  
 Branch: `arena/01a07c94-ai-hr-management-system`  
-Audit baseline HEAD: `bbcb48d`  
+Audit baseline HEAD: `e3f82a4`  
 
 ## Executive verdict
 
