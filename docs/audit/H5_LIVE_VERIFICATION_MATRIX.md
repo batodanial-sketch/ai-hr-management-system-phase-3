@@ -64,3 +64,17 @@ These counts describe this H5 execution, not production behavior:
 - `NOT-TESTED`: **0**
 
 No result is upgraded to `LIVE-VERIFIED` without an actual external target.
+
+## Phase 14 live recheck — 2026-09-14
+
+Repository integrity was confirmed at `458f902` on `arena/01a07c94-ai-hr-management-system`. The pre-existing mode-only change to `scripts/zero-downtime-migrate.sh` remains preserved and unstaged.
+
+Infrastructure discovery found no `DATABASE_URL`, Supabase project, deployment URL, synthetic sessions, n8n, Python bridge, Storage, scheduler, SCIM provider, controlled AI provider, or live telemetry target. No H5 result was upgraded. The schema collector returned `BLOCKED_EXTERNAL` because `DATABASE_URL` is not configured; the RLS suite stopped with `DATABASE_URL is required`.
+
+Phase 14 live counts remain:
+
+- `LIVE-VERIFIED`: 0
+- `TEST-VERIFIED`: unchanged local evidence
+- `CODE-VERIFIED`: unchanged source evidence
+- `BLOCKED-EXTERNAL`: all external controls
+- `FAILED`: 0 live controls exercised to failure
