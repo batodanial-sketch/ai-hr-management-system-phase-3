@@ -1,7 +1,8 @@
 # Fluxentiq AI — H5 Live Verification Matrix
 
-Date: 2026-09-13  
-Commit under verification: `0b7111e`  
+Date: 2026-09-14
+Step 13 commit under verification: `ae907ec`
+Historical H5.1 remediation commit: `0b7111e`
 Evidence rule: live infrastructure is never inferred from source or mocked tests.
 
 ## Environment discovery
@@ -18,7 +19,7 @@ Evidence rule: live infrastructure is never inferred from source or mocked tests
 
 | Security domain | Test environment | Result | Evidence / exact next command |
 |---|---|---|---|
-| Migration application from clean database | Disposable PostgreSQL/Supabase | `BLOCKED-EXTERNAL` | `DATABASE_URL=... node scripts/db/local-pg.mjs reset --tolerant` or approved Supabase migration runner; current sandbox lacks URL/runtime dependency |
+| Migration application from clean database | Disposable PostgreSQL/Supabase | `BLOCKED-EXTERNAL` | `DATABASE_URL=... node scripts/db/local-pg.mjs reset --tolerant` or approved Supabase migration runner; current sandbox lacks URL; `pg` is restored |
 | Live schema catalog | Disposable PostgreSQL/Supabase | `BLOCKED-EXTERNAL` | `DATABASE_URL=... node scripts/verify_rls_catalog.mjs`; current invocation returned `{"status":"BLOCKED_EXTERNAL","reason":"DATABASE_URL is not configured"}` |
 | Anonymous RLS | Supabase Auth/Postgres | `BLOCKED-EXTERNAL` | Run `scripts/db/authz-rls-suite.mjs` plus JWT-backed endpoint tests |
 | Employee RLS | Supabase Auth/Postgres | `BLOCKED-EXTERNAL` | Same RLS suite with real authenticated JWT |

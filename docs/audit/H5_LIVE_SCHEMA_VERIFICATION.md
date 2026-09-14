@@ -10,6 +10,6 @@ The executable collector is:
 DATABASE_URL=<approved-disposable-db> node scripts/verify_rls_catalog.mjs
 ```
 
-It queries `pg_class`, `pg_policies`, `pg_proc`, `pg_constraint`, `pg_indexes`, and foreign keys. The H5 attempt could not run because `DATABASE_URL` is not configured. The current sandbox also lacks the `pg` runtime dependency required by the existing database harness.
+It queries `pg_class`, `pg_policies`, `pg_proc`, `pg_constraint`, `pg_indexes`, and foreign keys. The Step 13 attempt returned `{"status":"BLOCKED_EXTERNAL","reason":"DATABASE_URL is not configured"}`. The `pg` runtime dependency has since been restored, but no approved disposable PostgreSQL/Supabase environment is available.
 
 No live schema, migration-application, RLS, function, constraint, or index claim is made. See `H5_LIVE_SCHEMA_VERIFICATION.json` for machine-readable evidence.

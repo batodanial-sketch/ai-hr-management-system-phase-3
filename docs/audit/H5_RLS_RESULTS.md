@@ -20,3 +20,7 @@ DATABASE_URL=<approved-disposable-db> node scripts/db/authz-rls-suite.mjs
 ```
 
 For hosted Supabase, use the approved pooler/connection and real JWT-backed sessions rather than treating a local PostgreSQL shim as hosted Supabase evidence.
+
+## Step 13 recheck — 2026-09-14
+
+Status remains `BLOCKED-EXTERNAL`. The `pg` dependency and local toolchain were restored, but `DATABASE_URL` and an approved disposable database remain missing. The harness was re-invoked and stopped with `Error: DATABASE_URL is required`; no RLS query or migration was executed.

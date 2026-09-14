@@ -14,3 +14,7 @@ Required two-tenant cases:
 - filename and employee-ID substitution.
 
 Use synthetic documents only and record HTTP status plus whether any content bytes were returned.
+
+## Step 13 recheck — 2026-09-14
+
+Status remains `BLOCKED-EXTERNAL`. No Supabase Storage environment or deployed application was available; no storage request was executed.

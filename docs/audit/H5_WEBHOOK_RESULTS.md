@@ -27,3 +27,7 @@ Required machine credentials:
 - outbound broadcast: API key with `webhooks:write`;
 - configured `N8N_WEBHOOK_SECRET` / `PYTHON_BRIDGE_WEBHOOK_SECRET`;
 - applied replay migration.
+
+## Step 13 recheck — 2026-09-14
+
+Live n8n and Python bridge status remains `BLOCKED-EXTERNAL`: no deployed endpoints, tenant credentials, secrets, or replay-capable database were available. Prior primitive and source/test evidence remains unchanged.
