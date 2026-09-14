@@ -1,0 +1,3350 @@
+{
+  "generated": "2026-09-14",
+  "repositoryHead": "bbcb48d",
+  "scope": "static route inventory; not live verification",
+  "routeCount": 112,
+  "methodCount": 147,
+  "routes": [
+    {
+      "route": "/api/account/delete",
+      "source": "app/api/account/delete/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [
+        "memberships"
+      ],
+      "validationSignals": [
+        "NextRequest"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/admin-copilot",
+      "source": "app/api/ai/admin-copilot/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "X-Organization-Id"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json",
+        "NextRequest"
+      ],
+      "dbSignals": true,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/copilot",
+      "source": "app/api/ai/copilot/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id",
+        "X-Organization-Id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/engine/[...path]",
+      "source": "app/api/ai/engine/[...path]/route.ts",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/evaluate-candidate",
+      "source": "app/api/ai/evaluate-candidate/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/evaluate-pto",
+      "source": "app/api/ai/evaluate-pto/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/insights",
+      "source": "app/api/ai/insights/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/interview-report",
+      "source": "app/api/ai/interview-report/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/jobs/[jobId]",
+      "source": "app/api/ai/jobs/[jobId]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/next15AsyncParams.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/match-candidate",
+      "source": "app/api/ai/match-candidate/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/parse-resume",
+      "source": "app/api/ai/parse-resume/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/rank-candidates",
+      "source": "app/api/ai/rank-candidates/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/semantic-search",
+      "source": "app/api/ai/semantic-search/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/status",
+      "source": "app/api/ai/status/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/test",
+      "source": "app/api/ai/test/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/employeeService.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/ai/test-connection",
+      "source": "app/api/ai/test-connection/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/scimProvisioning.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/assets/assign",
+      "source": "app/api/assets/assign/route.ts",
+      "methods": [
+        "POST",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/assets",
+      "source": "app/api/assets/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/attendance/check-in",
+      "source": "app/api/attendance/check-in/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/attendance/check-out",
+      "source": "app/api/attendance/check-out/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/auth/login",
+      "source": "app/api/auth/login/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json",
+        "NextRequest"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/auth/signup",
+      "source": "app/api/auth/signup/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json",
+        "NextRequest"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/auth/sso/callback",
+      "source": "app/api/auth/sso/callback/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "NextRequest"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/auth/sso/initiate",
+      "source": "app/api/auth/sso/initiate/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/benefits/enroll",
+      "source": "app/api/benefits/enroll/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/observability.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/benefits",
+      "source": "app/api/benefits/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/candidates",
+      "source": "app/api/candidates/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/contractors/invoices",
+      "source": "app/api/contractors/invoices/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/contractors",
+      "source": "app/api/contractors/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/cron/daily-workflows",
+      "source": "app/api/cron/daily-workflows/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [
+        "CRON_SECRET",
+        "adminClient"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/desktop/auth-sync",
+      "source": "app/api/desktop/auth-sync/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/httpLimit.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/documents/[id]/content",
+      "source": "app/api/documents/[id]/content/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/documents/[id]/download",
+      "source": "app/api/documents/[id]/download/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/storagePipeline.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/documents/[id]/file",
+      "source": "app/api/documents/[id]/file/route.ts",
+      "methods": [
+        "DELETE"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowMigration.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/documents",
+      "source": "app/api/documents/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/documents/upload",
+      "source": "app/api/documents/upload/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "FormData"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/employees/[id]",
+      "source": "app/api/employees/[id]/route.ts",
+      "methods": [
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/employees",
+      "source": "app/api/employees/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/equity/grants",
+      "source": "app/api/equity/grants/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/equity",
+      "source": "app/api/equity/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/expenses/receipt-scan",
+      "source": "app/api/expenses/receipt-scan/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/expenses",
+      "source": "app/api/expenses/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/expenses/submit",
+      "source": "app/api/expenses/submit/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/graphql",
+      "source": "app/api/graphql/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/health",
+      "source": "app/api/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/intelligence/alerts",
+      "source": "app/api/intelligence/alerts/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/intelligence/briefing",
+      "source": "app/api/intelligence/briefing/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/intelligence/insights",
+      "source": "app/api/intelligence/insights/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/knowledge",
+      "source": "app/api/knowledge/route.ts",
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/knowledge/search",
+      "source": "app/api/knowledge/search/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/leave/request",
+      "source": "app/api/leave/request/route.ts",
+      "methods": [
+        "POST",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/license/activate",
+      "source": "app/api/license/activate/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/license/status",
+      "source": "app/api/license/status/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/license/sync",
+      "source": "app/api/license/sync/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/license/trial",
+      "source": "app/api/license/trial/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/lms/certifications",
+      "source": "app/api/lms/certifications/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/lms/courses",
+      "source": "app/api/lms/courses/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/metrics",
+      "source": "app/api/metrics/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/notifications",
+      "source": "app/api/notifications/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/notifications/stream",
+      "source": "app/api/notifications/stream/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/httpLimit.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/offboarding",
+      "source": "app/api/offboarding/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/onboarding/tasks",
+      "source": "app/api/onboarding/tasks/route.ts",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/payroll/calculate",
+      "source": "app/api/payroll/calculate/route.ts",
+      "methods": [
+        "POST",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/payroll/global-run",
+      "source": "app/api/payroll/global-run/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/payroll/tax-forms",
+      "source": "app/api/payroll/tax-forms/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/payrollService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/performance/ai-summarize",
+      "source": "app/api/performance/ai-summarize/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/performance/cycles",
+      "source": "app/api/performance/cycles/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/performance/reviews",
+      "source": "app/api/performance/reviews/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/planning",
+      "source": "app/api/planning/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/predictive/forecast",
+      "source": "app/api/predictive/forecast/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/recruitment/ai-screen",
+      "source": "app/api/recruitment/ai-screen/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/recruitment/match",
+      "source": "app/api/recruitment/match/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/recruitment/update-stage",
+      "source": "app/api/recruitment/update-stage/route.ts",
+      "methods": [
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/recruitmentMatching.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/reports",
+      "source": "app/api/reports/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/csvExport.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/scim/v2/[tenantId]/[...segments]",
+      "source": "app/api/scim/v2/[tenantId]/[...segments]/route.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
+      "authSignals": [
+        "verifyScimBearer"
+      ],
+      "tenantSignals": [
+        "tenantId",
+        "memberships"
+      ],
+      "validationSignals": [
+        "request.json",
+        "NextRequest"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/screening",
+      "source": "app/api/screening/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/screeningService.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/search",
+      "source": "app/api/search/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/settings/ai-budget",
+      "source": "app/api/settings/ai-budget/route.ts",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "authSignals": [
+        "getRbacContext"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/aiConnectionRouteSecurity.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/settings/memory/test",
+      "source": "app/api/settings/memory/test/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/e2e/realtime-sync.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/employeeService.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTaskHardening.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/settings",
+      "source": "app/api/settings/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/surveys/ai-analysis",
+      "source": "app/api/surveys/ai-analysis/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/surveys",
+      "source": "app/api/surveys/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/surveys/submit",
+      "source": "app/api/surveys/submit/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/system/cron",
+      "source": "app/api/system/cron/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "CRON_SECRET"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/system/error-test",
+      "source": "app/api/system/error-test/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/system/health",
+      "source": "app/api/system/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/system/ready",
+      "source": "app/api/system/ready/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/team/capacity",
+      "source": "app/api/team/capacity/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/tenant/settings",
+      "source": "app/api/tenant/settings/route.ts",
+      "methods": [
+        "PATCH"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowExecutor.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/[id]",
+      "source": "app/api/webhooks/[id]/route.ts",
+      "methods": [
+        "DELETE"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/external/inbound-lead",
+      "source": "app/api/webhooks/external/inbound-lead/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "resolveExternalApiKey"
+      ],
+      "tenantSignals": [
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowMachine.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/external/outbound-trigger",
+      "source": "app/api/webhooks/external/outbound-trigger/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object",
+        "schema.parse",
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": true,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowMachine.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/inbound/[provider]",
+      "source": "app/api/webhooks/inbound/[provider]/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "NextRequest"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/httpLimit.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/n8n-trigger",
+      "source": "app/api/webhooks/n8n-trigger/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "verifyTimestampedHmac",
+        "resolveExternalApiKey"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object",
+        "schema.parse"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/outbound",
+      "source": "app/api/webhooks/outbound/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "getRbacContext",
+        "resolveExternalApiKey"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/python-bridge",
+      "source": "app/api/webhooks/python-bridge/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "verifyTimestampedHmac",
+        "resolveExternalApiKey"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/python-callback",
+      "source": "app/api/webhooks/python-callback/route.ts",
+      "methods": [],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks",
+      "source": "app/api/webhooks/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/webhooks/slack/events",
+      "source": "app/api/webhooks/slack/events/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/[id]",
+      "source": "app/api/workflows/[id]/route.ts",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/[id]/run",
+      "source": "app/api/workflows/[id]/run/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSweep.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/storagePipeline.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/[id]/versions",
+      "source": "app/api/workflows/[id]/versions/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/approvals/[id]/approve",
+      "source": "app/api/workflows/approvals/[id]/approve/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/approvals/[id]/deny",
+      "source": "app/api/workflows/approvals/[id]/deny/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/unit/aiAuthority.test.ts",
+        "tests/unit/authzModel.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/proposalLifecycle.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/approvals",
+      "source": "app/api/workflows/approvals/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows",
+      "source": "app/api/workflows/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [
+        "requireRole"
+      ],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object",
+        "request.json"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/e2e/copilot-agent.spec.ts",
+        "tests/e2e/rbac-boundaries.spec.ts",
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/agentFoundation.test.ts",
+        "tests/unit/aiConnectionRouteSecurity.test.ts",
+        "tests/unit/copilotAgentParam.test.ts",
+        "tests/unit/graphqlRouteSecurity.test.ts",
+        "tests/unit/intelligenceRoutes.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/knowledge.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/observability.test.ts",
+        "tests/unit/recruitmentRoutes.test.ts",
+        "tests/unit/search.test.ts",
+        "tests/unit/securityRemediation.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/runs/[runId]/cancel",
+      "source": "app/api/workflows/runs/[runId]/cancel/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/runs/[runId]/retry",
+      "source": "app/api/workflows/runs/[runId]/retry/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/runs/[runId]",
+      "source": "app/api/workflows/runs/[runId]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowTools.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/runs",
+      "source": "app/api/workflows/runs/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "authSignals": [],
+      "tenantSignals": [
+        "organizationId"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceService.test.ts",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/next15AsyncParams.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/trigger",
+      "source": "app/api/workflows/trigger/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "authSignals": [],
+      "tenantSignals": [],
+      "validationSignals": [],
+      "dbSignals": false,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    },
+    {
+      "route": "/api/workflows/webhooks",
+      "source": "app/api/workflows/webhooks/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "authSignals": [
+        "adminClient"
+      ],
+      "tenantSignals": [
+        "organizationId",
+        "organization_id"
+      ],
+      "validationSignals": [
+        "z.object"
+      ],
+      "dbSignals": true,
+      "externalSignals": false,
+      "localTestReferences": [
+        "tests/engine-smoke-test.cjs",
+        "tests/unit/intelligenceSignals.test.ts",
+        "tests/unit/workflowBridge.test.ts",
+        "tests/unit/workflowExecutor.test.ts",
+        "tests/unit/workflowHandler.test.ts",
+        "tests/unit/workflowMachine.test.ts",
+        "tests/unit/workflowMigration.test.ts",
+        "tests/unit/workflowRoutes.test.ts",
+        "tests/unit/workflowSteps.test.ts",
+        "tests/unit/workflowTools.test.ts",
+        "tests/unit/workflowWebhooks.test.ts"
+      ],
+      "evidenceStatus": "CODE-VERIFIED"
+    }
+  ]
+}
