@@ -74,6 +74,7 @@ jest.mock("@/src/lib/pythonBridge", () => ({
 }));
 jest.mock("@/lib/supabase/server", () => ({
   hasSupabaseEnv: () => true,
+  assertProductionSupabaseConfigured: () => undefined,
   serverClient: () => fakeSupabase,
   adminClient: () => fakeSupabase,
 }));

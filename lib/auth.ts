@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
+import { assertProductionSupabaseConfigured, hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
 import { resolveCanonicalAuthz } from "@/lib/authz/canonical";
 import {
   RB_ROLES,
@@ -54,6 +54,7 @@ const ANONYMOUS_USER: SessionUser = {
  * resolves to an anonymous identity with no organization and no role.
  */
 export const getCurrentUser = cache(async (): Promise<SessionUser> => {
+  assertProductionSupabaseConfigured();
   if (!hasSupabaseEnv()) {
     return DEMO_USER;
   }

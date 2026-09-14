@@ -2,8 +2,8 @@ import "server-only";
 
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { adminClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import type { CanonicalRoleCode } from "@/lib/authz/model";
 import { recordAuditLog } from "@/lib/audit";
+import { normalizeScimRoleCode } from "@/lib/scim/roles";
 
 /**
  * SCIM 2.0 provisioning engine (Okta / Azure AD / Google Workspace).
@@ -118,29 +118,6 @@ async function findAuthUserByEmail(email: string): Promise<string | null> {
   return String(data.id);
 }
 
-/**
- * Maps IdP-facing role names onto CANONICAL role codes (`memberships.role`).
- * The SCIM vocabulary (`hr_admin`, `employee`, …) is presentation only; the
- * stored value is always one of the canonical `org_role` codes. Unknown
- * values map to the least-privileged canonical role (`member`) — this is a
- * provisioning default for a brand-new IdP assignment, not an authorization
- * fallback: authorization still requires the resulting row to exist.
- */
-const SCIM_ROLE_TO_CANONICAL: Record<string, CanonicalRoleCode> = {
-  owner: "owner",
-  super_admin: "owner",
-  admin: "admin",
-  hr_admin: "admin",
-  manager: "manager",
-  employee: "member",
-  member: "member",
-};
-
-function normalizeRoleCode(raw: unknown): CanonicalRoleCode {
-  const value = String(raw ?? "member").toLowerCase().trim();
-  return SCIM_ROLE_TO_CANONICAL[value] ?? "member";
-}
-
 export async function scimListUsers(tenantId: string): Promise<ScimUser[]> {
   if (!hasSupabaseEnv()) {
     throw new ScimErrorResponse(503, "SCIM provisioning is disabled — Supabase is not configured.");
@@ -188,7 +165,8 @@ export async function scimProvisionUser(
     throw new ScimErrorResponse(400, "userName must be a valid email address.", "invalidValue");
   }
 
-  let userId = await findAuthUserByEmail(email);
+  const existingUserId = await findAuthUserByEmail(email);
+  let userId = existingUserId;
   if (!userId) {
     // First-time provisioning: create an SSO-ready auth user with a random
     // password (login flows through the IdP) and confirmed email.
@@ -212,7 +190,7 @@ export async function scimProvisionUser(
     userId = created.user.id;
   }
 
-  const roleCode = normalizeRoleCode(input.role);
+  const roleCode = normalizeScimRoleCode(input.role);
   const { error: membershipError } = await adminClient().rpc("scim_assign_membership", {
     p_org: org.id,
     p_user: userId,
@@ -227,7 +205,7 @@ export async function scimProvisionUser(
     {
       actorId: "scim",
       actorType: "SYSTEM",
-      action: `scim.user.${userId ? "update" : "create"}`,
+      action: `scim.user.${existingUserId ? "update" : "create"}`,
       targetModule: "directory",
       targetId: userId,
       changes: { email, role: roleCode, active: input.active !== false },
@@ -258,7 +236,7 @@ export async function scimUpdateUser(
   const org = await resolveOrganization(tenantId);
 
   if (patch.role) {
-    const roleCode = normalizeRoleCode(patch.role);
+    const roleCode = normalizeScimRoleCode(patch.role);
     const { error } = await adminClient().rpc("scim_assign_membership", {
       p_org: org.id,
       p_user: userId,
@@ -272,7 +250,9 @@ export async function scimUpdateUser(
     const { error } = await adminClient().rpc("scim_assign_membership", {
       p_org: org.id,
       p_user: userId,
-      p_role_code: "employee",
+      // The canonical database vocabulary is member, not the SCIM-facing
+      // presentation label employee.
+      p_role_code: "member",
       p_active: false,
     });
     if (error) {
@@ -358,7 +338,7 @@ export async function scimSyncGroup(
   tenantId: string,
   group: { id?: string; displayName?: string; members?: Array<{ value: string }> },
 ): Promise<ScimGroup> {
-  const roleCode = normalizeRoleCode(String(group.displayName ?? group.id ?? "employee").replaceAll("-", "_"));
+  const roleCode = normalizeScimRoleCode(String(group.displayName ?? group.id ?? "employee").replaceAll("-", "_"));
   const memberIds = (group.members ?? []).map((member) => member.value);
   for (const userId of memberIds) {
     await scimUpdateUser(tenantId, userId, { role: roleCode, active: true });

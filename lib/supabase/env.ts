@@ -54,3 +54,8 @@ export function supabaseSecretKey(): string {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
   );
 }
+
+/** Explicit deployment boundary used to prevent production demo fallback. */
+export function isProductionRuntime(env: NodeJS.ProcessEnv = process.env): boolean {
+  return (env.APP_ENV ?? env.NODE_ENV) === "production";
+}

@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { type SessionUser } from "@/lib/auth";
 import { AuthzDeniedError, resolveCanonicalAuthz } from "@/lib/authz/canonical";
 import { RB_ROLES, roleAtLeast, type RbRole } from "@/lib/authz/model";
-import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
+import { assertProductionSupabaseConfigured, hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
 
 /**
  * Tenant RBAC scope resolution.
@@ -133,6 +133,7 @@ async function e2eRoleOverride(): Promise<RbRole | null> {
  * 401/403 via {@link rbacErrorResponse}.
  */
 export const getRbacContext = cache(async (): Promise<RbacContext> => {
+  assertProductionSupabaseConfigured();
   const override = await e2eRoleOverride();
 
   // Demo/preview (Supabase unconfigured): the demo admin identity drives

@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { Database } from "@/lib/database.types";
-import { supabaseUrl, supabasePublishableKey, supabaseSecretKey } from "./env";
+import { isProductionRuntime, supabaseUrl, supabasePublishableKey, supabaseSecretKey } from "./env";
 
 /**
  * Shared server-side Supabase client factory.
@@ -20,6 +20,13 @@ import { supabaseUrl, supabasePublishableKey, supabaseSecretKey } from "./env";
 
 export function hasSupabaseEnv(): boolean {
   return Boolean(supabaseUrl() && (supabasePublishableKey() || supabaseSecretKey()));
+}
+
+/** Production must never silently fall back to the local demo identity. */
+export function assertProductionSupabaseConfigured(): void {
+  if (isProductionRuntime() && !hasSupabaseEnv()) {
+    throw new Error("Supabase is required in production; demo mode is disabled.");
+  }
 }
 
 export function serverClient() {
