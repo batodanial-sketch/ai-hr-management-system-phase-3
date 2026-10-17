@@ -15,7 +15,9 @@ Playwright end-to-end suite for the Fluxentiq AI HR Management System
 The Playwright global setup can use a local Supabase stack, or a dedicated
 test project supplied via environment variables. GitHub Actions uses the local
 stack and creates disposable test credentials itself; no repository secrets
-or production project are required for CI.
+or production project are required for CI. Before the server starts, CI also
+runs `E2E_PREPARE_LICENSE=1 node scripts/prepare-e2e-settings.mjs` so protected
+browser routes are accessible under a temporary trial license.
 
 For a local run, start Supabase and inspect its local connection values:
 
@@ -130,7 +132,9 @@ resulting PNGs. Avoid routine auto-updates because they can hide regressions.
 
 The CI workflow provisions a disposable local Supabase instance using the
 checked-in migrations and `supabase/seed.sql`. It generates a random E2E user
-password and bridge secret at run time. Do not connect test teardown or seed
+password and bridge secret at run time and writes an ephemeral trial-license
+settings file before the test server starts. The file lives in the gitignored
+`data/` directory and is never committed. Do not connect test teardown or seed
 scripts to a production Supabase project.
 
 - **`supabase start` fails** — ensure the Docker daemon is available and ports
