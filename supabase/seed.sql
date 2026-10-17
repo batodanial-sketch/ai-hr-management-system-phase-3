@@ -17,14 +17,14 @@ values (
 on conflict (id) do nothing;
 
 -- Employees
-insert into public.employees (id, organization_id, employee_number, first_name, last_name, email, work_email, department, role, title, employment_status, start_date, location)
+insert into public.employees (id, organization_id, employee_number, first_name, last_name, email, work_email, department, role, title, status, employment_status, start_date, location)
 values
-  ('00000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'FTX-001', 'Ayesha', 'Rahman', 'ayesha.rahman@fluxentiq.test', 'ayesha.rahman@fluxentiq.test', 'Engineering', 'Backend Engineer', 'Staff Backend Engineer', 'active', '2022-03-14', 'Karachi, PK'),
-  ('00000000-0000-4000-8000-000000000002', '11111111-1111-4111-8111-111111111111', 'FTX-002', 'Daniel', 'Mbeki', 'daniel.mbeki@fluxentiq.test', 'daniel.mbeki@fluxentiq.test', 'Design', 'Product Designer', 'Senior Product Designer', 'active', '2021-11-02', 'Remote, ZA'),
-  ('00000000-0000-4000-8000-000000000003', '11111111-1111-4111-8111-111111111111', 'FTX-003', 'Sofia', 'Lindqvist', 'sofia.lindqvist@fluxentiq.test', 'sofia.lindqvist@fluxentiq.test', 'People Ops', 'HR Business Partner', 'Lead HRBP', 'on_leave', '2020-06-22', 'Stockholm, SE'),
-  ('00000000-0000-4000-8000-000000000004', '11111111-1111-4111-8111-111111111111', 'FTX-004', 'Miguel', 'Torres', 'miguel.torres@fluxentiq.test', 'miguel.torres@fluxentiq.test', 'Engineering', 'Frontend Engineer', 'Frontend Engineer II', 'active', '2023-02-13', 'Mexico City, MX'),
-  ('00000000-0000-4000-8000-000000000005', '11111111-1111-4111-8111-111111111111', 'FTX-005', 'Priya', 'Nair', 'priya.nair@fluxentiq.test', 'priya.nair@fluxentiq.test', 'Finance', 'Payroll Analyst', 'Payroll Analyst', 'active', '2022-08-01', 'Bengaluru, IN'),
-  ('00000000-0000-4000-8000-000000000006', '11111111-1111-4111-8111-111111111111', 'FTX-006', 'Omar', 'Haddad', 'omar.haddad@fluxentiq.test', 'omar.haddad@fluxentiq.test', 'Sales', 'Account Executive', 'Account Executive', 'terminated', '2021-01-18', 'Dubai, AE')
+  ('00000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'FTX-001', 'Ayesha', 'Rahman', 'ayesha.rahman@fluxentiq.test', 'ayesha.rahman@fluxentiq.test', 'Engineering', 'Backend Engineer', 'Staff Backend Engineer', 'active', 'active', '2022-03-14', 'Karachi, PK'),
+  ('00000000-0000-4000-8000-000000000002', '11111111-1111-4111-8111-111111111111', 'FTX-002', 'Daniel', 'Mbeki', 'daniel.mbeki@fluxentiq.test', 'daniel.mbeki@fluxentiq.test', 'Design', 'Product Designer', 'Senior Product Designer', 'active', 'active', '2021-11-02', 'Remote, ZA'),
+  ('00000000-0000-4000-8000-000000000003', '11111111-1111-4111-8111-111111111111', 'FTX-003', 'Sofia', 'Lindqvist', 'sofia.lindqvist@fluxentiq.test', 'sofia.lindqvist@fluxentiq.test', 'People Ops', 'HR Business Partner', 'Lead HRBP', 'on_leave', 'on_leave', '2020-06-22', 'Stockholm, SE'),
+  ('00000000-0000-4000-8000-000000000004', '11111111-1111-4111-8111-111111111111', 'FTX-004', 'Miguel', 'Torres', 'miguel.torres@fluxentiq.test', 'miguel.torres@fluxentiq.test', 'Engineering', 'Frontend Engineer', 'Frontend Engineer II', 'active', 'active', '2023-02-13', 'Mexico City, MX'),
+  ('00000000-0000-4000-8000-000000000005', '11111111-1111-4111-8111-111111111111', 'FTX-005', 'Priya', 'Nair', 'priya.nair@fluxentiq.test', 'priya.nair@fluxentiq.test', 'Finance', 'Payroll Analyst', 'Payroll Analyst', 'active', 'active', '2022-08-01', 'Bengaluru, IN'),
+  ('00000000-0000-4000-8000-000000000006', '11111111-1111-4111-8111-111111111111', 'FTX-006', 'Omar', 'Haddad', 'omar.haddad@fluxentiq.test', 'omar.haddad@fluxentiq.test', 'Sales', 'Account Executive', 'Account Executive', 'terminated', 'terminated', '2021-01-18', 'Dubai, AE')
 on conflict (id) do nothing;
 
 -- Job posting + candidates
