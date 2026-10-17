@@ -13,6 +13,7 @@ const DEFAULT_BRIDGE_URL = "http://localhost:8000";
 export async function emitWorkflowEvent(
   event: string,
   payload: Record<string, unknown>,
+  organizationId?: string | null,
 ): Promise<void> {
   const url = `${process.env.AI_BRIDGE_URL ?? DEFAULT_BRIDGE_URL}/api/workflows/trigger`;
   const secret = process.env.BRIDGE_SECRET_KEY ?? "";
@@ -22,6 +23,7 @@ export async function emitWorkflowEvent(
       headers: {
         "Content-Type": "application/json",
         ...(secret ? { "X-Bridge-Secret": secret } : {}),
+        ...(organizationId ? { "X-Organization-Id": organizationId } : {}),
       },
       body: JSON.stringify({ event, payload }),
       signal: AbortSignal.timeout(3000),

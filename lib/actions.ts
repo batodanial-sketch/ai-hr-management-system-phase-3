@@ -195,7 +195,7 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
     first_name: data.firstName,
     last_name: data.lastName,
     department: data.department,
-  });
+  }, user.organizationId);
 
   return { id };
 }
@@ -238,7 +238,7 @@ export async function updateEmployee(id: string, input: EmployeeInput): Promise<
     first_name: data.firstName,
     last_name: data.lastName,
     department: data.department,
-  });
+  }, user.organizationId);
 
   revalidatePath("/employees");
   revalidatePath(`/employees/${id}`);
@@ -273,7 +273,7 @@ export async function setEmploymentStatus(
       actor_id: user.id,
     };
     void dispatchWebhooks("offboarding.completed", event);
-    void emitWorkflowEvent("offboarding.completed", event);
+    void emitWorkflowEvent("offboarding.completed", event, user.organizationId);
   }
 
   revalidatePath(`/employees/${id}`);
@@ -370,7 +370,7 @@ export async function requestLeave(input: LeaveRequestInput): Promise<ActionResu
     leave_type: data.type,
     start_date: data.startDate,
     end_date: data.endDate,
-  });
+  }, user.organizationId);
 
   return { id };
 }
