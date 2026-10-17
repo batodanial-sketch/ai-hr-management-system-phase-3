@@ -141,9 +141,9 @@ ALTER TABLE public.payroll_line_items
   ALTER COLUMN net_pay SET DEFAULT 0,
   ALTER COLUMN net_pay SET NOT NULL;
 
--- Newer inserts don't have a payroll_entries parent; old line_type/code/label/
--- amount remain populated with valid defaults so the old constraints still hold.
-ALTER TABLE public.payroll_line_items ALTER COLUMN payroll_entry_id DROP NOT NULL;
+-- The BEFORE INSERT compatibility trigger creates a canonical payroll_entry
+-- whenever payroll_run_id is present, so keep the legacy parent FK mandatory.
+-- Defaults protect older writers that omit line details.
 ALTER TABLE public.payroll_line_items ALTER COLUMN line_type SET DEFAULT 'earning';
 ALTER TABLE public.payroll_line_items ALTER COLUMN code SET DEFAULT 'base';
 ALTER TABLE public.payroll_line_items ALTER COLUMN label SET DEFAULT 'Base pay';
