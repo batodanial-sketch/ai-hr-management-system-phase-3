@@ -69,12 +69,24 @@ export class WorkflowBuilderPage extends BasePage {
   }
 
   async configureTrigger(event: string): Promise<void> {
+    const optionLabels: Record<string, string> = {
+      "employee.created": "Employee created",
+      "leave.requested": "Leave requested",
+      "candidate.advanced": "Candidate advanced",
+      "payroll.completed": "Payroll completed",
+    };
+    const label = optionLabels[event];
+    if (!label) {
+      throw new Error(`Unsupported workflow trigger event: ${event}`);
+    }
+
     await expect(this.triggerConfig).toBeVisible();
-    await this.triggerEventSelect.selectOption(event);
+    await this.triggerEventSelect.click();
+    await this.page.getByRole("option", { name: label, exact: true }).click();
   }
 
   async expectTriggerEvent(event: string): Promise<void> {
-    await expect(this.triggerEventSelect).toHaveValue(event);
+    await expect(this.triggerEventSelect).toHaveAttribute("data-event", event);
   }
 
   async save(): Promise<void> {
