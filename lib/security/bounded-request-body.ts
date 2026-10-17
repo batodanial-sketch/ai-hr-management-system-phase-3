@@ -21,6 +21,11 @@ export async function readBoundedRequestBody(
     /^\d+$/.test(contentLength) &&
     Number(contentLength) > maxBytes
   ) {
+    try {
+      await request.body?.cancel();
+    } catch {
+      // The request is already rejected; cancellation failure is non-fatal.
+    }
     return { ok: false, reason: "too_large" };
   }
 
