@@ -29,6 +29,13 @@ create table if not exists public.payroll_line_items (
   created_at      timestamptz not null default now()
 );
 
+-- The original payroll_line_items table uses payroll_entry_id. Add the
+-- payroll_runs link before this migration creates an index/policy that refers
+-- to it; later compatibility work backfills other UI aliases.
+alter table public.payroll_line_items
+  add column if not exists payroll_run_id uuid
+  references public.payroll_runs (id) on delete cascade;
+
 create index if not exists idx_payroll_runs_org on public.payroll_runs (organization_id);
 create index if not exists idx_payroll_lines_run on public.payroll_line_items (payroll_run_id);
 
