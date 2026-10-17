@@ -170,6 +170,10 @@ export default async function globalSetup(): Promise<void> {
 
   const admin = createAdminClient();
 
+  // Seed the org first: memberships.organization_id has a real FK to
+  // organizations.id, so upserting membership before the org violates that FK
+  // on a clean database reset.
+  await seedBaselineData(admin);
   const testUser = await ensureTestUser(admin, email, password);
   await ensureE2eMembership(admin, testUser.id);
 
@@ -200,6 +204,4 @@ export default async function globalSetup(): Promise<void> {
     JSON.stringify(storageState, null, 2),
     "utf8",
   );
-
-  await seedBaselineData(admin);
 }
