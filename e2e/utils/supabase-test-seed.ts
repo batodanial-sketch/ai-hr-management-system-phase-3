@@ -236,6 +236,51 @@ export async function ensureE2eMembership(
 }
 
 export async function cleanupBaselineData(admin: SupabaseClient): Promise<void> {
+  // Cleanup is scoped to the dedicated E2E org. Compatibility triggers may
+  // create canonical leave/payroll rows without the UI fixture's source_tag;
+  // remove those children first so a failed test cannot strand employee FKs.
+  const { error: leaveRequestsError } = await admin
+    .from("leave_requests")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_requests", leaveRequestsError);
+
+  const { error: leaveBalancesError } = await admin
+    .from("leave_balances")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_balances", leaveBalancesError);
+
+  const { error: payrollLinesError } = await admin
+    .from("payroll_line_items")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_line_items", payrollLinesError);
+
+  const { error: payrollEntriesError } = await admin
+    .from("payroll_entries")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_entries", payrollEntriesError);
+
+  const { error: payrollRunsError } = await admin
+    .from("payroll_runs")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_runs", payrollRunsError);
+
+  const { error: payrollCyclesError } = await admin
+    .from("payroll_cycles")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_cycles", payrollCyclesError);
+
+  const { error: leaveTypesError } = await admin
+    .from("leave_types")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_types", leaveTypesError);
+
   const { error: candidatesError } = await admin
     .from("candidates")
     .delete()
