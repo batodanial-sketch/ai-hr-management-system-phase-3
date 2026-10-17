@@ -51,6 +51,59 @@ jobs:
       - name: Secret and server-boundary scan
         run: npm run security:scan
 
+  e2e-smoke:
+    name: Playwright Hermetic Smoke
+    timeout-minutes: 35
+    runs-on: ubuntu-latest
+    needs: typecheck-and-build
+    env:
+      E2E_BASE_URL: http://localhost:3000
+      E2E_BRIDGE_COMMAND: "true"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # These specs use mocked AI streams or the no-Supabase demo fallback;
+      # they must remain runnable without production credentials or bridge keys.
+      - name: Run hermetic browser smoke tests
+        run: >-
+          npx playwright test
+          e2e/specs/workflow-builder.spec.ts
+          e2e/specs/copilot-chat.spec.ts
+          e2e/visuals.spec.ts
+          tests/e2e/copilot-agent.spec.ts
+          tests/e2e/rbac-boundaries.spec.ts
+          tests/e2e/realtime-sync.spec.ts
+
+      - name: Upload smoke-test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload smoke-test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-results
+          path: test-results/
+          retention-days: 7
+
   e2e-tests:
     name: Playwright E2E
     timeout-minutes: 60
