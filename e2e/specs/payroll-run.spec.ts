@@ -1,6 +1,6 @@
 import { test } from "../fixtures/customTest";
 import { createAdminClient } from "../utils/supabase-test-seed";
-import { cleanupPayrollData, seedPayrollData, RUN_001, RUN_002 } from "../utils/domain-seed";
+import { cleanupPayrollData, seedPayrollData, RUN_001 } from "../utils/domain-seed";
 import { E2E_EMP_ONE, E2E_EMP_TWO, E2E_EMP_THREE } from "../utils/supabase-test-seed";
 
 /**

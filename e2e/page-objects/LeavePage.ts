@@ -87,8 +87,7 @@ export class LeavePage extends BasePage {
   /** Asserts the current user's own request appears with the given status. */
   async expectMyRequestStatus(status: "pending" | "approved" | "rejected"): Promise<void> {
     const row = this.myRequests
-      .locator('[data-testid="leave-request-row"]')
-      .filter({ has: this.page.locator(`[data-status="${status}"]`) })
+      .locator(`[data-testid="leave-request-row"][data-status="${status}"]`)
       .first();
     await expect(row).toBeVisible();
   }
