@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createAdminSupabaseClient, isSupabaseAdminConfigured } from "@/src/lib/supabase";
 import { claimWebhookReplay, verifyTimestampedHmac } from "@/lib/security/webhook-replay";
 import { resolveExternalApiKey } from "@/src/lib/security/webhookAuth";
-import { readBoundedRequestBody } from "@/lib/security/bounded-requested-body";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
