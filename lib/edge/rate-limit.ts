@@ -1,5 +1,9 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { edgeRateCategoryFor, type EdgeRateCategory } from "./rate-limit-routing";
+
+export { edgeRateCategoryFor } from "./rate-limit-routing";
+export type { EdgeRateCategory } from "./rate-limit-routing";
 
 /**
  * Edge Shield — distributed rate limiting for middleware.
@@ -20,7 +24,7 @@ import { Redis } from "@upstash/redis";
  * (epoch-ms timestamp) — see `edgeRateLimitResponse`.
  */
 
-export type EdgeRateCategory = "auth" | "webhook" | "module" | "copilot";
+
 
 function configuredPositiveLimit(name: string, fallback: number): number {
   const value = Number(process.env[name] ?? fallback);
@@ -166,44 +170,6 @@ export function edgeRateBody(result: EdgeRateResult): { body: object; headers: R
       "X-RateLimit-Reset": String(result.resetAt),
     },
   };
-}
-
-/** True when the request path belongs to an edge-limited category. */
-export function edgeRateCategoryFor(pathname: string): EdgeRateCategory | null {
-  if (
-    pathname.startsWith("/api/webhooks/") ||
-    pathname.startsWith("/api/desktop/") ||
-    pathname.startsWith("/api/scim/")
-  ) {
-    return "webhook";
-  }
-  // Apply the auth budget to authentication endpoints, not to GETs for
-  // the public login/signup pages themselves. Counting page navigation made
-  // normal reloads and browser test suites exhaust the 10-request budget
-  // before any credential or SSO action was attempted.
-  if (pathname.startsWith("/api/auth")) {
-    return "auth";
-  }
-  if (pathname.startsWith("/api/ai/") || pathname.startsWith("/api/engine/")) {
-    return "copilot";
-  }
-  if (
-    pathname.startsWith("/api/employees") ||
-    pathname.startsWith("/api/benefits") ||
-    pathname.startsWith("/api/equity") ||
-    pathname.startsWith("/api/expenses") ||
-    pathname.startsWith("/api/surveys") ||
-    pathname.startsWith("/api/planning") ||
-    pathname.startsWith("/api/contractors") ||
-    pathname.startsWith("/api/offboarding") ||
-    pathname.startsWith("/api/assets") ||
-    pathname.startsWith("/api/documents") ||
-    pathname.startsWith("/api/screening") ||
-    pathname.startsWith("/api/team")
-  ) {
-    return "module";
-  }
-  return null;
 }
 
 /** Best-effort client IP from standard proxy headers (middleware runs at the
