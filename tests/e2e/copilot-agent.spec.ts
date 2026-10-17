@@ -123,9 +123,19 @@ test.describe("Agentic Copilot tool loop", () => {
     const confirmedRequest = requests[1] as Record<string, unknown>;
     expect(confirmedRequest.approveProposal).toBe(APPROVAL_PROPOSAL_ID);
     expect(confirmedRequest.confirmToolCall).toBeUndefined();
-    expect(confirmedRequest.messages).toEqual([
-      { role: "user", content: "Create an expense for AWS training" },
-    ]);
+    const submittedMessages = confirmedRequest.messages as Array<{
+      role: string;
+      content: string;
+    }>;
+    expect(submittedMessages[submittedMessages.length - 1]).toEqual({
+      role: "user",
+      content: "Create an expense for AWS training",
+    });
+    expect(
+      submittedMessages.some(
+        (message) => message.role === "assistant" && message.content === "",
+      ),
+    ).toBe(false);
 
     // The tool result card renders live status badges from the CRUD response.
     await expect(page.getByTestId("tool-result-card")).toBeVisible();

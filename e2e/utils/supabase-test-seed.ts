@@ -39,6 +39,8 @@ export interface EmployeeRow {
   employment_status: EmploymentStatus;
   start_date: string;
   source_tag: string;
+  employee_number?: string;
+  work_email?: string;
 }
 
 export interface JobPostingRow {
@@ -119,6 +121,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeOne",
         email: "e2e.employee.one@fluxentiq.test",
+        employee_number: "E2E-001",
+        work_email: "e2e.employee.one@fluxentiq.test",
         department: "Engineering",
         role: "Backend Engineer",
         employment_status: "active",
@@ -131,6 +135,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeTwo",
         email: "e2e.employee.two@fluxentiq.test",
+        employee_number: "E2E-002",
+        work_email: "e2e.employee.two@fluxentiq.test",
         department: "Design",
         role: "Product Designer",
         employment_status: "active",
@@ -143,6 +149,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeThree",
         email: "e2e.employee.three@fluxentiq.test",
+        employee_number: "E2E-003",
+        work_email: "e2e.employee.three@fluxentiq.test",
         department: "People Ops",
         role: "HR Business Partner",
         employment_status: "on_leave",

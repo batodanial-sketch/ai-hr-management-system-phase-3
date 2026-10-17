@@ -4,11 +4,17 @@ import { expect, test } from "../fixtures/customTest";
  * Visual regression suite: pixel-diff screenshot assertions for the dashboard
  * and analytics surfaces.
  *
- * Baselines live next to this file under __screenshots__ (generated on first
- * run with --update-snapshots, then committed). CI fails when the diff exceeds
+ * Baselines live in Playwright's
+ * visual-regression.spec.ts-snapshots directory and are committed. These tests
+ * use deterministic demo-mode data, not a database-specific view. CI fails when the diff exceeds
  * maxDiffPixelRatio, which is tuned to tolerate sub-pixel font rendering.
  */
 test.describe("Visual regression", () => {
+  test.skip(
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    "Pixel baselines use deterministic demo data; DB-backed behavior is verified by functional E2E tests.",
+  );
+
   test("dashboard matches the golden baseline", async ({ page, dashboardPage }) => {
     await dashboardPage.goto();
     await expect(page).toHaveScreenshot("dashboard.png", {
