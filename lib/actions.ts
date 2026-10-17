@@ -11,6 +11,7 @@ import { requireRole } from "@/lib/rbac";
 import { getMemoryAdapter } from "@/lib/memory/factory";
 import type { Row } from "@/lib/memory/types";
 import { getLicenseState, TRIAL_MAX_EMPLOYEES } from "@/lib/license";
+import { readSettings } from "@/lib/settings/config";
 import { recordAudit, logAuditEvent } from "@/lib/audit";
 import { createNotification } from "@/lib/notifications";
 import { dispatchWebhooks } from "@/lib/webhooks";
@@ -374,6 +375,69 @@ export async function requestLeave(input: LeaveRequestInput): Promise<ActionResu
   return { id };
 }
 
+/** Applies available-day accounting for non-Supabase memory adapters. */
+async function reconcileLeaveBalanceInMemory(
+  memory: Awaited<ReturnType<typeof getMemoryAdapter>>,
+  request: Row,
+  previousStatus: string,
+  nextStatus: LeaveStatus,
+): Promise<void> {
+  const wasApproved = previousStatus === "approved";
+  const willBeApproved = nextStatus === "approved";
+  if (wasApproved === willBeApproved) return;
+
+  const leaveType = String(request.type ?? "pto");
+  if (leaveType === "unpaid") return;
+
+  const employeeId = String(request.employee_id ?? "");
+  const organizationId = String(request.organization_id ?? "");
+  const start = new Date(String(request.start_date ?? ""));
+  const end = new Date(String(request.end_date ?? ""));
+  if (!employeeId || !organizationId || !Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) {
+    throw new Error("Leave request is missing employee, workspace, or date details.");
+  }
+
+  const configuredDays = Number(request.total_days);
+  const days = Number.isFinite(configuredDays) && configuredDays > 0
+    ? configuredDays
+    : Math.floor((Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) -
+        Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate())) / 86_400_000) + 1;
+  if (days <= 0) {
+    throw new Error("Leave request dates are invalid.");
+  }
+
+  const rows = await memory.select<Row>("leave_balances", {
+    column: "employee_id",
+    value: employeeId,
+  });
+  const year = start.getUTCFullYear();
+  const balance = rows.find((row) =>
+    String(row.organization_id ?? "") === organizationId &&
+    String(row.type ?? "") === leaveType &&
+    Number(row.year ?? row.balance_year) === year
+  );
+  if (!balance) {
+    throw new Error(`No ${leaveType} leave balance is configured for this employee and year.`);
+  }
+
+  const available = Number(balance.balance_days ?? 0);
+  const used = Number(balance.used_days ?? 0);
+  if (willBeApproved) {
+    if (available < days) {
+      throw new Error("Insufficient leave balance to approve this request.");
+    }
+    await memory.update("leave_balances", { column: "id", value: String(balance.id) }, {
+      balance_days: available - days,
+      used_days: used + days,
+    });
+  } else {
+    await memory.update("leave_balances", { column: "id", value: String(balance.id) }, {
+      balance_days: available + days,
+      used_days: Math.max(0, used - days),
+    });
+  }
+}
+
 /** Approves or rejects a leave request. */
 export async function resolveLeaveRequest(
   id: string,
@@ -383,7 +447,28 @@ export async function resolveLeaveRequest(
   const memory = await getMemoryAdapter();
   const user = await getCurrentUser();
   await assertRecordInActiveOrganization(memory, "leave_requests", id, user.organizationId, "Leave request");
+  const scopedRequests = await memory.select<Row>("leave_requests", {
+    column: "organization_id",
+    value: user.organizationId,
+  });
+  const request = scopedRequests.find((row) => String(row.id) === id);
+  if (!request) {
+    throw new Error("Leave request was not found in the active workspace.");
+  }
+
+  const previousStatus = String(request.status ?? "pending");
+  const settings = await readSettings();
+  const databaseReconcilesBalance = settings.memory.provider === "supabase" && hasSupabaseEnv();
   await memory.update("leave_requests", { column: "id", value: id }, { status });
+  if (!databaseReconcilesBalance) {
+    try {
+      await reconcileLeaveBalanceInMemory(memory, request, previousStatus, status);
+    } catch (error) {
+      // Revert the status if adapter-side balance validation or update fails.
+      await memory.update("leave_requests", { column: "id", value: id }, { status: previousStatus as LeaveStatus });
+      throw error;
+    }
+  }
 
   void recordAudit({ action: "leave.resolve", entity: "leave_request", entityId: id, metadata: { status } });
   void dispatchWebhooks("leave.resolved", { leave_request_id: id, status });

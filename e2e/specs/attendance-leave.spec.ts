@@ -24,8 +24,8 @@ test.describe("Attendance & leave", () => {
     await leavePage.goto();
     await leavePage.submitRequest({
       type: "pto",
-      startDate: "2025-04-01",
-      endDate: "2025-04-02",
+      startDate: "2026-11-10",
+      endDate: "2026-11-11",
       reason: "E2E vacation",
     });
     await leavePage.expectMyRequestStatus("pending");
