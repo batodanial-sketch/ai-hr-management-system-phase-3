@@ -212,6 +212,17 @@ jobs:
             exit 1
           fi
 
+          test_password="$(openssl rand -hex 32)"
+          bridge_secret="$(openssl rand -hex 32)"
+
+          # GitHub does not automatically mask locally generated values. Mask
+          # every credential before writing it to GITHUB_ENV so action logs
+          # and failure diagnostics cannot reveal the ephemeral keys.
+          echo "::add-mask::$publishable_key"
+          echo "::add-mask::$secret_key"
+          echo "::add-mask::$test_password"
+          echo "::add-mask::$bridge_secret"
+
           {
             echo "NEXT_PUBLIC_SUPABASE_URL=$api_url"
             echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$publishable_key"
@@ -222,8 +233,8 @@ jobs:
             # storage key prefix is "sb-127-auth-token".
             echo "SUPABASE_PROJECT_REF=127"
             echo "E2E_TEST_USER_EMAIL=ci-e2e@fluxentiq.test"
-            echo "E2E_TEST_USER_PASSWORD=$(openssl rand -hex 32)"
-            echo "BRIDGE_SECRET_KEY=$(openssl rand -hex 32)"
+            echo "E2E_TEST_USER_PASSWORD=$test_password"
+            echo "BRIDGE_SECRET_KEY=$bridge_secret"
           } >> "$GITHUB_ENV"
 
       - name: Install Python dependencies
