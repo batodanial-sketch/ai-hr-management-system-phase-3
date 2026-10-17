@@ -41,18 +41,32 @@ values
   ('00000000-0000-4000-8000-000000000105', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000201', 'Ines', 'Marques', 'ines.marques@example.com', 'Backend Engineer', 'hired', 89, 'LinkedIn')
 on conflict (id) do nothing;
 
--- Leave balances + requests
-insert into public.leave_balances (id, employee_id, type, balance_days, used_days, year)
+-- Canonical leave types (required by the original schema's FK columns).
+insert into public.leave_types (id, organization_id, name, code, annual_allowance)
 values
-  ('00000000-0000-4000-8000-000000000301', '00000000-0000-4000-8000-000000000001', 'pto', 20, 6, 2025),
-  ('00000000-0000-4000-8000-000000000302', '00000000-0000-4000-8000-000000000001', 'sick', 10, 2, 2025)
+  ('00000000-0000-4000-8000-000000000911', '11111111-1111-4111-8111-111111111111', 'Paid Time Off', 'pto', 20),
+  ('00000000-0000-4000-8000-000000000912', '11111111-1111-4111-8111-111111111111', 'Sick Leave', 'sick', 10),
+  ('00000000-0000-4000-8000-000000000913', '11111111-1111-4111-8111-111111111111', 'Unpaid Leave', 'unpaid', 0)
 on conflict (id) do nothing;
 
-insert into public.leave_requests (id, organization_id, employee_id, employee_name, type, start_date, end_date, reason, status)
+-- Leave balances + requests
+insert into public.leave_balances (
+  id, organization_id, employee_id, leave_type_id, type, balance_days,
+  used_days, year, balance_year, opening_days, accrued_days, carried_days, source_tag
+)
 values
-  ('00000000-0000-4000-8000-000000000401', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000004', 'Miguel Torres', 'pto', '2025-03-10', '2025-03-12', 'Family visit', 'pending'),
-  ('00000000-0000-4000-8000-000000000402', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 'sick', '2025-03-01', '2025-03-02', 'Flu', 'approved'),
-  ('00000000-0000-4000-8000-000000000403', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000005', 'Priya Nair', 'pto', '2025-03-18', '2025-03-22', 'Annual leave', 'pending')
+  ('00000000-0000-4000-8000-000000000301', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000911', 'pto', 20, 6, 2025, 2025, 20, 0, 0, 'demo'),
+  ('00000000-0000-4000-8000-000000000302', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000912', 'sick', 10, 2, 2025, 2025, 10, 0, 0, 'demo')
+on conflict (id) do nothing;
+
+insert into public.leave_requests (
+  id, organization_id, employee_id, leave_type_id, employee_name, type,
+  start_date, end_date, total_days, reason, status, source_tag
+)
+values
+  ('00000000-0000-4000-8000-000000000401', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-000000000911', 'Miguel Torres', 'pto', '2025-03-10', '2025-03-12', 3, 'Family visit', 'pending', 'demo'),
+  ('00000000-0000-4000-8000-000000000402', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000912', 'Daniel Mbeki', 'sick', '2025-03-01', '2025-03-02', 2, 'Flu', 'approved', 'demo'),
+  ('00000000-0000-4000-8000-000000000403', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000005', '00000000-0000-4000-8000-000000000911', 'Priya Nair', 'pto', '2025-03-18', '2025-03-22', 5, 'Annual leave', 'pending', 'demo')
 on conflict (id) do nothing;
 
 -- Payroll runs + line items
@@ -62,11 +76,14 @@ values
   ('00000000-0000-4000-8000-000000000502', '11111111-1111-4111-8111-111111111111', '2025-02-01', '2025-02-28', 'completed', 'EUR')
 on conflict (id) do nothing;
 
-insert into public.payroll_line_items (id, payroll_run_id, employee_id, employee_name, gross_pay, deductions, net_pay, currency)
+insert into public.payroll_line_items (
+  id, organization_id, payroll_run_id, employee_id, employee_name,
+  gross_pay, deductions, net_pay, currency, source_tag
+)
 values
-  ('00000000-0000-4000-8000-000000000601', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000001', 'Ayesha Rahman', 5000, 1000, 4000, 'USD'),
-  ('00000000-0000-4000-8000-000000000602', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 6000, 1200, 4800, 'USD'),
-  ('00000000-0000-4000-8000-000000000603', '00000000-0000-4000-8000-000000000502', '00000000-0000-4000-8000-000000000003', 'Sofia Lindqvist', 4000, 800, 3200, 'EUR')
+  ('00000000-0000-4000-8000-000000000601', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000001', 'Ayesha Rahman', 5000, 1000, 4000, 'USD', 'demo'),
+  ('00000000-0000-4000-8000-000000000602', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 6000, 1200, 4800, 'USD', 'demo'),
+  ('00000000-0000-4000-8000-000000000603', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000502', '00000000-0000-4000-8000-000000000003', 'Sofia Lindqvist', 4000, 800, 3200, 'EUR', 'demo')
 on conflict (id) do nothing;
 
 -- Lead intelligence (CRM)
