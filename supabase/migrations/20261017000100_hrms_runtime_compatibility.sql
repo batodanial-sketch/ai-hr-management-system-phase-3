@@ -93,6 +93,20 @@ BEGIN
     NEW.leave_type_id := public.ensure_legacy_leave_type(NEW.organization_id, NEW.type::TEXT);
   END IF;
 
+  IF NOT EXISTS (
+    SELECT 1 FROM public.employees e
+    WHERE e.id = NEW.employee_id AND e.organization_id = NEW.organization_id
+  ) THEN
+    RAISE EXCEPTION 'Leave request employee must belong to organization %', NEW.organization_id;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM public.leave_types lt
+    WHERE lt.id = NEW.leave_type_id AND lt.organization_id = NEW.organization_id
+  ) THEN
+    RAISE EXCEPTION 'Leave type must belong to organization %', NEW.organization_id;
+  END IF;
+
   IF NEW.total_days IS NULL OR NEW.total_days <= 0 THEN
     NEW.total_days := GREATEST(1, (NEW.end_date - NEW.start_date + 1)::NUMERIC);
   END IF;
@@ -126,8 +140,22 @@ BEGIN
     RAISE EXCEPTION 'Cannot resolve organization for leave balance employee %', NEW.employee_id;
   END IF;
 
+  IF NOT EXISTS (
+    SELECT 1 FROM public.employees e
+    WHERE e.id = NEW.employee_id AND e.organization_id = NEW.organization_id
+  ) THEN
+    RAISE EXCEPTION 'Leave balance employee must belong to organization %', NEW.organization_id;
+  END IF;
+
   IF NEW.leave_type_id IS NULL THEN
     NEW.leave_type_id := public.ensure_legacy_leave_type(NEW.organization_id, NEW.type::TEXT);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM public.leave_types lt
+    WHERE lt.id = NEW.leave_type_id AND lt.organization_id = NEW.organization_id
+  ) THEN
+    RAISE EXCEPTION 'Leave type must belong to organization %', NEW.organization_id;
   END IF;
 
   IF NEW.balance_year IS NULL THEN
@@ -185,7 +213,11 @@ BEGIN
       RAISE EXCEPTION 'Payroll run % does not exist', NEW.payroll_run_id;
     END IF;
 
-    NEW.organization_id := COALESCE(NEW.organization_id, run_row.organization_id);
+    IF NEW.organization_id IS NOT NULL AND NEW.organization_id <> run_row.organization_id THEN
+      RAISE EXCEPTION 'Payroll run and line item must belong to the same organization';
+    END IF;
+    NEW.organization_id := run_row.organization_id;
+
     IF NEW.employee_id IS NULL AND NEW.payroll_entry_id IS NOT NULL THEN
       SELECT employee_id INTO NEW.employee_id
       FROM public.payroll_entries
@@ -194,6 +226,13 @@ BEGIN
 
     IF NEW.employee_id IS NULL THEN
       RAISE EXCEPTION 'Payroll line item must include employee_id';
+    END IF;
+
+    SELECT organization_id INTO employee_row_org_id
+    FROM public.employees
+    WHERE id = NEW.employee_id;
+    IF NOT FOUND OR employee_row_org_id <> run_row.organization_id THEN
+      RAISE EXCEPTION 'Payroll line item employee must belong to the payroll run organization';
     END IF;
 
     IF NEW.payroll_entry_id IS NULL THEN
@@ -247,8 +286,18 @@ BEGIN
     FROM public.payroll_entries
     WHERE id = NEW.payroll_entry_id;
 
-    NEW.employee_id := COALESCE(NEW.employee_id, entry_employee_id);
-    NEW.organization_id := COALESCE(NEW.organization_id, employee_row_org_id);
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Payroll entry % does not exist', NEW.payroll_entry_id;
+    END IF;
+    IF NEW.organization_id IS NOT NULL AND NEW.organization_id <> employee_row_org_id THEN
+      RAISE EXCEPTION 'Payroll entry and line item must belong to the same organization';
+    END IF;
+    IF NEW.employee_id IS NOT NULL AND NEW.employee_id <> entry_employee_id THEN
+      RAISE EXCEPTION 'Payroll entry and line item employee must match';
+    END IF;
+
+    NEW.employee_id := entry_employee_id;
+    NEW.organization_id := employee_row_org_id;
   END IF;
 
   IF NEW.line_type IS NULL THEN NEW.line_type := 'earning'; END IF;
@@ -289,6 +338,15 @@ BEGIN
   IF TG_OP = 'DELETE' THEN
     affected_run_id := OLD.payroll_run_id;
   ELSE
+    IF TG_OP = 'UPDATE'
+      AND OLD.payroll_run_id IS DISTINCT FROM NEW.payroll_run_id
+      AND OLD.payroll_run_id IS NOT NULL THEN
+      UPDATE public.payroll_runs
+      SET total_gross = COALESCE((SELECT SUM(gross_pay) FROM public.payroll_line_items WHERE payroll_run_id = OLD.payroll_run_id), 0),
+          total_deductions = COALESCE((SELECT SUM(deductions) FROM public.payroll_line_items WHERE payroll_run_id = OLD.payroll_run_id), 0),
+          total_net = COALESCE((SELECT SUM(net_pay) FROM public.payroll_line_items WHERE payroll_run_id = OLD.payroll_run_id), 0)
+      WHERE id = OLD.payroll_run_id;
+    END IF;
     affected_run_id := NEW.payroll_run_id;
   END IF;
 
@@ -307,3 +365,17 @@ DROP TRIGGER IF EXISTS legacy_payroll_run_totals_compat ON public.payroll_line_i
 CREATE TRIGGER legacy_payroll_run_totals_compat
 AFTER INSERT OR UPDATE OR DELETE ON public.payroll_line_items
 FOR EACH ROW EXECUTE FUNCTION public.recalculate_legacy_payroll_run_totals();
+
+-- These SECURITY DEFINER helpers are invoked by installed triggers. Do not
+-- expose the reusable leave-type creator or trigger functions as public RPCs.
+REVOKE ALL ON FUNCTION public.ensure_legacy_leave_type(UUID, TEXT) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.prepare_legacy_leave_request() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.prepare_legacy_leave_balance() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.prepare_legacy_payroll_line_item() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.recalculate_legacy_payroll_run_totals() FROM PUBLIC, anon, authenticated;
+
+GRANT EXECUTE ON FUNCTION public.ensure_legacy_leave_type(UUID, TEXT) TO service_role;
+GRANT EXECUTE ON FUNCTION public.prepare_legacy_leave_request() TO service_role;
+GRANT EXECUTE ON FUNCTION public.prepare_legacy_leave_balance() TO service_role;
+GRANT EXECUTE ON FUNCTION public.prepare_legacy_payroll_line_item() TO service_role;
+GRANT EXECUTE ON FUNCTION public.recalculate_legacy_payroll_run_totals() TO service_role;
