@@ -22,9 +22,14 @@ import { Redis } from "@upstash/redis";
 
 export type EdgeRateCategory = "auth" | "webhook" | "module" | "copilot";
 
+function configuredPositiveLimit(name: string, fallback: number): number {
+  const value = Number(process.env[name] ?? fallback);
+  return Number.isSafeInteger(value) && value > 0 ? value : fallback;
+}
+
 export const EDGE_LIMITS: Record<EdgeRateCategory, number> = {
-  auth: 10,
-  webhook: 10,
+  auth: configuredPositiveLimit("EDGE_AUTH_RATE_LIMIT", 10),
+  webhook: configuredPositiveLimit("EDGE_WEBHOOK_RATE_LIMIT", 10),
   module: 100,
   copilot: 30, // tier-adjusted in middleware via the license cookie
 };
