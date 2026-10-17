@@ -24,6 +24,40 @@ export function LoginForm() {
   const [error, setError] = React.useState<string | null>(
     searchParams.get("error"),
   );
+  type WorkspaceDecisionPath =
+    | "existing_membership_allowed"
+    | "invited_membership_activated"
+    | "membership_required"
+    | "domain_not_provisioned"
+    | "personal_account_blocked"
+    | "ambiguous_domain_blocked";
+  interface WorkspaceSsoDecision {
+    decision: WorkspaceDecisionPath;
+    email: string;
+    domain: string;
+    message: string;
+    redirectTo: string | null;
+  }
+  const initialWorkspaceDecision = (): WorkspaceSsoDecision | null => {
+    const decision = searchParams.get("ssoDecision") as WorkspaceDecisionPath | null;
+    const emailValue = searchParams.get("email") ?? "";
+    const domainValue = searchParams.get("domain") ?? emailValue.split("@")[1] ?? "";
+    const messages: Record<WorkspaceDecisionPath, string> = {
+      existing_membership_allowed: "Existing membership verified.",
+      invited_membership_activated: "Pending invite activated.",
+      membership_required: "Access requires approval for this domain.",
+      domain_not_provisioned: "This domain is not provisioned for Google Workspace access.",
+      personal_account_blocked: "Personal accounts are not permitted. Use your company account.",
+      ambiguous_domain_blocked: "Domain ownership could not be verified.",
+    };
+    return decision && decision in messages
+      ? { decision, email: emailValue, domain: domainValue, message: messages[decision], redirectTo: null }
+      : null;
+  };
+  const [workspaceSsoResult, setWorkspaceSsoResult] =
+    React.useState<WorkspaceSsoDecision | null>(initialWorkspaceDecision);
+  const [requestingAccess, setRequestingAccess] = React.useState(false);
+  const [accessRequestPending, setAccessRequestPending] = React.useState(false);
 
   // Sanitize the `next` query param — only allow internal, same-origin paths
   // (guards against open-redirect attempts via ?next=//evil.com or absolute URLs).
@@ -81,16 +115,68 @@ export function LoginForm() {
 
   const handleGoogle = async () => {
     setError(null);
+    setWorkspaceSsoResult(null);
+    setAccessRequestPending(false);
+    try {
+      // The server uses the verified Supabase session only. The email body
+      // exists for mocked UI decision tests and is ignored by the real route.
+      const response = await fetch("/api/auth/sso-callback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+      const decision = (await response.json().catch(() => null)) as
+        | (WorkspaceSsoDecision & { requiresOAuth?: boolean; message?: string })
+        | null;
+      if (response.ok && decision && "decision" in decision) {
+        setWorkspaceSsoResult(decision);
+        if (decision.redirectTo) router.push(decision.redirectTo);
+        return;
+      }
+      if (response.status !== 401 && !decision?.requiresOAuth) {
+        setError(decision?.message ?? "Unable to verify Google Workspace access.");
+        return;
+      }
+    } catch {
+      // The authenticated OAuth callback repeats the same policy decision.
+    }
     if (!supabase) {
       router.push(next);
       return;
     }
+    const callback = new URL("/auth/callback", window.location.origin);
+    callback.searchParams.set("next", next);
+    callback.searchParams.set("workspace", "true");
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
+      options: { redirectTo: callback.toString() },
     });
-    if (oauthError) {
-      setError(oauthError.message);
+    if (oauthError) setError(oauthError.message);
+  };
+
+  const handleRequestAccess = async () => {
+    if (!workspaceSsoResult?.email || !workspaceSsoResult.domain) {
+      setError("Sign in with your company email before requesting workspace access.");
+      return;
+    }
+    setRequestingAccess(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/auth/request-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: workspaceSsoResult.email, domain: workspaceSsoResult.domain }),
+      });
+      const result = (await response.json().catch(() => null)) as { status?: string; message?: string } | null;
+      if (!response.ok || result?.status !== "pending") {
+        setError(result?.message ?? "Unable to submit the workspace access request.");
+        return;
+      }
+      setAccessRequestPending(true);
+    } catch {
+      setError("Unable to submit the workspace access request. Please try again.");
+    } finally {
+      setRequestingAccess(false);
     }
   };
 
@@ -131,6 +217,28 @@ export function LoginForm() {
           >
             <GoogleIcon /> Continue with Google
           </Button>
+
+          {workspaceSsoResult?.decision === "membership_required" && (
+            <div data-testid="auth-access-request-prompt" className="mt-4 rounded-lg border border-border/70 bg-card/50 p-3">
+              <p className="text-sm">{workspaceSsoResult.message}</p>
+              {accessRequestPending ? (
+                <p data-testid="auth-access-request-pending" className="mt-2 text-xs font-medium text-success">
+                  Access request submitted and pending approval.
+                </p>
+              ) : (
+                <Button type="button" variant="outline" className="mt-3 w-full" data-testid="auth-request-access-button" disabled={requestingAccess} onClick={() => void handleRequestAccess()}>
+                  {requestingAccess ? "Submitting request…" : "Request access"}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {workspaceSsoResult &&
+            ["domain_not_provisioned", "personal_account_blocked", "ambiguous_domain_blocked"].includes(workspaceSsoResult.decision) && (
+              <p data-testid="auth-blocked-message" className="mt-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {workspaceSsoResult.message}
+              </p>
+            )}
 
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-border" />
