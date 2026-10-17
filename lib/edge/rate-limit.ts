@@ -1,6 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { edgeRateCategoryFor, type EdgeRateCategory } from "./rate-limit-routing";
+import type { EdgeRateCategory } from "./rate-limit-routing";
 
 export { edgeRateCategoryFor } from "./rate-limit-routing";
 export type { EdgeRateCategory } from "./rate-limit-routing";
