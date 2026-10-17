@@ -5,6 +5,7 @@ import { serviceWorkflowStore } from "@/lib/workflows/store";
 import { runIdempotencyKey, webhookDeliveryKey } from "@/lib/workflows/idempotency";
 import { SYSTEM_ACTOR, driveRun } from "@/lib/workflows/executor";
 import { systemDeps } from "@/lib/workflows/runtime";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,6 +31,7 @@ type WorkflowEvent = (typeof WORKFLOW_EVENTS)[number];
 
 /** Max workflows driven per delivery (bound; overflow is reported, not silent). */
 const MAX_WORKFLOWS_PER_DELIVERY = 25;
+const MAX_WORKFLOW_WEBHOOK_BODY_BYTES = 64 * 1024;
 
 const bodySchema = z.object({
   event: z.enum(WORKFLOW_EVENTS),
@@ -105,7 +107,9 @@ export async function POST(request: Request): Promise<Response> {
   if (!secret) {
     return Response.json({ ok: false, error: "Workflow webhooks are not configured.", code: "WEBHOOK_NOT_CONFIGURED" }, { status: 503 });
   }
-  const raw = await request.text();
+  const bodyResult = await readBoundedRequestBody(request, MAX_WORKFLOW_WEBHOOK_BODY_BYTES);
+  if (!bodyResult.ok) return Response.json({ ok: false, error: "Workflow webhook body exceeds the 64 KiB limit.", code: "BODY_TOO_LARGE" }, { status: 413 });
+  const raw = bodyResult.text;
   const signature = request.headers.get("x-fluxentiq-workflow-signature") ?? "";
   const expected = Buffer.from(createHmac("sha256", secret).update(raw).digest("hex"));
   const actual = Buffer.from(signature);
