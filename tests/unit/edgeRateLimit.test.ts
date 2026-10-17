@@ -1,4 +1,4 @@
-import { edgeRateCategoryFor } from "@/lib/edge/rate-limit";
+import { edgeRateCategoryFor } from "@/lib/edge/rate-limit-routing";
 
 describe("edgeRateCategoryFor", () => {
   it("does not rate-limit public authentication page navigation as API traffic", () => {
