@@ -1,7 +1,10 @@
 import { verifySlackSignature } from "@/lib/security/slack";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+const MAX_SLACK_EVENT_BODY_BYTES = 1_000_000;
 
 /**
  * Slack Events API ingress. Authentication is performed over the exact raw
@@ -11,7 +14,9 @@ export const dynamic = "force-dynamic";
  * claim that downstream business processing occurred.
  */
 export async function POST(request: Request): Promise<Response> {
-  const rawBody = await request.text();
+  const bodyResult = await readBoundedRequestBody(request, MAX_SLACK_EVENT_BODY_BYTES);
+  if (!bodyResult.ok) return Response.json({ success: false, error: "Slack event body is too large." }, { status: 413 });
+  const rawBody = bodyResult.text;
   const timestamp = request.headers.get("x-slack-request-timestamp");
   const signature = request.headers.get("x-slack-signature");
   if (!verifySlackSignature(rawBody, timestamp, signature, process.env.SLACK_SIGNING_SECRET)) {
