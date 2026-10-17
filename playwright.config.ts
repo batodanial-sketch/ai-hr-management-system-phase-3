@@ -69,11 +69,15 @@ export default defineConfig({
       // header-gated test hook (see lib/rbac.ts) — it lets the rbac-boundaries
       // spec simulate under-privileged roles; it is inert for every other
       // request and never active in production builds.
-      command:
-        process.env.E2E_WEBSERVER_COMMAND ??
-        (process.platform === "win32"
-          ? "set E2E_ROLE_OVERRIDE_ENABLED=1&& npm run dev"
-          : "E2E_ROLE_OVERRIDE_ENABLED=1 npm run dev"),
+      command: process.env.E2E_WEBSERVER_COMMAND ?? "npm run dev",
+      // The E2E suite deliberately exercises many auth/API paths from one IP
+      // in parallel. Keep rate limiting enabled but give that test-only server
+      // enough headroom that unrelated tests do not 429 one another.
+      env: {
+        E2E_ROLE_OVERRIDE_ENABLED: "1",
+        EDGE_AUTH_RATE_LIMIT: "500",
+        EDGE_WEBHOOK_RATE_LIMIT: "500",
+      },
       url: BASE_URL,
       reuseExistingServer: !CI,
       timeout: 120_000,
