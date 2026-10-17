@@ -17,7 +17,7 @@
 | BUG-005 | **Medium** | `app/actions/*`, webhook routes (288 sites) | Type safety / Anti-pattern | Widespread `as any` bypasses the generated `Database` types |
 | BUG-006 | **Low** | `bridge/workflow_engine.py:232`, `app/api/webhooks/external/outbound-trigger/route.ts` | Security — SSRF | Server posts to admin/buyer-supplied URLs with no allow-list |
 | BUG-007 | **Low** | `app/api/auth/signup/route.ts:15` | Security — weak policy | Password minimum of 6 chars, no strength rules |
-| BUG-008 | **Medium** | `app/api/webhooks/n8n-trigger/route.ts` | Resource exhaustion — oversized request buffering | Payload persistence was bounded only after the complete HTTP body had been buffered and parsed |
+| BUG-008 | **Medium** | Webhook ingress and configuration routes | Resource exhaustion — oversized request buffering | Several endpoints buffered complete request bodies before enforcing limits, or had no request-size ceiling |
 
 ---
 
@@ -201,15 +201,27 @@ output: payload.status === 'succeeded' ? safePayload : {},
 
 ---
 
-### BUG-008 — n8n webhook buffers the full request before payload limits apply
+### BUG-008 — inbound webhook routes buffer request bodies before limits apply
 
-- **Location**: `app/api/webhooks/n8n-trigger/route.ts`
-- **Severity**: Medium · **Category**: Resource exhaustion / request validation
+- **Locations:** n8n webhook, provider gateway, Python bridge callback, Slack Events, workflow event gateway, external lead intake, and webhook configuration route.
+- **Severity:** Medium · **Category**: Resource exhaustion / request validation
 
-**Root cause:** The endpoint previously called `request.text()` before validating the body. The later 8 KB persistence cap protected database writes but did not constrain memory spent buffering and parsing incoming HTTP requests.
+**Root cause:** The n8n webhook applied its 8 KB persistence cap only after `request.text()`; the provider gateway checked its 1 MB cap only after buffering; other inbound routes buffered raw bodies or parsed JSON without an equivalent ceiling. This left application memory and parsing work exposed to oversized requests.
 
-**Remediation:** The endpoint now rejects bodies larger than 64 KiB before JSON parsing. The shared `readBoundedRequestBody()` utility checks a valid `Content-Length` as an early guard and, independently, counts bytes while streaming. If the streamed body crosses the limit, it cancels the reader and returns a 413 response. The stream counter remains authoritative for missing, incorrect, or chunked content-length values.
+**Remediation:** The shared `readBoundedRequestBody()` helper checks valid `Content-Length` values before reading and independently counts streamed bytes, so missing or inaccurate headers cannot bypass the cap. Over-limit streams are cancelled and rejected with HTTP 413 before JSON parsing or signature verification. Per-route ceilings preserve larger provider envelopes where needed:
+
+| Route | Maximum request body |
+|---|---:|
+| `app/api/webhooks/n8n-trigger/route.ts` | 64 KiB |
+| `app/api/webhooks/inbound/[provider]/route.ts` | 1,000,000 bytes |
+| `app/api/webhooks/python-bridge/route.ts` | 64 KiB |
+| `app/api/webhooks/slack/events/route.ts` | 1,000,000 bytes |
+| `app/api/workflows/webhooks/route.ts` | 64 KiB |
+| `app/api/webhooks/external/inbound-lead/route.ts` | 64 KiB |
+| `app/api/webhooks/route.ts` (subscription configuration) | 64 KiB |
+
+The original post-parse payload truncation remains in place as a separate data-retention control. Existing signature, replay, authentication, and tenant checks are retained.
 
 **Regression coverage:** `tests/unit/boundedRequestBody.test.ts` covers declared-length rejection, streamed-body rejection, UTF-8 byte counting, and successful reads under the cap.
 
-**Validation status:** Unit tests were added to the repository; CI execution is pending for the pull request. This entry does not claim that tests or a production deployment have already run successfully.
+**Validation status:** Unit tests are in the pull request and CI is running; do not consider the change release-ready until the current CI run passes and the affected workflows are exercised.
