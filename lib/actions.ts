@@ -272,8 +272,8 @@ export async function setEmploymentStatus(
       organization_id: user.organizationId,
       actor_id: user.id,
     };
-    void dispatchWebhooks("employee.offboarded", event);
-    void emitWorkflowEvent("employee.offboarded", event);
+    void dispatchWebhooks("offboarding.completed", event);
+    void emitWorkflowEvent("offboarding.completed", event);
   }
 
   revalidatePath(`/employees/${id}`);
@@ -446,10 +446,14 @@ export async function resolveLeaveRequest(
   await requireRole("MANAGER");
   const memory = await getMemoryAdapter();
   const user = await getCurrentUser();
-  await assertRecordInActiveOrganization(memory, "leave_requests", id, user.organizationId, "Leave request");
+  if (!user.organizationId) {
+    throw new Error("No active workspace.");
+  }
+  const organizationId = user.organizationId;
+  await assertRecordInActiveOrganization(memory, "leave_requests", id, organizationId, "Leave request");
   const scopedRequests = await memory.select<Row>("leave_requests", {
     column: "organization_id",
-    value: user.organizationId,
+    value: organizationId,
   });
   const request = scopedRequests.find((row) => String(row.id) === id);
   if (!request) {
