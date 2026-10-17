@@ -30,14 +30,14 @@ const SKIP_BRIDGE = process.env.E2E_BRIDGE_COMMAND === "true";
 export default defineConfig({
   testDir: ".",
   testMatch: ["e2e/**/*.spec.ts", "tests/e2e/**/*.spec.ts"],
-  // Several integration specs intentionally share deterministic seeded rows
-  // and perform cleanup in afterAll. Keep tests within each file serial so a
-  // parallel worker cannot delete/reset data while a sibling test is using it.
-  // Playwright still runs independent files in parallel (bounded by workers).
+  // Several integration specs share deterministic seeded rows and remove
+  // rows by source_tag in afterAll. The full DB-backed E2E job sets
+  // E2E_SERIAL=1 to prevent separate files from racing those shared fixtures.
+  // The hermetic, no-DB smoke job can still run independent files concurrently.
   fullyParallel: false,
   forbidOnly: CI,
   retries: CI ? 2 : 0,
-  workers: CI ? 2 : undefined,
+  workers: process.env.E2E_SERIAL === "1" ? 1 : CI ? 2 : undefined,
   timeout: 60_000,
   expect: {
     timeout: 10_000,
