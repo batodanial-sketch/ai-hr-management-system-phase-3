@@ -253,7 +253,11 @@ export async function setEmploymentStatus(
   const memory = await getMemoryAdapter();
   const user = await getCurrentUser();
   await assertRecordInActiveOrganization(memory, "employees", id, user.organizationId, "Employee");
-  await memory.update("employees", { column: "id", value: id }, { employment_status: status });
+  await memory.update(
+    "employees",
+    { column: "id", value: id },
+    { employment_status: status, status },
+  );
 
   void recordAudit({
     action: status === "terminated" ? "employee.offboard" : "employee.update",
@@ -261,6 +265,15 @@ export async function setEmploymentStatus(
     entityId: id,
     metadata: { status },
   });
+  if (status === "terminated") {
+    const event = {
+      employee_id: id,
+      organization_id: user.organizationId,
+      actor_id: user.id,
+    };
+    void dispatchWebhooks("employee.offboarded", event);
+    void emitWorkflowEvent("employee.offboarded", event);
+  }
 
   revalidatePath(`/employees/${id}`);
   revalidatePath("/employees");

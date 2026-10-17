@@ -100,6 +100,7 @@ export class EmployeeProfilePage extends BasePage {
 
   async saveProfile(): Promise<void> {
     await this.submitButton.click();
+    await this.page.waitForURL(/\/employees\/[^/]+$/);
     await this.waitForNetworkIdle();
   }
 
