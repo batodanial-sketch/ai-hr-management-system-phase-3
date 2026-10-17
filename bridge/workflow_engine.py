@@ -63,45 +63,63 @@ class WorkflowEngine:
         self._supabase = supabase
         self._run_counter = 0
 
-    async def trigger(self, request: WorkflowTriggerRequest) -> WorkflowExecution:
-        run_id = request.run_id or self._new_run_id()
-        nodes = request.workflow
+    async def trigger(
+        self, request: WorkflowTriggerRequest, organization_id: str | None = None
+    ) -> WorkflowExecution:
+        if self._supabase and not (organization_id or "").strip():
+            raise ValueError("Workflow execution requires a trusted organization scope.")
+        if self._supabase and request.workflow is not None:
+            raise ValueError("Inline workflow graphs are not accepted by the database-backed event endpoint.")
 
-        # Load a persisted definition when no inline workflow is provided.
-        if nodes is None:
-            nodes = await self._load_definition(request.event)
+        scoped_org = organization_id.strip() if organization_id else None
+        if request.workflow is not None:
+            definitions: list[tuple[str | None, list[WorkflowNode]]] = [(None, request.workflow)]
+        elif self._supabase and scoped_org:
+            definitions = await self._load_definitions(request.event, scoped_org)
+        else:
+            definitions = []
 
-        if not nodes:
-            await self._record_run(run_id, request.event, "no_workflow", [], None)
-            return WorkflowExecution(
-                run_id=run_id,
-                event=request.event,
-                status="no_workflow",
-                executed_actions=[],
-            )
+        if not definitions:
+            run_id = self._coerce_run_id(request.run_id)
+            await self._record_run(run_id, scoped_org, None, request.event, "no_workflow", [], None)
+            return WorkflowExecution(run_id=run_id, event=request.event, status="no_workflow", executed_actions=[])
 
-        try:
-            executed = await self._execute(nodes, request.payload)
-            await self._record_run(run_id, request.event, "completed", executed, None)
-            return WorkflowExecution(
-                run_id=run_id,
-                event=request.event,
-                status="completed",
-                executed_actions=executed,
-            )
-        except Exception as exc:  # noqa: BLE001 — record + re-raise to caller
-            logger.exception("Workflow execution failed for event %s", request.event)
-            await self._record_run(run_id, request.event, "failed", [], str(exc))
-            return WorkflowExecution(
-                run_id=run_id,
-                event=request.event,
-                status="failed",
-                executed_actions=[],
-                error=str(exc),
-            )
+        actions: list[str] = []
+        failures: list[str] = []
+        first_run_id: str | None = None
+        for workflow_id, nodes in definitions:
+            run_id = self._coerce_run_id(request.run_id) if len(definitions) == 1 else self._new_run_id()
+            first_run_id = first_run_id or run_id
+            try:
+                executed = await self._execute(nodes, request.payload, scoped_org)
+                actions.extend(executed)
+                await self._record_run(run_id, scoped_org, workflow_id, request.event, "completed", executed, None)
+            except Exception as exc:  # noqa: BLE001 — isolate failures between workflows
+                logger.exception("Workflow execution failed for event %s", request.event)
+                failures.append(str(exc))
+                await self._record_run(run_id, scoped_org, workflow_id, request.event, "failed", [], str(exc))
+
+        return WorkflowExecution(
+            run_id=first_run_id or self._new_run_id(),
+            event=request.event,
+            status="failed" if failures else "completed",
+            executed_actions=actions,
+            error="; ".join(failures)[:1000] if failures else None,
+        )
+
+    @staticmethod
+    def _coerce_run_id(value: str | None) -> str:
+        """Ensure run IDs satisfy the workflow_runs UUID primary key."""
+        import uuid
+        if value:
+            try:
+                return str(uuid.UUID(value))
+            except (ValueError, TypeError, AttributeError):
+                pass
+        return str(uuid.uuid4())
 
     async def _execute(
-        self, nodes: list[WorkflowNode], payload: dict[str, Any]
+        self, nodes: list[WorkflowNode], payload: dict[str, Any], organization_id: str | None
     ) -> list[str]:
         """Linear pass over nodes; condition nodes toggle the active branch."""
         executed: list[str] = []
@@ -123,26 +141,26 @@ class WorkflowEngine:
                         await asyncio.sleep(seconds)
                 continue
             if node.type == "action" and active:
-                label = await self._run_action(node, payload)
+                label = await self._run_action(node, payload, organization_id)
                 executed.append(label or node.label)
         return executed
 
     async def _run_action(
-        self, node: WorkflowNode, payload: dict[str, Any]
+        self, node: WorkflowNode, payload: dict[str, Any], organization_id: str | None
     ) -> str | None:
         action = str(node.config.get("action", "webhook"))
         if action == "send_email":
-            return await self._action_send_email(node, payload)
+            return await self._action_send_email(node, payload, organization_id)
         if action == "create_record":
-            return await self._action_create_record(node, payload)
+            return await self._action_create_record(node, payload, organization_id)
         if action == "update_record":
-            return await self._action_update_record(node, payload)
+            return await self._action_update_record(node, payload, organization_id)
         if action == "groq_evaluate":
             return await self._action_groq_evaluate(node, payload)
         return await self._action_webhook(node, payload)
 
     async def _action_send_email(
-        self, node: WorkflowNode, payload: dict[str, Any]
+        self, node: WorkflowNode, payload: dict[str, Any], organization_id: str | None
     ) -> str:
         to = str(node.config.get("to", "") or payload.get("email", ""))
         subject = str(node.config.get("subject", node.label))
@@ -153,10 +171,10 @@ class WorkflowEngine:
             await self._supabase.insert(
                 "notifications",
                 [{
+                    "organization_id": organization_id,
                     "kind": "workflow",
                     "title": subject,
                     "description": f"Triggered by workflow action '{node.label}'",
-                    "target": to,
                 }],
             )
         # 2. Send the email through the HTTP relay the app exposes, so the
@@ -182,26 +200,52 @@ class WorkflowEngine:
         return f"send_email:{subject}"
 
     async def _action_create_record(
-        self, node: WorkflowNode, payload: dict[str, Any]
+        self, node: WorkflowNode, payload: dict[str, Any], organization_id: str | None
     ) -> str:
         table = str(node.config.get("table", ""))
+        allowed_tables = {
+            "employees", "candidates", "leave_requests", "leave_balances",
+            "payroll_runs", "payroll_line_items", "expense_reports",
+            "notifications", "audit_logs", "performance_reviews",
+        }
+        if table not in allowed_tables:
+            raise ValueError("Workflow create_record target is not an allowed HR table.")
+        if self._supabase and not organization_id:
+            raise ValueError("Workflow record creation requires an organization scope.")
         fields = dict(node.config.get("fields", {}) or {})
         row = {key: value.format_map(payload) if isinstance(value, str) else value
                for key, value in fields.items()}
-        if self._supabase and table:
+        if self._supabase:
+            # Ignore any workflow/body-supplied organization and pin to the trusted header.
+            row["organization_id"] = organization_id
             await self._supabase.insert(table, [row])
         # Log only the target table and column count — the row may contain PII.
         logger.info("Workflow create_record table=%s fields=%d", table, len(row))
         return f"create_record:{table}"
 
     async def _action_update_record(
-        self, node: WorkflowNode, payload: dict[str, Any]
+        self, node: WorkflowNode, payload: dict[str, Any], organization_id: str | None
     ) -> str:
         table = str(node.config.get("table", ""))
+        allowed_tables = {
+            "employees", "candidates", "leave_requests", "leave_balances",
+            "payroll_runs", "payroll_line_items", "expense_reports",
+            "notifications", "audit_logs", "performance_reviews",
+        }
+        if table not in allowed_tables:
+            raise ValueError("Workflow update_record target is not an allowed HR table.")
         match = dict(node.config.get("match", {}) or {})
         patch = dict(node.config.get("fields", {}) or {})
-        if self._supabase and table:
-            await self._supabase.update(table, match, patch)
+        if self._supabase:
+            if not organization_id:
+                raise ValueError("Workflow record updates require an organization scope.")
+            if not match:
+                raise ValueError("Workflow record updates require a specific row match.")
+            if "organization_id" in match and str(match["organization_id"]) != organization_id:
+                raise ValueError("Workflow record match cannot change organization scope.")
+            match["organization_id"] = organization_id
+            patch.pop("organization_id", None)
+            await self._supabase.update(table, {str(k): str(v) for k, v in match.items()}, patch)
         # `match`/`patch` may contain PII — log the table and key count only.
         logger.info(
             "Workflow update_record table=%s match_keys=%d patch_fields=%d",
@@ -235,30 +279,53 @@ class WorkflowEngine:
             response.raise_for_status()
         return f"webhook:{url}"
 
-    async def _load_definition(self, event: str) -> list[WorkflowNode] | None:
+    async def _load_definitions(
+        self, event: str, organization_id: str
+    ) -> list[tuple[str, list[WorkflowNode]]]:
+        """Load active workflows within one trusted organization, then their nodes."""
         if not self._supabase:
-            return None
-        rows = await self._supabase.select(
-            "workflow_nodes",
-            filters={"trigger_event": event, "active": "true"},
+            return []
+        workflows = await self._supabase.select(
+            "workflows",
+            filters={
+                "organization_id": organization_id,
+                "trigger_event": event,
+                "status": "active",
+            },
             limit=100,
         )
-        if not rows:
-            return None
-        rows.sort(key=lambda row: row.get("position", 0))
-        return [
-            WorkflowNode(
-                id=str(row.get("id", f"node-{index}")),
-                type=row.get("type", "action"),  # type: ignore[arg-type]
-                label=str(row.get("label", "node")),
-                config=row.get("config") or {},
+        definitions: list[tuple[str, list[WorkflowNode]]] = []
+        for workflow in workflows:
+            workflow_id = str(workflow.get("id", ""))
+            if not workflow_id:
+                continue
+            rows = await self._supabase.select(
+                "workflow_nodes",
+                filters={"workflow_id": workflow_id},
+                limit=100,
             )
-            for index, row in enumerate(rows)
-        ]
+            rows.sort(key=lambda row: int(row.get("position", 0) or 0))
+            nodes: list[WorkflowNode] = []
+            for index, row in enumerate(rows):
+                node_type = row.get("type", "action")
+                if node_type not in {"trigger", "action", "condition", "delay"}:
+                    logger.warning("Ignoring unknown workflow node type at index %d", index)
+                    continue
+                nodes.append(WorkflowNode(
+                    id=str(row.get("id", f"node-{index}")),
+                    type=node_type,
+                    label=str(row.get("label", "node")),
+                    config=row.get("config") if isinstance(row.get("config"), dict) else {},
+                ))
+            if nodes:
+                definitions.append((workflow_id, nodes))
+        return definitions
 
     async def _record_run(
         self,
         run_id: str,
+        organization_id: str | None,
+        workflow_id: str | None,
         event: str,
         status: str,
         executed: list[str],
@@ -267,23 +334,28 @@ class WorkflowEngine:
         if not self._supabase:
             logger.info("workflow run %s [%s] %s → %s", run_id, event, status, executed)
             return
-        await self._supabase.insert(
-            "workflow_runs",
-            [{
-                "id": run_id,
-                "event": event,
-                "status": status,
-                "executed_actions": executed,
-                "error": error,
-            }],
-        )
+        if not organization_id:
+            logger.error("Skipped workflow run persistence because tenant scope was missing")
+            return
+        try:
+            await self._supabase.insert(
+                "workflow_runs",
+                [{
+                    "id": run_id,
+                    "organization_id": organization_id,
+                    "workflow_id": workflow_id,
+                    "event": event,
+                    "status": status,
+                    "executed_actions": executed,
+                    "error": error,
+                }],
+            )
+        except Exception as exc:  # noqa: BLE001 — audit persistence must not mask the run result
+            logger.warning("Could not persist workflow run status=%s: %s", status, exc)
 
     def _new_run_id(self) -> str:
-        import time
         import uuid
-
-        self._run_counter += 1
-        return f"run-{int(time.time())}-{uuid.uuid4().hex[:8]}"
+        return str(uuid.uuid4())
 
 
 def make_engine(supabase: SupabaseClient | None) -> WorkflowEngine:
