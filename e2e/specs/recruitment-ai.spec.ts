@@ -1,5 +1,5 @@
 import { expect, test } from "../fixtures/customTest";
-import { createAdminClient } from "../utils/supabase-test-seed";
+import { createAdminClient, E2E_CAND_ONE, E2E_CAND_TWO, E2E_CAND_THREE } from "../utils/supabase-test-seed";
 import { mockAiEvaluation } from "../utils/ai-mocks";
 
 /**
@@ -7,6 +7,20 @@ import { mockAiEvaluation } from "../utils/ai-mocks";
  * global-setup (e2e-cand-001..003) against the e2e-software-engineer-posting.
  */
 test.describe("Recruitment kanban", () => {
+  // Reset seeded stages so the first test's drag-and-drop doesn't leak into
+  // the stage-distribution assertion that follows it.
+  test.beforeEach(async () => {
+    const admin = createAdminClient();
+    const baseline = [
+      [E2E_CAND_ONE, "applied"],
+      [E2E_CAND_TWO, "interview"],
+      [E2E_CAND_THREE, "offer"],
+    ] as const;
+    for (const [id, stage] of baseline) {
+      const { error } = await admin.from("candidates").update({ stage }).eq("id", id);
+      if (error) throw new Error(`Failed to reset candidate ${id}: ${error.message}`);
+    }
+  });
   test("moves a candidate across stages and triggers an AI evaluation", async ({
     recruitmentKanbanPage,
     page,

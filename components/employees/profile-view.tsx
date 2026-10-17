@@ -73,7 +73,7 @@ export function ProfileView({ employee }: { employee: Employee }) {
               </h1>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">{employee.title}</Badge>
-                <div data-testid="employee-profile-status">
+                <div data-testid="employee-profile-status" data-status={employee.employmentStatus}>
                   <StatusBadge status={employee.employmentStatus} />
                 </div>
               </div>
