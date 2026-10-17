@@ -108,8 +108,10 @@ buffers in-memory (no binary fixtures committed) for upload/OCR flows.
 
 ## 8. Visual regression
 
-`visual-regression.spec.ts` uses `toHaveScreenshot`. Baselines live in
-`e2e/specs/__screenshots__`. Generate them once and commit:
+`visual-regression.spec.ts` uses Playwright's `toHaveScreenshot`. With the
+default Playwright snapshot path, baseline files live in
+`e2e/specs/visual-regression.spec.ts-snapshots/`. Generate them from the
+dedicated seeded E2E Supabase project, review the images, then commit:
 
 ```bash
 npx playwright test e2e/specs/visual-regression.spec.ts --update-snapshots
