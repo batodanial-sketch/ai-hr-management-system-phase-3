@@ -171,6 +171,8 @@ DECLARE
   cycle_id UUID;
   entry_id UUID;
   employee_org_id UUID;
+  employee_row_org_id UUID;
+  entry_employee_id UUID;
   currency_value CHAR(3);
 BEGIN
   IF NEW.payroll_run_id IS NOT NULL THEN
@@ -241,11 +243,12 @@ BEGIN
 
   IF NEW.payroll_entry_id IS NOT NULL THEN
     SELECT organization_id, employee_id
-    INTO employee_org_id, NEW.employee_id
+    INTO employee_row_org_id, entry_employee_id
     FROM public.payroll_entries
     WHERE id = NEW.payroll_entry_id;
 
-    NEW.organization_id := COALESCE(NEW.organization_id, employee_org_id);
+    NEW.employee_id := COALESCE(NEW.employee_id, entry_employee_id);
+    NEW.organization_id := COALESCE(NEW.organization_id, employee_row_org_id);
   END IF;
 
   IF NEW.line_type IS NULL THEN NEW.line_type := 'earning'; END IF;
@@ -271,7 +274,12 @@ AS $$
 DECLARE
   affected_run_id UUID;
 BEGIN
-  affected_run_id := COALESCE(NEW.payroll_run_id, OLD.payroll_run_id);
+  IF TG_OP = 'DELETE' THEN
+    affected_run_id := OLD.payroll_run_id;
+  ELSE
+    affected_run_id := NEW.payroll_run_id;
+  END IF;
+
   IF affected_run_id IS NOT NULL THEN
     UPDATE public.payroll_runs
     SET total_gross = COALESCE((SELECT SUM(gross_pay) FROM public.payroll_line_items WHERE payroll_run_id = affected_run_id), 0),
