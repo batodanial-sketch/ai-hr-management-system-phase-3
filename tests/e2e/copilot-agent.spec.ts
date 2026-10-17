@@ -6,12 +6,12 @@ import { expect, test, type Page, type Route } from "@playwright/test";
  * Hermetic: the AI bridge is never called. We intercept `/api/ai/copilot`
  * (the Next.js orchestrator) and replay a scripted SSE stream:
  *
- *   planner  → tool_call (confirmationRequired) → done (requiresConfirmation)
- *   approve  → tool_call (executing) → tool_result → delta → done
+ *   planner  → tool_call (confirmationRequired + proposalId) → done
+ *   approve  → proposalId-only request → tool_call → tool_result → done
  *
  * This exercises the full client path — streaming parser, approval card,
- * Approve/Deny interactions, the confirmToolCall resend, and the inline
- * result cards with live status badges — with zero external dependencies.
+ * Approve/Deny interactions, the server-side proposal-ID resend, and the
+ * inline result cards with live status badges — with zero external dependencies.
  */
 
 const COPILOT_PATH = "/copilot";
@@ -168,7 +168,7 @@ test.describe("Agentic Copilot tool loop", () => {
 
   test("read tools execute immediately and stream the final answer", async ({ page }) => {
     await routeCopilot(page, async (route, body) => {
-      if (body.confirmToolCall) {
+      if (body.approveProposal) {
         await route.fulfill({
           status: 200,
           contentType: "text/event-stream",
