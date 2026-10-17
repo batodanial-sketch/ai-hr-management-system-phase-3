@@ -77,6 +77,8 @@ export default defineConfig({
         E2E_ROLE_OVERRIDE_ENABLED: "1",
         EDGE_AUTH_RATE_LIMIT: "500",
         EDGE_WEBHOOK_RATE_LIMIT: "500",
+        EDGE_MODULE_RATE_LIMIT: "500",
+        EDGE_COPILOT_RATE_LIMIT: "500",
       },
       url: BASE_URL,
       reuseExistingServer: !CI,
