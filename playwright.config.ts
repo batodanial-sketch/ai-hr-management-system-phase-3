@@ -30,7 +30,11 @@ const SKIP_BRIDGE = process.env.E2E_BRIDGE_COMMAND === "true";
 export default defineConfig({
   testDir: ".",
   testMatch: ["e2e/**/*.spec.ts", "tests/e2e/**/*.spec.ts"],
-  fullyParallel: true,
+  // Several integration specs intentionally share deterministic seeded rows
+  // and perform cleanup in afterAll. Keep tests within each file serial so a
+  // parallel worker cannot delete/reset data while a sibling test is using it.
+  // Playwright still runs independent files in parallel (bounded by workers).
+  fullyParallel: false,
   forbidOnly: CI,
   retries: CI ? 2 : 0,
   workers: CI ? 2 : undefined,
