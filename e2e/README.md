@@ -118,7 +118,24 @@ npx playwright test e2e/specs/visual-regression.spec.ts --update-snapshots
 `maxDiffPixelRatio` is 0.02; adjust in the spec if your CI platform renders
 fonts with wider sub-pixel variance.
 
-## 9. CI troubleshooting
+## 9. CI secrets and troubleshooting
+
+The GitHub Actions `Playwright E2E` job requires these repository Actions secrets.
+Configure them under **Settings → Secrets and variables → Actions**. Use a
+dedicated E2E Supabase project and a dedicated, non-production test account;
+the suite writes and deletes seeded rows and the E2E user.
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY` (server-side secret key; never use the publishable key here)
+- `SUPABASE_PROJECT_REF`
+- `E2E_TEST_USER_EMAIL`
+- `E2E_TEST_USER_PASSWORD`
+- `BRIDGE_SECRET_KEY`
+
+The CI workflow checks that these values exist before starting Playwright. It
+reports missing secret *names* only and never prints secret values. Do not paste
+these credentials into source control or chat.
 
 - **`supabase start` fails** — ensure the Docker daemon is running and ports
   54322/54321 are free.
