@@ -17,6 +17,7 @@
 | BUG-005 | **Medium** | `app/actions/*`, webhook routes (288 sites) | Type safety / Anti-pattern | Widespread `as any` bypasses the generated `Database` types |
 | BUG-006 | **Low** | `bridge/workflow_engine.py:232`, `app/api/webhooks/external/outbound-trigger/route.ts` | Security — SSRF | Server posts to admin/buyer-supplied URLs with no allow-list |
 | BUG-007 | **Low** | `app/api/auth/signup/route.ts:15` | Security — weak policy | Password minimum of 6 chars, no strength rules |
+| BUG-008 | **Medium** | `app/api/webhooks/n8n-trigger/route.ts` | Resource exhaustion — oversized request buffering | Payload persistence was bounded only after the complete HTTP body had been buffered and parsed |
 
 ---
 
@@ -196,3 +197,19 @@ output: payload.status === 'succeeded' ? safePayload : {},
 ## 4. Security note (recurring)
 
 `.env.local` still contains **live secrets** (Supabase publishable/secret keys, Groq key) that have been pasted in chat across this session. These are production credentials — rotate them in the Supabase/Groq dashboards once testing concludes and update `.env.local` accordingly. Not repeated here; not committed (`.env.local` is gitignored).
+
+
+---
+
+### BUG-008 — n8n webhook buffers the full request before payload limits apply
+
+- **Location**: `app/api/webhooks/n8n-trigger/route.ts`
+- **Severity**: Medium · **Category**: Resource exhaustion / request validation
+
+**Root cause:** The endpoint previously called `request.text()` before validating the body. The later 8 KB persistence cap protected database writes but did not constrain memory spent buffering and parsing incoming HTTP requests.
+
+**Remediation:** The endpoint now rejects bodies larger than 64 KiB before JSON parsing. The shared `readBoundedRequestBody()` utility checks a valid `Content-Length` as an early guard and, independently, counts bytes while streaming. If the streamed body crosses the limit, it cancels the reader and returns a 413 response. The stream counter remains authoritative for missing, incorrect, or chunked content-length values.
+
+**Regression coverage:** `tests/unit/boundedRequestBody.test.ts` covers declared-length rejection, streamed-body rejection, UTF-8 byte counting, and successful reads under the cap.
+
+**Validation status:** Unit tests were added to the repository; CI execution is pending for the pull request. This entry does not claim that tests or a production deployment have already run successfully.
