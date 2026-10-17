@@ -32,14 +32,22 @@ test.describe("Landing visuals", () => {
 
     await expect(hero).toBeVisible();
 
-    // WebGL is not guaranteed on every CI runner. If the scene cannot mount,
-    // the hero must still render its token-driven background instead of going
-    // blank or crashing. On WebGL-capable runners, the canvas is checked too.
-    await expect.poll(async () => (await canvas.count()) > 0 || await fallback.isVisible(), {
-      timeout: 20_000,
-    }).toBe(true);
+    // Check browser capability rather than assuming headless Chromium has
+    // WebGL enabled. A capable runner must mount the scene; otherwise the
+    // documented CSS fallback must remain visibly rendered.
+    const webglAvailable = await page.evaluate(() => {
+      const canvas = document.createElement("canvas");
+      try {
+        return Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"));
+      } catch {
+        return false;
+      }
+    });
 
-    if ((await canvas.count()) === 0) {
+    if (webglAvailable) {
+      await expect(canvas).toBeAttached({ timeout: 20_000 });
+    } else {
+      await expect(fallback).toBeVisible();
       const backgroundImage = await fallback.evaluate((element) =>
         getComputedStyle(element).backgroundImage,
       );
