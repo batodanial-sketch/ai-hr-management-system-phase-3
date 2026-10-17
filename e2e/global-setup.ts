@@ -6,6 +6,7 @@ import {
   ensureE2eMembership,
   ensureTestUser,
   seedBaselineData,
+  E2E_ORG_ID,
 } from "./utils/supabase-test-seed";
 
 /**
@@ -176,6 +177,21 @@ export default async function globalSetup(): Promise<void> {
   await seedBaselineData(admin);
   const testUser = await ensureTestUser(admin, email, password);
   await ensureE2eMembership(admin, testUser.id);
+
+  // Pin to the fixture org because the canonical resolver honors the
+  // server-managed app_metadata organization_id when multiple memberships exist.
+  const { error: organizationClaimError } = await admin.auth.admin.updateUserById(
+    testUser.id,
+    {
+      app_metadata: {
+        ...(testUser.app_metadata ?? {}),
+        organization_id: E2E_ORG_ID,
+      },
+    },
+  );
+  if (organizationClaimError) {
+    throw new Error(`Failed to pin E2E organization claim: ${organizationClaimError.message}`);
+  }
 
   // Obtain a session for the test user so the browser can start authenticated.
   const client = createClient(supabaseUrl, serviceRoleKey, {

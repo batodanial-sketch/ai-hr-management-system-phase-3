@@ -70,7 +70,13 @@ export class LeavePage extends BasePage {
   }
 
   async submitRequest(input: LeaveRequestInput): Promise<void> {
-    await this.typeSelect.selectOption(input.type);
+    await this.typeSelect.click();
+    const leaveTypeLabel = {
+      pto: "Paid Time Off",
+      sick: "Sick Leave",
+      unpaid: "Unpaid Leave",
+    }[input.type];
+    await this.page.getByRole("option", { name: leaveTypeLabel, exact: true }).click();
     await this.startDateInput.fill(input.startDate);
     await this.endDateInput.fill(input.endDate);
     await this.reasonInput.fill(input.reason);

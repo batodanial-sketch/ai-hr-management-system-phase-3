@@ -74,7 +74,8 @@ export class EmployeeProfilePage extends BasePage {
     await this.firstNameInput.fill(input.firstName);
     await this.lastNameInput.fill(input.lastName);
     await this.emailInput.fill(input.email);
-    await this.departmentInput.fill(input.department);
+    await this.departmentInput.click();
+    await this.page.getByRole("option", { name: input.department, exact: true }).click();
     await this.roleInput.fill(input.role);
     await this.startDateInput.fill(input.startDate);
   }

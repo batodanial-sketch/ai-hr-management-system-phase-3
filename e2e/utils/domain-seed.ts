@@ -24,8 +24,8 @@ const LEAVE_002 = "00000000-0000-4000-8000-00000000e302";
 const BAL_PTO = "00000000-0000-4000-8000-00000000e401";
 const BAL_SICK = "00000000-0000-4000-8000-00000000e402";
 const BAL_ONE_PTO = "00000000-0000-4000-8000-00000000e403";
-const RUN_001 = "00000000-0000-4000-8000-00000000e501";
-const RUN_002 = "00000000-0000-4000-8000-00000000e502";
+export const RUN_001 = "00000000-0000-4000-8000-00000000e501";
+export const RUN_002 = "00000000-0000-4000-8000-00000000e502";
 const LINE_001 = "00000000-0000-4000-8000-00000000e601";
 const LINE_002 = "00000000-0000-4000-8000-00000000e602";
 const LINE_003 = "00000000-0000-4000-8000-00000000e603";
@@ -346,7 +346,7 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: DOMAIN_FLUXENTIQ,
         organization_id: E2E_ORG_ID,
-        domain: "fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         provisioning_status: "provisioned",
         membership_policy: "require_membership",
         allow_personal_accounts: false,
@@ -382,8 +382,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
         {
           id: MEMBERSHIP_001,
           organization_id: E2E_ORG_ID,
-          email: "member@fluxentiq.test",
-          domain: "fluxentiq.test",
+          email: "member@e2e.fluxentiq.test",
+          domain: "e2e.fluxentiq.test",
           role: "member",
           source_tag: E2E_MARKER,
         },
@@ -397,8 +397,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: INVITE_001,
         organization_id: E2E_ORG_ID,
-        email: "invited@fluxentiq.test",
-        domain: "fluxentiq.test",
+        email: "invited@e2e.fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         status: "pending",
         source_tag: E2E_MARKER,
       },
@@ -412,8 +412,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: ACCESS_001,
         organization_id: E2E_ORG_ID,
-        email: "approved@fluxentiq.test",
-        domain: "fluxentiq.test",
+        email: "approved@e2e.fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         status: "approved",
         token: "e2e-signed-token-123",
         source_tag: E2E_MARKER,
