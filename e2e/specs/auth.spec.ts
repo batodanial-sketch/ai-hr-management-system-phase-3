@@ -46,6 +46,10 @@ test.describe("Credential login", () => {
 });
 
 test.describe("Google Workspace SSO decision paths", () => {
+  // The mocked OAuth callback doesn't create a fresh auth session. Reuse the
+  // global authenticated E2E user so middleware can serve the target dashboard.
+  test.use({ storageState: "e2e/.auth/storageState.json" });
+
   test.beforeAll(async () => {
     await seedWorkspaceData(createAdminClient());
   });

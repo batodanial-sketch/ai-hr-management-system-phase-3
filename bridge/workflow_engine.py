@@ -172,7 +172,7 @@ class WorkflowEngine:
                 "notifications",
                 [{
                     "organization_id": organization_id,
-                    "kind": "workflow",
+                    "kind": "info",
                     "title": subject,
                     "description": f"Triggered by workflow action '{node.label}'",
                 }],

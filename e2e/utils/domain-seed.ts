@@ -19,7 +19,7 @@ import {
 /* Fixed UUIDs (domain-scoped)                                         */
 /* ------------------------------------------------------------------ */
 
-const LEAVE_001 = "00000000-0000-4000-8000-00000000e301";
+export const LEAVE_001 = "00000000-0000-4000-8000-00000000e301";
 const LEAVE_002 = "00000000-0000-4000-8000-00000000e302";
 const BAL_PTO = "00000000-0000-4000-8000-00000000e401";
 const BAL_SICK = "00000000-0000-4000-8000-00000000e402";
@@ -182,23 +182,44 @@ export async function seedLeaveData(
     [
       {
         id: BAL_PTO,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_CURRENT,
         type: "pto",
         balance_days: 20,
+        opening_days: 20,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
       {
         id: BAL_SICK,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_CURRENT,
         type: "sick",
         balance_days: 10,
+        opening_days: 10,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
       {
         id: BAL_ONE_PTO,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_ONE,
         type: "pto",
         balance_days: 20,
+        opening_days: 20,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
     ],
@@ -215,6 +236,7 @@ export async function seedLeaveData(
         type: "pto",
         start_date: "2026-03-10",
         end_date: "2026-03-12",
+        total_days: 3,
         status: "pending",
         source_tag: E2E_MARKER,
       },

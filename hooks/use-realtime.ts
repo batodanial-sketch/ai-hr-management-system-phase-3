@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { createClient, type RealtimeChannel } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import { type RealtimeChannel, type SupabaseClient } from "@supabase/supabase-js";
 import { supabasePublishableKey, supabaseUrl } from "@/lib/supabase/env";
 import { notifyRouteError } from "@/components/layout/route-error-toast";
 
@@ -71,15 +72,19 @@ export function useSupabaseRealtime<T = Record<string, unknown>>({
     }
 
     let channel: RealtimeChannel | null = null;
+    let client: SupabaseClient | null = null;
     let cancelled = false;
     setStatus("connecting");
 
     try {
-      const supabase = createClient(supabaseUrl(), supabasePublishableKey(), {
+      // Use the SSR-aware browser client so subscriptions share the Supabase
+      // auth session stored in cookies. A fresh raw JS client only has the
+      // publishable/anon key and is silently unable to pass table RLS policies.
+      client = createBrowserClient(supabaseUrl(), supabasePublishableKey(), {
         realtime: { params: { eventsPerSecond: 5 } },
       });
       const channelName = `fx-realtime-${table}-${event}-${filter ?? "all"}`;
-      channel = supabase.channel(channelName).on(
+      channel = client.channel(channelName).on(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         "postgres_changes" as any,
         {
@@ -128,9 +133,8 @@ export function useSupabaseRealtime<T = Record<string, unknown>>({
 
     return () => {
       cancelled = true;
-      if (channel) {
-        const supabase = createClient(supabaseUrl(), supabasePublishableKey());
-        void supabase.removeChannel(channel);
+      if (channel && client) {
+        void client.removeChannel(channel);
       }
     };
   }, [table, filter, event, enabled, configured, attempt]);

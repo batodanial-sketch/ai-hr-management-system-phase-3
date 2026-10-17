@@ -1,6 +1,6 @@
 import { expect, test } from "../fixtures/customTest";
 import { createAdminClient, E2E_EMP_ONE } from "../utils/supabase-test-seed";
-import { cleanupLeaveData, seedLeaveData } from "../utils/domain-seed";
+import { cleanupLeaveData, seedLeaveData, LEAVE_001 } from "../utils/domain-seed";
 
 /**
  * Attendance & leave suite: PTO submission, manager approval queue, and leave
@@ -48,6 +48,14 @@ test.describe("Attendance & leave", () => {
 
     // e2e-leave-001 is a 3-day PTO against a 20-day balance → 17 remaining.
     const admin = createAdminClient();
+    const { data: resolvedRequest, error: requestError } = await admin
+      .from("leave_requests")
+      .select("status")
+      .eq("id", LEAVE_001)
+      .single();
+    if (requestError) throw new Error(`Leave request query failed: ${requestError.message}`);
+    expect(resolvedRequest.status).toBe("approved");
+
     const { data, error } = await admin
       .from("leave_balances")
       .select("balance_days")
