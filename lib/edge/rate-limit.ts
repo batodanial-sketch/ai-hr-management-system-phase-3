@@ -177,12 +177,11 @@ export function edgeRateCategoryFor(pathname: string): EdgeRateCategory | null {
   ) {
     return "webhook";
   }
-  if (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/auth/")
-  ) {
+  // Apply the auth budget to authentication endpoints, not to GETs for
+  // the public login/signup pages themselves. Counting page navigation made
+  // normal reloads and browser test suites exhaust the 10-request budget
+  // before any credential or SSO action was attempted.
+  if (pathname.startsWith("/api/auth")) {
     return "auth";
   }
   if (pathname.startsWith("/api/ai/") || pathname.startsWith("/api/engine/")) {
