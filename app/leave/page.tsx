@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getLeaveBalances, getLeaveRequests } from "@/lib/api";
+import { getEmployees, getLeaveBalances, getLeaveRequests } from "@/lib/api";
+import { getCurrentUser } from "@/lib/auth";
 import { ApprovalQueue } from "@/components/leave/approval-queue";
 import { LeaveBalanceCard } from "@/components/leave/leave-balance-card";
 import { LeaveRequestForm } from "@/components/leave/leave-request-form";
@@ -11,9 +12,22 @@ export const metadata: Metadata = {
 };
 
 export default async function LeavePage() {
-  const balances = await getLeaveBalances();
-  const requests = await getLeaveRequests();
-  const myRequests = requests.slice(0, 2);
+  const [balances, requests, employees, user] = await Promise.all([
+    getLeaveBalances(),
+    getLeaveRequests(),
+    getEmployees(),
+    getCurrentUser(),
+  ]);
+
+  // The approval queue is team-wide for authorized managers, but "My requests"
+  // must never show another employee's leave details.
+  const normalizedEmail = user.email.trim().toLowerCase();
+  const currentEmployee = normalizedEmail
+    ? employees.find((employee) => employee.email.trim().toLowerCase() === normalizedEmail)
+    : undefined;
+  const myRequests = currentEmployee
+    ? requests.filter((request) => request.employeeId === currentEmployee.id)
+    : [];
 
   return (
     <div className="space-y-6">
