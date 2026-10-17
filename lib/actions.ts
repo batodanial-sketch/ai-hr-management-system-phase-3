@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
@@ -30,10 +32,9 @@ import type {
  * on Supabase, since profiles/memberships reference auth.users.
  */
 
-function syntheticId(prefix: string): string {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random()
-    .toString(36)
-    .slice(2, 7)}`;
+/** PostgreSQL-backed records use UUID primary keys; keep memory and live adapters aligned. */
+function syntheticId(_prefix: string): string {
+  return randomUUID();
 }
 
 /* ------------------------------------------------------------------ */
@@ -131,9 +132,11 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
   await memory.insert("employees", {
     id,
     organization_id: user.organizationId,
+    employee_number: `EMP-${id.slice(0, 8).toUpperCase()}`,
     first_name: data.firstName,
     last_name: data.lastName,
     email: data.email,
+    work_email: data.email,
     department: data.department,
     role: data.role,
     title: data.role,
