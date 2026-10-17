@@ -141,9 +141,12 @@ these credentials into source control or chat.
 
 - **`supabase start` fails** — ensure the Docker daemon is running and ports
   54322/54321 are free.
-- **Missing env** — `global-setup.ts` throws with the exact variable name; the
-  workflow supplies Supabase values from `supabase status -o env`.
-- **Visual diff flakes** — bump `maxDiffPixelRatio` (0.02 → 0.05) or mask the
-  live clock/avatar region rather than deleting baselines.
-- **Shard isolation** — each shard runs `global-setup` independently; test data
-  is `source_tag`-scoped so parallel workers do not collide.
+- **Missing env** — `global-setup.ts` throws with the exact variable name.
+  Local runs may source `supabase status -o env` after starting a local stack;
+  GitHub Actions uses the repository secrets listed above.
+- **Visual diff flakes** — review screenshot artifacts and mask a specifically
+  dynamic region rather than deleting baselines or widening the pixel threshold
+  without evidence.
+- **Shared seeded data** — tests inside each Playwright spec file run serially
+  because their `beforeAll`/ `afterAll` hooks own deterministic fixture rows.
+  Independent spec files still run in separate workers.
