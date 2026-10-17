@@ -28,6 +28,7 @@ export default async function LeavePage() {
   const myRequests = currentEmployee
     ? requests.filter((request) => request.employeeId === currentEmployee.id)
     : [];
+  const canViewTeamLeave = user.role === "owner" || user.role === "admin" || user.role === "manager";
 
   return (
     <div className="space-y-6">
@@ -76,7 +77,7 @@ export default async function LeavePage() {
             </div>
           </div>
 
-          <ApprovalQueue requests={requests} />
+          {canViewTeamLeave ? <ApprovalQueue requests={requests} /> : null}
         </div>
       </section>
     </div>
