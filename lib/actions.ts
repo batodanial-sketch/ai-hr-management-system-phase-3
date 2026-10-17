@@ -9,6 +9,7 @@ import { emitWorkflowEvent } from "@/lib/bridge";
 import { getCurrentUser } from "@/lib/auth";
 import { requireRole } from "@/lib/rbac";
 import { getMemoryAdapter } from "@/lib/memory/factory";
+import type { Row } from "@/lib/memory/types";
 import { getLicenseState, TRIAL_MAX_EMPLOYEES } from "@/lib/license";
 import { recordAudit, logAuditEvent } from "@/lib/audit";
 import { createNotification } from "@/lib/notifications";
@@ -96,6 +97,25 @@ function validate<T>(schema: z.ZodType<T>, input: unknown): T {
   return result.data;
 }
 
+async function assertRecordInActiveOrganization(
+  memory: Awaited<ReturnType<typeof getMemoryAdapter>>,
+  table: string,
+  id: string,
+  organizationId: string | null,
+  label: string,
+): Promise<void> {
+  if (!organizationId) {
+    throw new Error("No active workspace.");
+  }
+  const rows = await memory.select<Row>(table, {
+    column: "organization_id",
+    value: organizationId,
+  });
+  if (!rows.some((row) => String(row.id) === id)) {
+    throw new Error(`${label} was not found in the active workspace.`);
+  }
+}
+
 export interface EmployeeInput {
   firstName: string;
   lastName: string;
@@ -116,12 +136,19 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
   const data = validate(employeeSchema, input);
   const id = syntheticId("emp");
   const user = await getCurrentUser();
+  if (!user.organizationId) {
+    throw new Error("No active workspace.");
+  }
   const memory = await getMemoryAdapter();
 
-  // Trial headcount cap — authoritative server-side enforcement.
+  // Trial headcount cap is tenant-scoped; another customer's employees must
+  // never consume this organization's trial allowance.
   const license = await getLicenseState();
   if (license?.tier === "TRIAL") {
-    const existing = await memory.select("employees");
+    const existing = await memory.select<Row>("employees", {
+      column: "organization_id",
+      value: user.organizationId,
+    });
     if (existing.length >= TRIAL_MAX_EMPLOYEES) {
       throw new Error(
         `The free trial is limited to ${TRIAL_MAX_EMPLOYEES} employees. Upgrade to Pro for unlimited headcount.`,
@@ -172,6 +199,51 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
   return { id };
 }
 
+/** Updates an employee profile without changing its tenant or employment status. */
+export async function updateEmployee(id: string, input: EmployeeInput): Promise<void> {
+  await requireRole("HR_ADMIN");
+  const data = validate(employeeSchema, input);
+  const user = await getCurrentUser();
+  const memory = await getMemoryAdapter();
+  await assertRecordInActiveOrganization(memory, "employees", id, user.organizationId, "Employee");
+
+  await memory.update("employees", { column: "id", value: id }, {
+    first_name: data.firstName,
+    last_name: data.lastName,
+    email: data.email,
+    work_email: data.email,
+    department: data.department,
+    role: data.role,
+    title: data.role,
+    start_date: data.startDate,
+    location: data.location ?? null,
+  });
+
+  void recordAudit({
+    action: "employee.update",
+    entity: "employee",
+    entityId: id,
+    metadata: { email: data.email, department: data.department },
+  });
+  void dispatchWebhooks("employee.updated", {
+    employee_id: id,
+    email: data.email,
+    first_name: data.firstName,
+    last_name: data.lastName,
+  });
+  void emitWorkflowEvent("employee.updated", {
+    employee_id: id,
+    email: data.email,
+    first_name: data.firstName,
+    last_name: data.lastName,
+    department: data.department,
+  });
+
+  revalidatePath("/employees");
+  revalidatePath(`/employees/${id}`);
+  revalidatePath(`/employees/${id}/edit`);
+}
+
 /** Updates an employee's employment status (used by the offboarding flow). */
 export async function setEmploymentStatus(
   id: string,
@@ -179,6 +251,8 @@ export async function setEmploymentStatus(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "employees", id, user.organizationId, "Employee");
   await memory.update("employees", { column: "id", value: id }, { employment_status: status });
 
   void recordAudit({
@@ -199,6 +273,8 @@ export async function moveCandidateStage(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "candidates", id, user.organizationId, "Candidate");
   await memory.update("candidates", { column: "id", value: id }, { stage });
 
   void recordAudit({ action: "candidate.move", entity: "candidate", entityId: id, metadata: { stage } });
@@ -228,18 +304,25 @@ export async function requestLeave(input: LeaveRequestInput): Promise<ActionResu
     throw new Error("End date must be on or after the start date.");
   }
 
-  const email = user.email;
-  const employees = await memory.select<{
-    id: string;
-    first_name: string;
-    last_name: string;
-  }>("employees", { column: "email", value: email });
-  const employee = employees[0];
+  if (!user.id || !user.organizationId || !user.email) {
+    throw new Error("An authenticated workspace user is required to request leave.");
+  }
 
-  const employeeId = employee?.id ?? "00000000-0000-4000-8000-000000000001";
-  const employeeName = employee
-    ? `${employee.first_name} ${employee.last_name}`
-    : user.fullName;
+  const employees = await memory.select<Row>("employees", {
+    column: "organization_id",
+    value: user.organizationId,
+  });
+  const normalizedEmail = user.email.trim().toLowerCase();
+  const employee = employees.find((row) =>
+    String(row.email ?? "").trim().toLowerCase() === normalizedEmail ||
+    String(row.work_email ?? "").trim().toLowerCase() === normalizedEmail,
+  );
+  if (!employee) {
+    throw new Error("Your employee record is not linked to the active workspace.");
+  }
+
+  const employeeId = String(employee.id);
+  const employeeName = `${String(employee.first_name ?? "")} ${String(employee.last_name ?? "")}`.trim() || user.fullName;
 
   await memory.insert("leave_requests", {
     id,
@@ -285,6 +368,8 @@ export async function resolveLeaveRequest(
 ): Promise<void> {
   await requireRole("MANAGER");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "leave_requests", id, user.organizationId, "Leave request");
   await memory.update("leave_requests", { column: "id", value: id }, { status });
 
   void recordAudit({ action: "leave.resolve", entity: "leave_request", entityId: id, metadata: { status } });
@@ -302,6 +387,8 @@ export async function resolveLeaveRequest(
 export async function executePayrollRun(id: string): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "payroll_runs", id, user.organizationId, "Payroll run");
   await memory.update("payroll_runs", { column: "id", value: id }, { status: "completed" });
 
   void recordAudit({ action: "payroll.execute", entity: "payroll_run", entityId: id });
@@ -322,6 +409,8 @@ export async function setPayrollRunStatus(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "payroll_runs", id, user.organizationId, "Payroll run");
   await memory.update("payroll_runs", { column: "id", value: id }, { status });
   revalidatePath("/payroll");
 }

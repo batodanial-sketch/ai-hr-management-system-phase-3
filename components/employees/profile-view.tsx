@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Mail,
   MapPin,
+  Pencil,
   UserRoundX,
 } from "lucide-react";
 import { setEmploymentStatus } from "@/lib/actions";
@@ -79,7 +80,13 @@ export function ProfileView({ employee }: { employee: Employee }) {
             </div>
           </div>
           {canManage && employee.employmentStatus !== "terminated" && (
-            <Dialog open={offboardOpen} onOpenChange={setOffboardOpen}>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button asChild variant="outline" data-testid="employee-edit-button">
+                <Link href={`/employees/${employee.id}/edit`}>
+                  <Pencil className="h-4 w-4" /> Edit profile
+                </Link>
+              </Button>
+              <Dialog open={offboardOpen} onOpenChange={setOffboardOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="destructive"
@@ -111,7 +118,8 @@ export function ProfileView({ employee }: { employee: Employee }) {
                   </Button>
                 </DialogFooter>
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           )}
         </div>
 

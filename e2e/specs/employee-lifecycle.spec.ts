@@ -53,6 +53,7 @@ test.describe("Employee lifecycle", () => {
     const admin = createAdminClient();
     try {
       await employeeProfilePage.gotoProfile(E2E_EMP_TWO);
+      await employeeProfilePage.openEdit();
 
       await employeeProfilePage.setFirstName("E2E Updated");
       await employeeProfilePage.saveProfile();
