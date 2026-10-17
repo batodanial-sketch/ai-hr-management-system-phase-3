@@ -252,9 +252,21 @@ BEGIN
   END IF;
 
   IF NEW.line_type IS NULL THEN NEW.line_type := 'earning'; END IF;
-  IF NEW.code IS NULL THEN NEW.code := 'PAYROLL-SUMMARY'; END IF;
-  IF NEW.label IS NULL THEN NEW.label := COALESCE(NEW.employee_name, 'Employee') || ' payroll summary'; END IF;
-  IF NEW.amount IS NULL THEN NEW.amount := COALESCE(NEW.gross_pay, NEW.net_pay, 0); END IF;
+  -- The compatibility migration provides defaults for legacy NOT NULL fields.
+  -- Replace those placeholders for payroll-run summary rows so the canonical
+  -- payroll entry and line item reflect the same gross/net values.
+  IF NEW.code IS NULL OR (NEW.payroll_run_id IS NOT NULL AND NEW.code = 'base') THEN
+    NEW.code := 'PAYROLL-SUMMARY';
+  END IF;
+  IF NEW.label IS NULL OR (NEW.payroll_run_id IS NOT NULL AND NEW.label = 'Base pay') THEN
+    NEW.label := COALESCE(NEW.employee_name, 'Employee') || ' payroll summary';
+  END IF;
+  IF NEW.amount IS NULL OR (
+    NEW.payroll_run_id IS NOT NULL AND NEW.amount = 0 AND
+    COALESCE(NEW.gross_pay, NEW.net_pay, 0) <> 0
+  ) THEN
+    NEW.amount := COALESCE(NEW.gross_pay, NEW.net_pay, 0);
+  END IF;
 
   RETURN NEW;
 END;
