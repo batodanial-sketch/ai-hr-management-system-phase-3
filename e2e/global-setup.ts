@@ -83,6 +83,8 @@ function buildStorageState(params: {
     throw new Error(`Invalid E2E_BASE_URL "${baseUrl}".`);
   }
 
+  const trialCookieExpires = Math.floor(Date.now() / 1000) + 15 * 24 * 60 * 60;
+
   return {
     cookies: [
       {
@@ -92,6 +94,19 @@ function buildStorageState(params: {
         path: "/",
         expires: -1,
         httpOnly: false,
+        secure,
+        sameSite: "Lax",
+      },
+      // Middleware checks the trial/paid-license cookie separately from the
+      // persisted license state. Keep the disposable E2E account past that
+      // guard after global setup writes the temporary trial into settings.
+      {
+        name: "fluxentiq.trial",
+        value: "valid",
+        domain: hostname,
+        path: "/",
+        expires: trialCookieExpires,
+        httpOnly: true,
         secure,
         sameSite: "Lax",
       },
