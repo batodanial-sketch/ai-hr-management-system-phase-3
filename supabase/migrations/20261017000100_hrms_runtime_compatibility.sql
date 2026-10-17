@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION public.ensure_legacy_leave_type(
 RETURNS UUID
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
 DECLARE
   normalized_type TEXT := lower(trim(COALESCE(p_type, 'pto')));
@@ -86,7 +86,7 @@ CREATE OR REPLACE FUNCTION public.prepare_legacy_leave_request()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
 BEGIN
   IF NEW.leave_type_id IS NULL THEN
@@ -124,7 +124,7 @@ CREATE OR REPLACE FUNCTION public.prepare_legacy_leave_balance()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
 DECLARE
   employee_org_id UUID;
@@ -192,7 +192,7 @@ CREATE OR REPLACE FUNCTION public.prepare_legacy_payroll_line_item()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
 DECLARE
   run_row RECORD;
@@ -330,7 +330,7 @@ CREATE OR REPLACE FUNCTION public.recalculate_legacy_payroll_run_totals()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
 DECLARE
   affected_run_id UUID;
