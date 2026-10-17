@@ -64,6 +64,7 @@ jobs:
     needs: typecheck-and-build
     env:
       APP_ENV: development
+      E2E_PREPARE_LICENSE: "1"
       E2E_BASE_URL: http://localhost:3000
       E2E_WEBSERVER_COMMAND: "npm run start"
       E2E_BRIDGE_COMMAND: "true"
@@ -159,6 +160,7 @@ jobs:
     needs: typecheck-and-build
     env:
       APP_ENV: development
+      E2E_PREPARE_LICENSE: "1"
       E2E_SERIAL: "1"
       E2E_BASE_URL: http://localhost:3000
       E2E_BRIDGE_URL: http://localhost:8000

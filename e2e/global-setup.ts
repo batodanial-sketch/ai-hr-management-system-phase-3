@@ -132,9 +132,29 @@ export default async function globalSetup(): Promise<void> {
   if (!hasSupabaseEnv) {
     const stateDir = path.join(process.cwd(), "e2e", ".auth");
     await mkdir(stateDir, { recursive: true });
+
+    // The local-demo browser suites still pass through middleware's license
+    // cookie gate. Only add this bypass when CI explicitly prepared temporary
+    // E2E trial settings; never invent an entitlement for an ordinary local run.
+    const baseUrl = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+    const state: StorageState = { cookies: [], origins: [] };
+    if (process.env.E2E_PREPARE_LICENSE === "1") {
+      const parsed = new URL(baseUrl);
+      state.cookies.push({
+        name: "fluxentiq.trial",
+        value: "valid",
+        domain: parsed.hostname,
+        path: "/",
+        expires: Math.floor(Date.now() / 1000) + 15 * 24 * 60 * 60,
+        httpOnly: true,
+        secure: parsed.protocol === "https:",
+        sameSite: "Lax",
+      });
+      state.origins.push({ origin: parsed.origin, localStorage: [] });
+    }
     await writeFile(
       path.join(stateDir, "storageState.json"),
-      JSON.stringify({ cookies: [], origins: [] }),
+      JSON.stringify(state, null, 2),
       "utf8",
     );
     return;
