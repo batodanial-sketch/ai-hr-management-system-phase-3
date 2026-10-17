@@ -31,11 +31,13 @@ function configuredPositiveLimit(name: string, fallback: number): number {
   return Number.isSafeInteger(value) && value > 0 ? value : fallback;
 }
 
+const DEFAULT_COPILOT_LIMIT = configuredPositiveLimit("EDGE_COPILOT_RATE_LIMIT", 60);
+
 export const EDGE_LIMITS: Record<EdgeRateCategory, number> = {
   auth: configuredPositiveLimit("EDGE_AUTH_RATE_LIMIT", 10),
   webhook: configuredPositiveLimit("EDGE_WEBHOOK_RATE_LIMIT", 10),
-  module: 100,
-  copilot: 30, // tier-adjusted in middleware via the license cookie
+  module: configuredPositiveLimit("EDGE_MODULE_RATE_LIMIT", 100),
+  copilot: DEFAULT_COPILOT_LIMIT,
 };
 
 /** Copilot orchestrator tier budgets (req/min) — mirrors lib/rate-limit. */
@@ -45,7 +47,7 @@ export const EDGE_COPILOT_TIER_LIMITS: Record<string, number> = {
   ENTERPRISE: 600,
 };
 
-export const EDGE_DEFAULT_COPILOT_LIMIT = 60;
+export const EDGE_DEFAULT_COPILOT_LIMIT = DEFAULT_COPILOT_LIMIT;
 
 const WINDOW_SECONDS = 60;
 
