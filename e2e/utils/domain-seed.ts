@@ -154,6 +154,8 @@ export async function seedCurrentEmployee(
       first_name: "E2E",
       last_name: "CurrentUser",
       email,
+      employee_number: "E2E-CURRENT",
+      work_email: email,
       department: "People Ops",
       role: "HR Administrator",
       employment_status: "active",
