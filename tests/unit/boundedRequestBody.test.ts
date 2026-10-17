@@ -1,4 +1,4 @@
-import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
+import { readBoundedRequestBody } from "@/lib/security/bounded-requested-body";
 
 describe("readBoundedRequestBody", () => {
   it("rejects a body early when Content-Length exceeds the byte limit", async () => {
