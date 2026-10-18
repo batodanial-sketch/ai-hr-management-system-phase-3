@@ -463,7 +463,24 @@ export async function resolveLeaveRequest(
   const previousStatus = String(request.status ?? "pending");
   const settings = await readSettings();
   const databaseReconcilesBalance = settings.memory.provider === "supabase" && hasSupabaseEnv();
-  await memory.update("leave_requests", { column: "id", value: id }, { status });
+  try {
+    await memory.update("leave_requests", { column: "id", value: id }, { status });
+  } catch (error) {
+    console.error("[resolveLeaveRequest] Failed to persist leave decision", error);
+    throw error;
+  }
+  // Supabase may return no error for an UPDATE that matched zero rows when
+  // row-level security filters the target. Verify the decision was persisted.
+  const persistedRequests = await memory.select<Row>("leave_requests", {
+    column: "organization_id",
+    value: organizationId,
+  });
+  const persistedRequest = persistedRequests.find((row) => String(row.id) === id);
+  if (!persistedRequest || String(persistedRequest.status) !== status) {
+    throw new Error(
+      "Leave decision was not persisted. Confirm workspace permissions and database connectivity.",
+    );
+  }
   if (!databaseReconcilesBalance) {
     try {
       await reconcileLeaveBalanceInMemory(memory, request, previousStatus, status);

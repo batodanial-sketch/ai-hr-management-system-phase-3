@@ -108,6 +108,7 @@ export class LeavePage extends BasePage {
     await expect(row).toBeVisible();
     await row.locator('[data-testid="leave-approve-button"]').click();
     await this.waitForNetworkIdle();
+    await this.assertNoActionError("approval");
   }
 
   async rejectRequest(employeeName: string): Promise<void> {
@@ -115,6 +116,15 @@ export class LeavePage extends BasePage {
     await expect(row).toBeVisible();
     await row.locator('[data-testid="leave-reject-button"]').click();
     await this.waitForNetworkIdle();
+    await this.assertNoActionError("rejection");
+  }
+
+  private async assertNoActionError(action: "approval" | "rejection"): Promise<void> {
+    const error = this.page.getByTestId("leave-action-error");
+    if (await error.isVisible().catch(() => false)) {
+      const message = (await error.textContent())?.trim() || "unknown persistence error";
+      throw new Error("Leave request " + action + " failed: " + message);
+    }
   }
 
   /** Asserts a queue row now reflects the given status. */

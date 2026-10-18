@@ -41,14 +41,23 @@ export function ApprovalQueue({ requests }: { requests: LeaveRequest[] }) {
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   const [aiCheckingId, setAiCheckingId] = React.useState<string | null>(null);
   const [aiDecisions, setAiDecisions] = React.useState<Record<string, PtoAiDecision>>({});
+  const [actionError, setActionError] = React.useState<string | null>(null);
 
   const resolve = async (id: string, status: "approved" | "rejected") => {
     setPendingId(id);
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status } : item)),
-    );
-    await resolveLeaveRequest(id, status);
-    setPendingId(null);
+    setActionError(null);
+    try {
+      // Only reflect the decision after the server confirms it was saved.
+      await resolveLeaveRequest(id, status);
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, status } : item)),
+      );
+    } catch (error) {
+      console.error("Failed to persist leave request decision", error);
+      setActionError("The leave decision could not be saved. Please refresh and retry.");
+    } finally {
+      setPendingId(null);
+    }
   };
 
   const runAiCheck = async (request: LeaveRequest) => {
@@ -111,6 +120,15 @@ export function ApprovalQueue({ requests }: { requests: LeaveRequest[] }) {
         </p>
       </div>
 
+      {actionError ? (
+        <p
+          data-testid="leave-action-error"
+          role="alert"
+          className="px-5 py-3 text-sm text-destructive"
+        >
+          {actionError}
+        </p>
+      ) : null}
       <div className="divide-y divide-border/60">
         {items.map((request) => (
           <div
