@@ -62,6 +62,13 @@ test.describe("Realtime dashboard feed", () => {
     const merchant = `Realtime E2E ${Date.now()}`;
     await page.goto("/expenses");
     await expect(page.getByTestId("expenses-table")).toBeVisible();
+    // Server-rendered HTML can appear before client hydration. Wait for the
+    // live subscription itself so this test does not race the React effect.
+    await expect(page.getByTestId("realtime-status-expense_reports")).toHaveAttribute(
+      "data-status",
+      "subscribed",
+      { timeout: 15_000 },
+    );
 
     // Mutate the table from outside the browser (as a workflow/webhook would).
     const { error: insertError } = await admin.from("expense_reports").insert({

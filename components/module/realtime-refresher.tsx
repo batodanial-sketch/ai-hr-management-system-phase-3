@@ -75,10 +75,17 @@ function RealtimeSubscriber({
   organizationId?: string | null;
   onEvent: () => void;
 }) {
-  useSupabaseRealtime({
+  const { status } = useSupabaseRealtime({
     table,
     filter: organizationId ? `organization_id=eq.${organizationId}` : undefined,
     onEvent: () => onEvent(),
   });
-  return null;
+  return (
+    <span
+      aria-hidden="true"
+      className="sr-only"
+      data-testid={"realtime-status-" + table}
+      data-status={status}
+    />
+  );
 }
