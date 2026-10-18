@@ -582,12 +582,19 @@ async def evaluate_pto(
 
 
 @app.post("/api/workflows/trigger")
-async def trigger_workflow(request: WorkflowTriggerRequest):
-    """Triggers a workflow for a domain event and returns the execution result."""
+async def trigger_workflow(http_request: Request, request: WorkflowTriggerRequest):
+    """Run tenant-scoped active workflows in response to a trusted domain event."""
+    organization_id = _org_id_from_request(http_request)
+    if not organization_id:
+        raise HTTPException(status_code=422, detail="A trusted X-Organization-Id header is required.")
+    if request.workflow is not None:
+        raise HTTPException(status_code=400, detail="Inline workflow graphs are not accepted by this endpoint.")
     try:
-        result = await workflow_engine.trigger(request)
+        result = await workflow_engine.trigger(request, organization_id=organization_id)
     except SupabaseError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail="Workflow storage operation failed.") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     return JSONResponse(result.model_dump())
 
 

@@ -38,9 +38,9 @@ export class PayrollPage extends BasePage {
   }
 
   private runRow(runId: string): Locator {
-    return this.getByTestId("payroll-run-row").filter({
-      has: this.page.locator(`[data-run-id="${runId}"]`),
-    }).first();
+    return this.page.locator(
+      `[data-testid="payroll-run-row"][data-run-id="${runId}"]`,
+    );
   }
 
   async executeRun(): Promise<void> {
@@ -61,9 +61,9 @@ export class PayrollPage extends BasePage {
   }
 
   private lineRow(employeeId: string): Locator {
-    return this.getByTestId("payroll-line-row").filter({
-      has: this.page.locator(`[data-employee-id="${employeeId}"]`),
-    }).first();
+    return this.page.locator(
+      `[data-testid="payroll-line-row"][data-employee-id="${employeeId}"]`,
+    );
   }
 
   private async lineValue(employeeId: string, field: string): Promise<number> {
@@ -104,7 +104,8 @@ export class PayrollPage extends BasePage {
   }
 
   async selectCurrency(currency: string): Promise<void> {
-    await this.currencySelect.selectOption(currency);
+    await this.currencySelect.click();
+    await this.page.getByRole("option", { name: currency, exact: true }).click();
     await this.waitForNetworkIdle();
   }
 

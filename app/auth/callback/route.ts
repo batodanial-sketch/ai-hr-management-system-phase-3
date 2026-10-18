@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getLicenseState, startTrial } from "@/lib/license";
 import { supabaseUrl, supabasePublishableKey } from "@/lib/supabase/env";
 import { attachOrganizationClaim } from "@/lib/tenant";
+import { resolveWorkspaceSsoDecision } from "@/lib/auth/workspace-sso";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const code = searchParams.get("code");
   const next = safeNext(searchParams.get("next"));
   const wantsTrial = searchParams.get("trial") === "true";
+  const wantsWorkspaceSso = searchParams.get("workspace") === "true";
 
   const url = supabaseUrl();
   const anonKey = supabasePublishableKey();
@@ -69,9 +71,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  // Pin the user's tenant to app_metadata (Google signup provisions a new org
-  // via the handle_new_user trigger; returning users already have one).
-  if (data.user) {
+  // Workspace SSO is policy-checked using the authenticated Supabase
+  // identity only. Browser-supplied email/domain fields are never trusted.
+  if (data.user && wantsWorkspaceSso) {
+    const decision = await resolveWorkspaceSsoDecision(
+      data.user.email ?? "",
+      data.user.id,
+      data.user.app_metadata,
+    );
+    if (!decision.redirectTo) {
+      const resultUrl = new URL("/login", origin);
+      resultUrl.searchParams.set("ssoDecision", decision.decision);
+      resultUrl.searchParams.set("email", decision.email);
+      resultUrl.searchParams.set("domain", decision.domain);
+      return NextResponse.redirect(resultUrl);
+    }
+  } else if (data.user) {
+    // Non-workspace sign-ins keep the existing tenant-pinning behavior.
     await attachOrganizationClaim(data.user.id);
   }
 

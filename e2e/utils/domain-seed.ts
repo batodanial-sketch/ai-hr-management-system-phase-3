@@ -19,13 +19,13 @@ import {
 /* Fixed UUIDs (domain-scoped)                                         */
 /* ------------------------------------------------------------------ */
 
-const LEAVE_001 = "00000000-0000-4000-8000-00000000e301";
+export const LEAVE_001 = "00000000-0000-4000-8000-00000000e301";
 const LEAVE_002 = "00000000-0000-4000-8000-00000000e302";
 const BAL_PTO = "00000000-0000-4000-8000-00000000e401";
 const BAL_SICK = "00000000-0000-4000-8000-00000000e402";
 const BAL_ONE_PTO = "00000000-0000-4000-8000-00000000e403";
-const RUN_001 = "00000000-0000-4000-8000-00000000e501";
-const RUN_002 = "00000000-0000-4000-8000-00000000e502";
+export const RUN_001 = "00000000-0000-4000-8000-00000000e501";
+export const RUN_002 = "00000000-0000-4000-8000-00000000e502";
 const LINE_001 = "00000000-0000-4000-8000-00000000e601";
 const LINE_002 = "00000000-0000-4000-8000-00000000e602";
 const LINE_003 = "00000000-0000-4000-8000-00000000e603";
@@ -154,6 +154,8 @@ export async function seedCurrentEmployee(
       first_name: "E2E",
       last_name: "CurrentUser",
       email,
+      employee_number: "E2E-CURRENT",
+      work_email: email,
       department: "People Ops",
       role: "HR Administrator",
       employment_status: "active",
@@ -180,23 +182,44 @@ export async function seedLeaveData(
     [
       {
         id: BAL_PTO,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_CURRENT,
         type: "pto",
         balance_days: 20,
+        opening_days: 20,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
       {
         id: BAL_SICK,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_CURRENT,
         type: "sick",
         balance_days: 10,
+        opening_days: 10,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
       {
         id: BAL_ONE_PTO,
+        organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_ONE,
         type: "pto",
         balance_days: 20,
+        opening_days: 20,
+        accrued_days: 0,
+        carried_days: 0,
+        used_days: 0,
+        balance_year: 2026,
+        year: 2026,
         source_tag: E2E_MARKER,
       },
     ],
@@ -211,8 +234,9 @@ export async function seedLeaveData(
         organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_ONE,
         type: "pto",
-        start_date: "2025-03-10",
-        end_date: "2025-03-12",
+        start_date: "2026-03-10",
+        end_date: "2026-03-12",
+        total_days: 3,
         status: "pending",
         source_tag: E2E_MARKER,
       },
@@ -221,8 +245,8 @@ export async function seedLeaveData(
         organization_id: E2E_ORG_ID,
         employee_id: E2E_EMP_TWO,
         type: "sick",
-        start_date: "2025-03-01",
-        end_date: "2025-03-02",
+        start_date: "2026-03-01",
+        end_date: "2026-03-02",
         status: "approved",
         source_tag: E2E_MARKER,
       },
@@ -344,7 +368,7 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: DOMAIN_FLUXENTIQ,
         organization_id: E2E_ORG_ID,
-        domain: "fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         provisioning_status: "provisioned",
         membership_policy: "require_membership",
         allow_personal_accounts: false,
@@ -380,8 +404,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
         {
           id: MEMBERSHIP_001,
           organization_id: E2E_ORG_ID,
-          email: "member@fluxentiq.test",
-          domain: "fluxentiq.test",
+          email: "member@e2e.fluxentiq.test",
+          domain: "e2e.fluxentiq.test",
           role: "member",
           source_tag: E2E_MARKER,
         },
@@ -395,8 +419,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: INVITE_001,
         organization_id: E2E_ORG_ID,
-        email: "invited@fluxentiq.test",
-        domain: "fluxentiq.test",
+        email: "invited@e2e.fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         status: "pending",
         source_tag: E2E_MARKER,
       },
@@ -410,8 +434,8 @@ export async function seedWorkspaceData(admin: SupabaseClient): Promise<void> {
       {
         id: ACCESS_001,
         organization_id: E2E_ORG_ID,
-        email: "approved@fluxentiq.test",
-        domain: "fluxentiq.test",
+        email: "approved@e2e.fluxentiq.test",
+        domain: "e2e.fluxentiq.test",
         status: "approved",
         token: "e2e-signed-token-123",
         source_tag: E2E_MARKER,

@@ -1,5 +1,9 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import type { EdgeRateCategory } from "./rate-limit-routing";
+
+export { edgeRateCategoryFor } from "./rate-limit-routing";
+export type { EdgeRateCategory } from "./rate-limit-routing";
 
 /**
  * Edge Shield — distributed rate limiting for middleware.
@@ -20,13 +24,20 @@ import { Redis } from "@upstash/redis";
  * (epoch-ms timestamp) — see `edgeRateLimitResponse`.
  */
 
-export type EdgeRateCategory = "auth" | "webhook" | "module" | "copilot";
+
+
+function configuredPositiveLimit(name: string, fallback: number): number {
+  const value = Number(process.env[name] ?? fallback);
+  return Number.isSafeInteger(value) && value > 0 ? value : fallback;
+}
+
+const DEFAULT_COPILOT_LIMIT = configuredPositiveLimit("EDGE_COPILOT_RATE_LIMIT", 60);
 
 export const EDGE_LIMITS: Record<EdgeRateCategory, number> = {
-  auth: 10,
-  webhook: 10,
-  module: 100,
-  copilot: 30, // tier-adjusted in middleware via the license cookie
+  auth: configuredPositiveLimit("EDGE_AUTH_RATE_LIMIT", 10),
+  webhook: configuredPositiveLimit("EDGE_WEBHOOK_RATE_LIMIT", 10),
+  module: configuredPositiveLimit("EDGE_MODULE_RATE_LIMIT", 100),
+  copilot: DEFAULT_COPILOT_LIMIT,
 };
 
 /** Copilot orchestrator tier budgets (req/min) — mirrors lib/rate-limit. */
@@ -36,7 +47,7 @@ export const EDGE_COPILOT_TIER_LIMITS: Record<string, number> = {
   ENTERPRISE: 600,
 };
 
-export const EDGE_DEFAULT_COPILOT_LIMIT = 60;
+export const EDGE_DEFAULT_COPILOT_LIMIT = DEFAULT_COPILOT_LIMIT;
 
 const WINDOW_SECONDS = 60;
 
@@ -161,45 +172,6 @@ export function edgeRateBody(result: EdgeRateResult): { body: object; headers: R
       "X-RateLimit-Reset": String(result.resetAt),
     },
   };
-}
-
-/** True when the request path belongs to an edge-limited category. */
-export function edgeRateCategoryFor(pathname: string): EdgeRateCategory | null {
-  if (
-    pathname.startsWith("/api/webhooks/") ||
-    pathname.startsWith("/api/desktop/") ||
-    pathname.startsWith("/api/scim/")
-  ) {
-    return "webhook";
-  }
-  if (
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/auth/")
-  ) {
-    return "auth";
-  }
-  if (pathname.startsWith("/api/ai/") || pathname.startsWith("/api/engine/")) {
-    return "copilot";
-  }
-  if (
-    pathname.startsWith("/api/employees") ||
-    pathname.startsWith("/api/benefits") ||
-    pathname.startsWith("/api/equity") ||
-    pathname.startsWith("/api/expenses") ||
-    pathname.startsWith("/api/surveys") ||
-    pathname.startsWith("/api/planning") ||
-    pathname.startsWith("/api/contractors") ||
-    pathname.startsWith("/api/offboarding") ||
-    pathname.startsWith("/api/assets") ||
-    pathname.startsWith("/api/documents") ||
-    pathname.startsWith("/api/screening") ||
-    pathname.startsWith("/api/team")
-  ) {
-    return "module";
-  }
-  return null;
 }
 
 /** Best-effort client IP from standard proxy headers (middleware runs at the

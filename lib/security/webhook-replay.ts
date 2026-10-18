@@ -35,7 +35,7 @@ export async function claimWebhookReplay(input: {
   if (!hasSupabaseEnv()) return "unavailable";
   const eventId = input.eventId.trim();
   if (!eventId || eventId.length > 240) return "duplicate";
-  const db = adminClient() as any;
+  const db = adminClient();
   const { error } = await db.from("webhook_replay_nonces").insert({
     provider: input.provider,
     event_id: eventId,

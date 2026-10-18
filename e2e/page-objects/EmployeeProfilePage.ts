@@ -32,6 +32,7 @@ export class EmployeeProfilePage extends BasePage {
   private readonly roleInput: Locator;
   private readonly startDateInput: Locator;
   private readonly submitButton: Locator;
+  private readonly editButton: Locator;
   private readonly profileCard: Locator;
   private readonly statusBadge: Locator;
   private readonly profileName: Locator;
@@ -47,6 +48,7 @@ export class EmployeeProfilePage extends BasePage {
     this.roleInput = this.getByTestId("employee-form-role");
     this.startDateInput = this.getByTestId("employee-form-start-date");
     this.submitButton = this.getByTestId("employee-form-submit");
+    this.editButton = this.getByTestId("employee-edit-button");
     this.profileCard = this.getByTestId("employee-profile");
     this.statusBadge = this.getByTestId("employee-profile-status");
     this.profileName = this.getByTestId("employee-profile-name");
@@ -74,7 +76,8 @@ export class EmployeeProfilePage extends BasePage {
     await this.firstNameInput.fill(input.firstName);
     await this.lastNameInput.fill(input.lastName);
     await this.emailInput.fill(input.email);
-    await this.departmentInput.fill(input.department);
+    await this.departmentInput.click();
+    await this.page.getByRole("option", { name: input.department, exact: true }).click();
     await this.roleInput.fill(input.role);
     await this.startDateInput.fill(input.startDate);
   }
@@ -84,12 +87,20 @@ export class EmployeeProfilePage extends BasePage {
     await this.page.waitForURL(/\/employees\/[^/]+/);
   }
 
+  async openEdit(): Promise<void> {
+    await expect(this.editButton).toBeVisible();
+    await this.editButton.click();
+    await this.page.waitForURL(/\/employees\/[^/]+\/edit$/);
+    await this.expectFormLoaded();
+  }
+
   async setFirstName(firstName: string): Promise<void> {
     await this.firstNameInput.fill(firstName);
   }
 
   async saveProfile(): Promise<void> {
     await this.submitButton.click();
+    await this.page.waitForURL(/\/employees\/[^/]+$/);
     await this.waitForNetworkIdle();
   }
 

@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { hasSupabaseEnv, serverClient } from "@/lib/supabase/server";
@@ -7,7 +9,9 @@ import { emitWorkflowEvent } from "@/lib/bridge";
 import { getCurrentUser } from "@/lib/auth";
 import { requireRole } from "@/lib/rbac";
 import { getMemoryAdapter } from "@/lib/memory/factory";
+import type { Row } from "@/lib/memory/types";
 import { getLicenseState, TRIAL_MAX_EMPLOYEES } from "@/lib/license";
+import { readSettings } from "@/lib/settings/config";
 import { recordAudit, logAuditEvent } from "@/lib/audit";
 import { createNotification } from "@/lib/notifications";
 import { dispatchWebhooks } from "@/lib/webhooks";
@@ -30,10 +34,9 @@ import type {
  * on Supabase, since profiles/memberships reference auth.users.
  */
 
-function syntheticId(prefix: string): string {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random()
-    .toString(36)
-    .slice(2, 7)}`;
+/** PostgreSQL-backed records use UUID primary keys; keep memory and live adapters aligned. */
+function syntheticId(_prefix: string): string {
+  return randomUUID();
 }
 
 /* ------------------------------------------------------------------ */
@@ -95,6 +98,25 @@ function validate<T>(schema: z.ZodType<T>, input: unknown): T {
   return result.data;
 }
 
+async function assertRecordInActiveOrganization(
+  memory: Awaited<ReturnType<typeof getMemoryAdapter>>,
+  table: string,
+  id: string,
+  organizationId: string | null,
+  label: string,
+): Promise<void> {
+  if (!organizationId) {
+    throw new Error("No active workspace.");
+  }
+  const rows = await memory.select<Row>(table, {
+    column: "organization_id",
+    value: organizationId,
+  });
+  if (!rows.some((row) => String(row.id) === id)) {
+    throw new Error(`${label} was not found in the active workspace.`);
+  }
+}
+
 export interface EmployeeInput {
   firstName: string;
   lastName: string;
@@ -115,12 +137,19 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
   const data = validate(employeeSchema, input);
   const id = syntheticId("emp");
   const user = await getCurrentUser();
+  if (!user.organizationId) {
+    throw new Error("No active workspace.");
+  }
   const memory = await getMemoryAdapter();
 
-  // Trial headcount cap — authoritative server-side enforcement.
+  // Trial headcount cap is tenant-scoped; another customer's employees must
+  // never consume this organization's trial allowance.
   const license = await getLicenseState();
   if (license?.tier === "TRIAL") {
-    const existing = await memory.select("employees");
+    const existing = await memory.select<Row>("employees", {
+      column: "organization_id",
+      value: user.organizationId,
+    });
     if (existing.length >= TRIAL_MAX_EMPLOYEES) {
       throw new Error(
         `The free trial is limited to ${TRIAL_MAX_EMPLOYEES} employees. Upgrade to Pro for unlimited headcount.`,
@@ -131,9 +160,11 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
   await memory.insert("employees", {
     id,
     organization_id: user.organizationId,
+    employee_number: `EMP-${id.slice(0, 8).toUpperCase()}`,
     first_name: data.firstName,
     last_name: data.lastName,
     email: data.email,
+    work_email: data.email,
     department: data.department,
     role: data.role,
     title: data.role,
@@ -164,9 +195,54 @@ export async function createEmployee(input: EmployeeInput): Promise<ActionResult
     first_name: data.firstName,
     last_name: data.lastName,
     department: data.department,
-  });
+  }, user.organizationId);
 
   return { id };
+}
+
+/** Updates an employee profile without changing its tenant or employment status. */
+export async function updateEmployee(id: string, input: EmployeeInput): Promise<void> {
+  await requireRole("HR_ADMIN");
+  const data = validate(employeeSchema, input);
+  const user = await getCurrentUser();
+  const memory = await getMemoryAdapter();
+  await assertRecordInActiveOrganization(memory, "employees", id, user.organizationId, "Employee");
+
+  await memory.update("employees", { column: "id", value: id }, {
+    first_name: data.firstName,
+    last_name: data.lastName,
+    email: data.email,
+    work_email: data.email,
+    department: data.department,
+    role: data.role,
+    title: data.role,
+    start_date: data.startDate,
+    location: data.location ?? null,
+  });
+
+  void recordAudit({
+    action: "employee.update",
+    entity: "employee",
+    entityId: id,
+    metadata: { email: data.email, department: data.department },
+  });
+  void dispatchWebhooks("employee.updated", {
+    employee_id: id,
+    email: data.email,
+    first_name: data.firstName,
+    last_name: data.lastName,
+  });
+  void emitWorkflowEvent("employee.updated", {
+    employee_id: id,
+    email: data.email,
+    first_name: data.firstName,
+    last_name: data.lastName,
+    department: data.department,
+  }, user.organizationId);
+
+  revalidatePath("/employees");
+  revalidatePath(`/employees/${id}`);
+  revalidatePath(`/employees/${id}/edit`);
 }
 
 /** Updates an employee's employment status (used by the offboarding flow). */
@@ -176,7 +252,13 @@ export async function setEmploymentStatus(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
-  await memory.update("employees", { column: "id", value: id }, { employment_status: status });
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "employees", id, user.organizationId, "Employee");
+  await memory.update(
+    "employees",
+    { column: "id", value: id },
+    { employment_status: status, status },
+  );
 
   void recordAudit({
     action: status === "terminated" ? "employee.offboard" : "employee.update",
@@ -184,6 +266,15 @@ export async function setEmploymentStatus(
     entityId: id,
     metadata: { status },
   });
+  if (status === "terminated") {
+    const event = {
+      employee_id: id,
+      organization_id: user.organizationId,
+      actor_id: user.id,
+    };
+    void dispatchWebhooks("offboarding.completed", event);
+    void emitWorkflowEvent("offboarding.completed", event, user.organizationId);
+  }
 
   revalidatePath(`/employees/${id}`);
   revalidatePath("/employees");
@@ -196,6 +287,8 @@ export async function moveCandidateStage(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "candidates", id, user.organizationId, "Candidate");
   await memory.update("candidates", { column: "id", value: id }, { stage });
 
   void recordAudit({ action: "candidate.move", entity: "candidate", entityId: id, metadata: { stage } });
@@ -225,18 +318,25 @@ export async function requestLeave(input: LeaveRequestInput): Promise<ActionResu
     throw new Error("End date must be on or after the start date.");
   }
 
-  const email = user.email;
-  const employees = await memory.select<{
-    id: string;
-    first_name: string;
-    last_name: string;
-  }>("employees", { column: "email", value: email });
-  const employee = employees[0];
+  if (!user.id || !user.organizationId || !user.email) {
+    throw new Error("An authenticated workspace user is required to request leave.");
+  }
 
-  const employeeId = employee?.id ?? "00000000-0000-4000-8000-000000000001";
-  const employeeName = employee
-    ? `${employee.first_name} ${employee.last_name}`
-    : user.fullName;
+  const employees = await memory.select<Row>("employees", {
+    column: "organization_id",
+    value: user.organizationId,
+  });
+  const normalizedEmail = user.email.trim().toLowerCase();
+  const employee = employees.find((row) =>
+    String(row.email ?? "").trim().toLowerCase() === normalizedEmail ||
+    String(row.work_email ?? "").trim().toLowerCase() === normalizedEmail,
+  );
+  if (!employee) {
+    throw new Error("Your employee record is not linked to the active workspace.");
+  }
+
+  const employeeId = String(employee.id);
+  const employeeName = `${String(employee.first_name ?? "")} ${String(employee.last_name ?? "")}`.trim() || user.fullName;
 
   await memory.insert("leave_requests", {
     id,
@@ -270,9 +370,72 @@ export async function requestLeave(input: LeaveRequestInput): Promise<ActionResu
     leave_type: data.type,
     start_date: data.startDate,
     end_date: data.endDate,
-  });
+  }, user.organizationId);
 
   return { id };
+}
+
+/** Applies available-day accounting for non-Supabase memory adapters. */
+async function reconcileLeaveBalanceInMemory(
+  memory: Awaited<ReturnType<typeof getMemoryAdapter>>,
+  request: Row,
+  previousStatus: string,
+  nextStatus: LeaveStatus,
+): Promise<void> {
+  const wasApproved = previousStatus === "approved";
+  const willBeApproved = nextStatus === "approved";
+  if (wasApproved === willBeApproved) return;
+
+  const leaveType = String(request.type ?? "pto");
+  if (leaveType === "unpaid") return;
+
+  const employeeId = String(request.employee_id ?? "");
+  const organizationId = String(request.organization_id ?? "");
+  const start = new Date(String(request.start_date ?? ""));
+  const end = new Date(String(request.end_date ?? ""));
+  if (!employeeId || !organizationId || !Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) {
+    throw new Error("Leave request is missing employee, workspace, or date details.");
+  }
+
+  const configuredDays = Number(request.total_days);
+  const days = Number.isFinite(configuredDays) && configuredDays > 0
+    ? configuredDays
+    : Math.floor((Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) -
+        Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate())) / 86_400_000) + 1;
+  if (days <= 0) {
+    throw new Error("Leave request dates are invalid.");
+  }
+
+  const rows = await memory.select<Row>("leave_balances", {
+    column: "employee_id",
+    value: employeeId,
+  });
+  const year = start.getUTCFullYear();
+  const balance = rows.find((row) =>
+    String(row.organization_id ?? "") === organizationId &&
+    String(row.type ?? "") === leaveType &&
+    Number(row.year ?? row.balance_year) === year
+  );
+  if (!balance) {
+    throw new Error(`No ${leaveType} leave balance is configured for this employee and year.`);
+  }
+
+  const available = Number(balance.balance_days ?? 0);
+  const used = Number(balance.used_days ?? 0);
+  if (willBeApproved) {
+    if (available < days) {
+      throw new Error("Insufficient leave balance to approve this request.");
+    }
+    await memory.update("leave_balances", { column: "id", value: String(balance.id) }, {
+      balance_days: available - days,
+      used_days: used + days,
+    });
+  } else {
+    await memory.update("leave_balances", { column: "id", value: String(balance.id) }, {
+      balance_days: available + days,
+      used_days: Math.max(0, used - days),
+    });
+  }
 }
 
 /** Approves or rejects a leave request. */
@@ -282,7 +445,51 @@ export async function resolveLeaveRequest(
 ): Promise<void> {
   await requireRole("MANAGER");
   const memory = await getMemoryAdapter();
-  await memory.update("leave_requests", { column: "id", value: id }, { status });
+  const user = await getCurrentUser();
+  if (!user.organizationId) {
+    throw new Error("No active workspace.");
+  }
+  const organizationId = user.organizationId;
+  await assertRecordInActiveOrganization(memory, "leave_requests", id, organizationId, "Leave request");
+  const scopedRequests = await memory.select<Row>("leave_requests", {
+    column: "organization_id",
+    value: organizationId,
+  });
+  const request = scopedRequests.find((row) => String(row.id) === id);
+  if (!request) {
+    throw new Error("Leave request was not found in the active workspace.");
+  }
+
+  const previousStatus = String(request.status ?? "pending");
+  const settings = await readSettings();
+  const databaseReconcilesBalance = settings.memory.provider === "supabase" && hasSupabaseEnv();
+  try {
+    await memory.update("leave_requests", { column: "id", value: id }, { status });
+  } catch (error) {
+    console.error("[resolveLeaveRequest] Failed to persist leave decision", error);
+    throw error;
+  }
+  // Supabase may return no error for an UPDATE that matched zero rows when
+  // row-level security filters the target. Verify the decision was persisted.
+  const persistedRequests = await memory.select<Row>("leave_requests", {
+    column: "organization_id",
+    value: organizationId,
+  });
+  const persistedRequest = persistedRequests.find((row) => String(row.id) === id);
+  if (!persistedRequest || String(persistedRequest.status) !== status) {
+    throw new Error(
+      "Leave decision was not persisted. Confirm workspace permissions and database connectivity.",
+    );
+  }
+  if (!databaseReconcilesBalance) {
+    try {
+      await reconcileLeaveBalanceInMemory(memory, request, previousStatus, status);
+    } catch (error) {
+      // Revert the status if adapter-side balance validation or update fails.
+      await memory.update("leave_requests", { column: "id", value: id }, { status: previousStatus as LeaveStatus });
+      throw error;
+    }
+  }
 
   void recordAudit({ action: "leave.resolve", entity: "leave_request", entityId: id, metadata: { status } });
   void dispatchWebhooks("leave.resolved", { leave_request_id: id, status });
@@ -299,6 +506,8 @@ export async function resolveLeaveRequest(
 export async function executePayrollRun(id: string): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "payroll_runs", id, user.organizationId, "Payroll run");
   await memory.update("payroll_runs", { column: "id", value: id }, { status: "completed" });
 
   void recordAudit({ action: "payroll.execute", entity: "payroll_run", entityId: id });
@@ -319,6 +528,8 @@ export async function setPayrollRunStatus(
 ): Promise<void> {
   await requireRole("HR_ADMIN");
   const memory = await getMemoryAdapter();
+  const user = await getCurrentUser();
+  await assertRecordInActiveOrganization(memory, "payroll_runs", id, user.organizationId, "Payroll run");
   await memory.update("payroll_runs", { column: "id", value: id }, { status });
   revalidatePath("/payroll");
 }

@@ -17,6 +17,7 @@
 | BUG-005 | **Medium** | `app/actions/*`, webhook routes (288 sites) | Type safety / Anti-pattern | Widespread `as any` bypasses the generated `Database` types |
 | BUG-006 | **Low** | `bridge/workflow_engine.py:232`, `app/api/webhooks/external/outbound-trigger/route.ts` | Security — SSRF | Server posts to admin/buyer-supplied URLs with no allow-list |
 | BUG-007 | **Low** | `app/api/auth/signup/route.ts:15` | Security — weak policy | Password minimum of 6 chars, no strength rules |
+| BUG-008 | **Medium** | Webhook ingress and configuration routes | Resource exhaustion — oversized request buffering | Several endpoints buffered complete request bodies before enforcing limits, or had no request-size ceiling |
 
 ---
 
@@ -196,3 +197,31 @@ output: payload.status === 'succeeded' ? safePayload : {},
 ## 4. Security note (recurring)
 
 `.env.local` still contains **live secrets** (Supabase publishable/secret keys, Groq key) that have been pasted in chat across this session. These are production credentials — rotate them in the Supabase/Groq dashboards once testing concludes and update `.env.local` accordingly. Not repeated here; not committed (`.env.local` is gitignored).
+
+
+---
+
+### BUG-008 — inbound webhook routes buffer request bodies before limits apply
+
+- **Locations:** n8n webhook, provider gateway, Python bridge callback, Slack Events, workflow event gateway, external lead intake, and webhook configuration route.
+- **Severity:** Medium · **Category**: Resource exhaustion / request validation
+
+**Root cause:** The n8n webhook applied its 8 KB persistence cap only after `request.text()`; the provider gateway checked its 1 MB cap only after buffering; other inbound routes buffered raw bodies or parsed JSON without an equivalent ceiling. This left application memory and parsing work exposed to oversized requests.
+
+**Remediation:** The shared `readBoundedRequestBody()` helper checks valid `Content-Length` values before reading and independently counts streamed bytes, so missing or inaccurate headers cannot bypass the cap. Over-limit streams are cancelled and rejected with HTTP 413 before JSON parsing or signature verification. Per-route ceilings preserve larger provider envelopes where needed:
+
+| Route | Maximum request body |
+|---|---:|
+| `app/api/webhooks/n8n-trigger/route.ts` | 64 KiB |
+| `app/api/webhooks/inbound/[provider]/route.ts` | 1,000,000 bytes |
+| `app/api/webhooks/python-bridge/route.ts` | 64 KiB |
+| `app/api/webhooks/slack/events/route.ts` | 1,000,000 bytes |
+| `app/api/workflows/webhooks/route.ts` | 64 KiB |
+| `app/api/webhooks/external/inbound-lead/route.ts` | 64 KiB |
+| `app/api/webhooks/route.ts` (subscription configuration) | 64 KiB |
+
+The original post-parse payload truncation remains in place as a separate data-retention control. Existing signature, replay, authentication, and tenant checks are retained.
+
+**Regression coverage:** `tests/unit/boundedRequestBody.test.ts` covers declared-length rejection, streamed-body rejection, UTF-8 byte counting, and successful reads under the cap.
+
+**Validation status:** Unit tests are in the pull request and CI is running; do not consider the change release-ready until the current CI run passes and the affected workflows are exercised.

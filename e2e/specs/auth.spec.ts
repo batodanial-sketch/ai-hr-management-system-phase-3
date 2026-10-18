@@ -38,14 +38,18 @@ test.describe("Credential login", () => {
   test("rejects invalid credentials", async ({ authPage }) => {
     await authPage.goto();
     await authPage.loginExpectingFailure(
-      "nobody@fluxentiq.test",
+      "nobody@e2e.fluxentiq.test",
       "definitely-wrong-password",
     );
-    await authPage.expectErrorContaining("invalid");
+    await authPage.expectErrorContaining("Invalid");
   });
 });
 
 test.describe("Google Workspace SSO decision paths", () => {
+  // The mocked OAuth callback doesn't create a fresh auth session. Reuse the
+  // global authenticated E2E user so middleware can serve the target dashboard.
+  test.use({ storageState: "e2e/.auth/storageState.json" });
+
   test.beforeAll(async () => {
     await seedWorkspaceData(createAdminClient());
   });
@@ -61,8 +65,8 @@ test.describe("Google Workspace SSO decision paths", () => {
     await mockSsoDecision(
       page,
       "existing_membership_allowed",
-      "member@fluxentiq.test",
-      "fluxentiq.test",
+      "member@e2e.fluxentiq.test",
+      "e2e.fluxentiq.test",
     );
     await authPage.goto();
     await authPage.continueWithGoogle();
@@ -76,8 +80,8 @@ test.describe("Google Workspace SSO decision paths", () => {
     await mockSsoDecision(
       page,
       "invited_membership_activated",
-      "invited@fluxentiq.test",
-      "fluxentiq.test",
+      "invited@e2e.fluxentiq.test",
+      "e2e.fluxentiq.test",
     );
     await authPage.goto();
     await authPage.continueWithGoogle();
@@ -91,8 +95,8 @@ test.describe("Google Workspace SSO decision paths", () => {
     await mockSsoDecision(
       page,
       "membership_required",
-      "uninvited@fluxentiq.test",
-      "fluxentiq.test",
+      "uninvited@e2e.fluxentiq.test",
+      "e2e.fluxentiq.test",
     );
     await authPage.goto();
     await authPage.continueWithGoogle();
@@ -152,8 +156,8 @@ test.describe("Access requests", () => {
     await mockSsoDecision(
       page,
       "membership_required",
-      "uninvited@fluxentiq.test",
-      "fluxentiq.test",
+      "uninvited@e2e.fluxentiq.test",
+      "e2e.fluxentiq.test",
     );
     await authPage.goto();
     await authPage.continueWithGoogle();
@@ -163,8 +167,8 @@ test.describe("Access requests", () => {
     const created = await submitAccessRequest(
       request,
       BASE_URL,
-      "uninvited@fluxentiq.test",
-      "fluxentiq.test",
+      "uninvited@e2e.fluxentiq.test",
+      "e2e.fluxentiq.test",
     );
     expect(created.status).toBe("pending");
     expect(created.token).toBeNull();
@@ -173,7 +177,7 @@ test.describe("Access requests", () => {
     const { data } = await admin
       .from("access_requests")
       .select("id, status")
-      .eq("email", "uninvited@fluxentiq.test")
+      .eq("email", "uninvited@e2e.fluxentiq.test")
       .eq("source_tag", "e2e")
       .single();
     expect(data?.status).toBe("pending");
@@ -188,7 +192,7 @@ test.describe("Access requests", () => {
       "e2e-signed-token-123",
     );
     expect(activated.status).toBe("activated");
-    expect(activated.email).toBe("approved@fluxentiq.test");
+    expect(activated.email).toBe("approved@e2e.fluxentiq.test");
 
     const invalid = await completeAccessRequest(
       request,

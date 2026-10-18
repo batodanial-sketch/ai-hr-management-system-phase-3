@@ -33,9 +33,9 @@ export class RecruitmentKanbanPage extends BasePage {
   }
 
   private column(stage: string): Locator {
-    return this.getByTestId("kanban-column").filter({
-      has: this.page.locator(`[data-stage="${stage}"]`),
-    });
+    return this.page.locator(
+      `[data-testid="kanban-column"][data-stage="${stage}"]`,
+    );
   }
 
   private cardsIn(stage: string): Locator {
@@ -70,9 +70,7 @@ export class RecruitmentKanbanPage extends BasePage {
   async dragCardToStage(fullName: string, targetStage: string): Promise<void> {
     const card = this.getByTestId("kanban-card").filter({ hasText: fullName }).first();
     await expect(card).toBeVisible();
-    const targetColumn = this.getByTestId("kanban-column").filter({
-      has: this.page.locator(`[data-stage="${targetStage}"]`),
-    });
+    const targetColumn = this.column(targetStage);
     await card.dragTo(targetColumn);
     await this.waitForNetworkIdle();
   }

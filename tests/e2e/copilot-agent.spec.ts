@@ -6,21 +6,34 @@ import { expect, test, type Page, type Route } from "@playwright/test";
  * Hermetic: the AI bridge is never called. We intercept `/api/ai/copilot`
  * (the Next.js orchestrator) and replay a scripted SSE stream:
  *
- *   planner  → tool_call (confirmationRequired) → done (requiresConfirmation)
- *   approve  → tool_call (executing) → tool_result → delta → done
+ *   planner  → tool_call (confirmationRequired + proposalId) → done
+ *   approve  → proposalId-only request → tool_call → tool_result → done
  *
  * This exercises the full client path — streaming parser, approval card,
- * Approve/Deny interactions, the confirmToolCall resend, and the inline
- * result cards with live status badges — with zero external dependencies.
+ * Approve/Deny interactions, the server-side proposal-ID resend, and the
+ * inline result cards with live status badges — with zero external dependencies.
  */
 
 const COPILOT_PATH = "/copilot";
 const COPILOT_ENDPOINT = "**/api/ai/copilot";
 
-const approvalStream = (tool: string, args: Record<string, unknown>) => [
+const APPROVAL_PROPOSAL_ID = "00000000-0000-4000-8000-00000000ab01";
+const DENIAL_PROPOSAL_ID = "00000000-0000-4000-8000-00000000ab02";
+
+const approvalStream = (
+  tool: string,
+  args: Record<string, unknown>,
+  proposalId = APPROVAL_PROPOSAL_ID,
+) => [
   {
     type: "tool_call",
-    call: { name: tool, arguments: args, confirmationRequired: true, description: "Creates a pending expense claim." },
+    call: {
+      name: tool,
+      arguments: args,
+      confirmationRequired: true,
+      description: "Creates a pending expense claim.",
+      proposalId,
+    },
   },
   { type: "done", result: { text: "", actions: [], requiresConfirmation: true } },
 ];
@@ -54,20 +67,26 @@ test.describe("Agentic Copilot tool loop", () => {
     const requests: unknown[] = [];
     await routeCopilot(page, async (route, body) => {
       requests.push(body);
-      if (body.confirmToolCall) {
-        // The client resends with the confirmed tool call — execute it.
-        const confirmed = body.confirmToolCall as { name: string };
+      if (body.approveProposal) {
+        // Approval sends only the server-side proposal ID, never client-supplied
+        // write arguments. The route returns the execution stream for that ID.
+        expect(body.approveProposal).toBe(APPROVAL_PROPOSAL_ID);
+        expect(body.confirmToolCall).toBeUndefined();
         await route.fulfill({
           status: 200,
           contentType: "text/event-stream",
           body: sse(
             executionStream(
-              confirmed.name,
+              "create_expense",
               { id: "exp-e2e-1", status: "submitted", recommendation: null },
               "Expense submitted — awaiting finance review.",
             ),
           ),
         });
+        return;
+      }
+      if (body.denyProposal) {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
         return;
       }
       // Planner: wants to create an expense (write tool → confirmation).
@@ -97,15 +116,26 @@ test.describe("Agentic Copilot tool loop", () => {
 
     await page.getByLabel("Approve Create expense").click();
 
-    // Confirm the client resent the exact confirmed tool call.
+    // Confirm only the opaque, server-side proposal ID is sent on approval.
     await expect
       .poll(() => requests.length, { timeout: 10_000 })
       .toBeGreaterThanOrEqual(2);
-    const confirmedRequest = requests[1] as {
-      confirmToolCall: { name: string; arguments: Record<string, unknown> };
-    };
-    expect(confirmedRequest.confirmToolCall.name).toBe("create_expense");
-    expect(confirmedRequest.confirmToolCall.arguments.amount).toBe(240);
+    const confirmedRequest = requests[1] as Record<string, unknown>;
+    expect(confirmedRequest.approveProposal).toBe(APPROVAL_PROPOSAL_ID);
+    expect(confirmedRequest.confirmToolCall).toBeUndefined();
+    const submittedMessages = confirmedRequest.messages as Array<{
+      role: string;
+      content: string;
+    }>;
+    expect(submittedMessages[submittedMessages.length - 1]).toEqual({
+      role: "user",
+      content: "Create an expense for AWS training",
+    });
+    expect(
+      submittedMessages.some(
+        (message) => message.role === "assistant" && message.content === "",
+      ),
+    ).toBe(false);
 
     // The tool result card renders live status badges from the CRUD response.
     await expect(page.getByTestId("tool-result-card")).toBeVisible();
@@ -113,17 +143,23 @@ test.describe("Agentic Copilot tool loop", () => {
     await expect(page.getByText("Expense submitted — awaiting finance review.")).toBeVisible();
   });
 
-  test("Deny closes the approval card without executing the tool", async ({ page }) => {
-    let requestCount = 0;
-    await routeCopilot(page, async (route) => {
-      requestCount += 1;
+  test("Deny closes the approval card and sends the proposal ID without executing the tool", async ({ page }) => {
+    const requests: Array<Record<string, unknown>> = [];
+    await routeCopilot(page, async (route, body) => {
+      requests.push(body);
+      if (body.denyProposal) {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+        return;
+      }
       await route.fulfill({
         status: 200,
         contentType: "text/event-stream",
         body: sse(
-          approvalStream("approve_offboarding", {
-            id: "00000000-0000-4000-8000-000000000002",
-          }),
+          approvalStream(
+            "approve_offboarding",
+            { id: "00000000-0000-4000-8000-000000000002" },
+            DENIAL_PROPOSAL_ID,
+          ),
         ),
       });
     });
@@ -133,15 +169,16 @@ test.describe("Agentic Copilot tool loop", () => {
     await expect(page.getByTestId("tool-step-card")).toContainText("Approve offboarding");
     await page.getByLabel("Deny Approve offboarding").click();
 
-    // Denied state renders and no confirmToolCall request is ever sent.
     await expect(page.getByTestId("tool-step-card")).toContainText("Denied");
-    await page.waitForTimeout(1_500);
-    expect(requestCount).toBe(1);
+    await expect.poll(() => requests.length, { timeout: 5_000 }).toBe(2);
+    expect(requests[1].denyProposal).toBe(DENIAL_PROPOSAL_ID);
+    expect(requests[1].approveProposal).toBeUndefined();
+    expect(requests[1].confirmToolCall).toBeUndefined();
   });
 
   test("read tools execute immediately and stream the final answer", async ({ page }) => {
     await routeCopilot(page, async (route, body) => {
-      if (body.confirmToolCall) {
+      if (body.approveProposal) {
         await route.fulfill({
           status: 200,
           contentType: "text/event-stream",

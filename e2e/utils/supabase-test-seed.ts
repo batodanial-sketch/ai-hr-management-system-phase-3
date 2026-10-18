@@ -39,6 +39,8 @@ export interface EmployeeRow {
   employment_status: EmploymentStatus;
   start_date: string;
   source_tag: string;
+  employee_number?: string;
+  work_email?: string;
 }
 
 export interface JobPostingRow {
@@ -119,6 +121,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeOne",
         email: "e2e.employee.one@fluxentiq.test",
+        employee_number: "E2E-001",
+        work_email: "e2e.employee.one@fluxentiq.test",
         department: "Engineering",
         role: "Backend Engineer",
         employment_status: "active",
@@ -131,6 +135,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeTwo",
         email: "e2e.employee.two@fluxentiq.test",
+        employee_number: "E2E-002",
+        work_email: "e2e.employee.two@fluxentiq.test",
         department: "Design",
         role: "Product Designer",
         employment_status: "active",
@@ -143,6 +149,8 @@ export async function seedBaselineData(admin: SupabaseClient): Promise<void> {
         first_name: "E2E",
         last_name: "EmployeeThree",
         email: "e2e.employee.three@fluxentiq.test",
+        employee_number: "E2E-003",
+        work_email: "e2e.employee.three@fluxentiq.test",
         department: "People Ops",
         role: "HR Business Partner",
         employment_status: "on_leave",
@@ -228,6 +236,51 @@ export async function ensureE2eMembership(
 }
 
 export async function cleanupBaselineData(admin: SupabaseClient): Promise<void> {
+  // Cleanup is scoped to the dedicated E2E org. Compatibility triggers may
+  // create canonical leave/payroll rows without the UI fixture's source_tag;
+  // remove those children first so a failed test cannot strand employee FKs.
+  const { error: leaveRequestsError } = await admin
+    .from("leave_requests")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_requests", leaveRequestsError);
+
+  const { error: leaveBalancesError } = await admin
+    .from("leave_balances")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_balances", leaveBalancesError);
+
+  const { error: payrollLinesError } = await admin
+    .from("payroll_line_items")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_line_items", payrollLinesError);
+
+  const { error: payrollEntriesError } = await admin
+    .from("payroll_entries")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_entries", payrollEntriesError);
+
+  const { error: payrollRunsError } = await admin
+    .from("payroll_runs")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_runs", payrollRunsError);
+
+  const { error: payrollCyclesError } = await admin
+    .from("payroll_cycles")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("payroll_cycles", payrollCyclesError);
+
+  const { error: leaveTypesError } = await admin
+    .from("leave_types")
+    .delete()
+    .eq("organization_id", E2E_ORG_ID);
+  await assertOk("leave_types", leaveTypesError);
+
   const { error: candidatesError } = await admin
     .from("candidates")
     .delete()

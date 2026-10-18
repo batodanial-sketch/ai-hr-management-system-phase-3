@@ -53,7 +53,7 @@ export class CopilotPage extends BasePage {
       this.drawer.locator('[data-testid="copilot-message"][data-role="user"]'),
     ).toBeVisible();
     await expect(
-      this.drawer.locator('[data-testid="copilot-message"][data-role="assistant"]'),
+      this.drawer.locator('[data-testid="copilot-message"][data-role="assistant"]').last(),
     ).toBeVisible();
   }
 

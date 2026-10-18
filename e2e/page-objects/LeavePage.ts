@@ -70,7 +70,13 @@ export class LeavePage extends BasePage {
   }
 
   async submitRequest(input: LeaveRequestInput): Promise<void> {
-    await this.typeSelect.selectOption(input.type);
+    await this.typeSelect.click();
+    const leaveTypeLabel = {
+      pto: "Paid Time Off",
+      sick: "Sick Leave",
+      unpaid: "Unpaid Leave",
+    }[input.type];
+    await this.page.getByRole("option", { name: leaveTypeLabel, exact: true }).click();
     await this.startDateInput.fill(input.startDate);
     await this.endDateInput.fill(input.endDate);
     await this.reasonInput.fill(input.reason);
@@ -81,8 +87,7 @@ export class LeavePage extends BasePage {
   /** Asserts the current user's own request appears with the given status. */
   async expectMyRequestStatus(status: "pending" | "approved" | "rejected"): Promise<void> {
     const row = this.myRequests
-      .locator('[data-testid="leave-request-row"]')
-      .filter({ has: this.page.locator(`[data-status="${status}"]`) })
+      .locator(`[data-testid="leave-request-row"][data-status="${status}"]`)
       .first();
     await expect(row).toBeVisible();
   }
@@ -103,6 +108,7 @@ export class LeavePage extends BasePage {
     await expect(row).toBeVisible();
     await row.locator('[data-testid="leave-approve-button"]').click();
     await this.waitForNetworkIdle();
+    await this.assertNoActionError("approval");
   }
 
   async rejectRequest(employeeName: string): Promise<void> {
@@ -110,6 +116,15 @@ export class LeavePage extends BasePage {
     await expect(row).toBeVisible();
     await row.locator('[data-testid="leave-reject-button"]').click();
     await this.waitForNetworkIdle();
+    await this.assertNoActionError("rejection");
+  }
+
+  private async assertNoActionError(action: "approval" | "rejection"): Promise<void> {
+    const error = this.page.getByTestId("leave-action-error");
+    if (await error.isVisible().catch(() => false)) {
+      const message = (await error.textContent())?.trim() || "unknown persistence error";
+      throw new Error("Leave request " + action + " failed: " + message);
+    }
   }
 
   /** Asserts a queue row now reflects the given status. */

@@ -273,16 +273,18 @@ export default function CopilotPage() {
           },
           onToolCall: (call) => {
             setSteps((prev) => {
-              const pending = prev.findIndex(
+              const existing = prev.findIndex(
                 (step) =>
                   step.name === call.name &&
-                  step.status === "pending" &&
-                  step.confirmationRequired,
+                  ((step.status === "pending" && step.confirmationRequired) ||
+                    (step.status === "executing" && !step.confirmationRequired)),
               );
-              if (pending >= 0 && !call.confirmationRequired) {
-                // The user approved — flip the card from pending → executing.
+              if (existing >= 0 && !call.confirmationRequired) {
+                // The approval handler marks the card as executing before the
+                // approved stream returns its tool_call event. Update that
+                // card in place rather than rendering a duplicate.
                 return prev.map((step, index) =>
-                  index === pending
+                  index === existing
                     ? { ...step, status: "executing", confirmationRequired: false, message: undefined }
                     : step,
                 );
@@ -417,6 +419,27 @@ export default function CopilotPage() {
         toast({ variant: "info", title: "Cannot approve", description: "This action has no server-side proposal. Ask again." });
         return;
       }
+      // The API requires the final message to be from the user. The
+      // pending assistant turn (which rendered the approval card) must not be
+      // included as the final item in the approval request history. Validate
+      // history before changing the card or creating a streaming bubble.
+      let lastUserIndex = -1;
+      messages.forEach((message, index) => {
+        if (message.role === "user") lastUserIndex = index;
+      });
+      if (lastUserIndex < 0) {
+        toast({
+          variant: "error",
+          title: "Cannot approve",
+          description: "The original user request is no longer available. Ask Copilot again.",
+        });
+        return;
+      }
+      const history = messages.slice(0, lastUserIndex + 1).map((message) => ({
+        role: message.role,
+        content: message.text,
+      }));
+
       const streamingId = `msg-${Date.now()}-a`;
       setSteps((prev) =>
         prev.map((item) =>
@@ -433,11 +456,6 @@ export default function CopilotPage() {
 
       const controller = new AbortController();
       abortRef.current = controller;
-
-      const history = messages.map((message) => ({
-        role: message.role,
-        content: message.text,
-      }));
       runAgentStream(
         {
           messages: history,

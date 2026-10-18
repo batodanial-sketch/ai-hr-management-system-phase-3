@@ -1,6 +1,7 @@
 import { test } from "../fixtures/customTest";
 import { createAdminClient } from "../utils/supabase-test-seed";
-import { cleanupPayrollData, seedPayrollData } from "../utils/domain-seed";
+import { cleanupPayrollData, seedPayrollData, RUN_001 } from "../utils/domain-seed";
+import { E2E_EMP_ONE, E2E_EMP_TWO, E2E_EMP_THREE } from "../utils/supabase-test-seed";
 
 /**
  * Payroll suite: global run execution, row calculation assertions and
@@ -21,14 +22,14 @@ test.describe("Payroll", () => {
     await payrollPage.goto();
 
     await payrollPage.executeRun();
-    await payrollPage.expectRunStatus("e2e-run-001", "completed");
+    await payrollPage.expectRunStatus(RUN_001, "completed");
 
     // net = gross - deductions for every USD line.
-    await payrollPage.expectLineBalances("e2e-emp-001");
-    await payrollPage.expectLineBalances("e2e-emp-002");
+    await payrollPage.expectLineBalances(E2E_EMP_ONE);
+    await payrollPage.expectLineBalances(E2E_EMP_TWO);
 
-    await payrollPage.expectLineNet("e2e-emp-001", 4000);
-    await payrollPage.expectLineNet("e2e-emp-002", 4800);
+    await payrollPage.expectLineNet(E2E_EMP_ONE, 4000);
+    await payrollPage.expectLineNet(E2E_EMP_TWO, 4800);
   });
 
   test("verifies multi-currency run isolation", async ({ payrollPage }) => {
@@ -36,7 +37,7 @@ test.describe("Payroll", () => {
 
     await payrollPage.selectCurrency("EUR");
     await payrollPage.expectCurrencyIndicator("EUR");
-    await payrollPage.expectLineNet("e2e-emp-003", 3200);
+    await payrollPage.expectLineNet(E2E_EMP_THREE, 3200);
 
     await payrollPage.selectCurrency("USD");
     await payrollPage.expectCurrencyIndicator("USD");

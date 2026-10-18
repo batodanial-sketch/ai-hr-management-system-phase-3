@@ -6,6 +6,7 @@ import {
   ensureE2eMembership,
   ensureTestUser,
   seedBaselineData,
+  E2E_ORG_ID,
 } from "./utils/supabase-test-seed";
 
 /**
@@ -83,6 +84,8 @@ function buildStorageState(params: {
     throw new Error(`Invalid E2E_BASE_URL "${baseUrl}".`);
   }
 
+  const trialCookieExpires = Math.floor(Date.now() / 1000) + 15 * 24 * 60 * 60;
+
   return {
     cookies: [
       {
@@ -92,6 +95,19 @@ function buildStorageState(params: {
         path: "/",
         expires: -1,
         httpOnly: false,
+        secure,
+        sameSite: "Lax",
+      },
+      // Middleware checks the trial/paid-license cookie separately from the
+      // persisted license state. Keep the disposable E2E account past that
+      // guard after global setup writes the temporary trial into settings.
+      {
+        name: "fluxentiq.trial",
+        value: "valid",
+        domain: hostname,
+        path: "/",
+        expires: trialCookieExpires,
+        httpOnly: true,
         secure,
         sameSite: "Lax",
       },
@@ -117,9 +133,29 @@ export default async function globalSetup(): Promise<void> {
   if (!hasSupabaseEnv) {
     const stateDir = path.join(process.cwd(), "e2e", ".auth");
     await mkdir(stateDir, { recursive: true });
+
+    // The local-demo browser suites still pass through middleware's license
+    // cookie gate. Only add this bypass when CI explicitly prepared temporary
+    // E2E trial settings; never invent an entitlement for an ordinary local run.
+    const baseUrl = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+    const state: StorageState = { cookies: [], origins: [] };
+    if (process.env.E2E_PREPARE_LICENSE === "1") {
+      const parsed = new URL(baseUrl);
+      state.cookies.push({
+        name: "fluxentiq.trial",
+        value: "valid",
+        domain: parsed.hostname,
+        path: "/",
+        expires: Math.floor(Date.now() / 1000) + 15 * 24 * 60 * 60,
+        httpOnly: true,
+        secure: parsed.protocol === "https:",
+        sameSite: "Lax",
+      });
+      state.origins.push({ origin: parsed.origin, localStorage: [] });
+    }
     await writeFile(
       path.join(stateDir, "storageState.json"),
-      JSON.stringify({ cookies: [], origins: [] }),
+      JSON.stringify(state, null, 2),
       "utf8",
     );
     return;
@@ -135,8 +171,27 @@ export default async function globalSetup(): Promise<void> {
 
   const admin = createAdminClient();
 
+  // Seed the org first: memberships.organization_id has a real FK to
+  // organizations.id, so upserting membership before the org violates that FK
+  // on a clean database reset.
+  await seedBaselineData(admin);
   const testUser = await ensureTestUser(admin, email, password);
   await ensureE2eMembership(admin, testUser.id);
+
+  // Pin to the fixture org because the canonical resolver honors the
+  // server-managed app_metadata organization_id when multiple memberships exist.
+  const { error: organizationClaimError } = await admin.auth.admin.updateUserById(
+    testUser.id,
+    {
+      app_metadata: {
+        ...(testUser.app_metadata ?? {}),
+        organization_id: E2E_ORG_ID,
+      },
+    },
+  );
+  if (organizationClaimError) {
+    throw new Error(`Failed to pin E2E organization claim: ${organizationClaimError.message}`);
+  }
 
   // Obtain a session for the test user so the browser can start authenticated.
   const client = createClient(supabaseUrl, serviceRoleKey, {
@@ -165,6 +220,4 @@ export default async function globalSetup(): Promise<void> {
     JSON.stringify(storageState, null, 2),
     "utf8",
   );
-
-  await seedBaselineData(admin);
 }

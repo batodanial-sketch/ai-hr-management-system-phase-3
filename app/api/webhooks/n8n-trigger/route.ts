@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createAdminSupabaseClient, isSupabaseAdminConfigured } from "@/src/lib/supabase";
 import { claimWebhookReplay, verifyTimestampedHmac } from "@/lib/security/webhook-replay";
 import { resolveExternalApiKey } from "@/src/lib/security/webhookAuth";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ const schema = z.object({
 });
 
 const MAX_PAYLOAD_CHARS = 8_000;
+const MAX_WEBHOOK_BODY_BYTES = 64 * 1024;
 
 function boundedPayload(value: unknown): unknown {
   try {
@@ -29,7 +31,14 @@ function boundedPayload(value: unknown): unknown {
 
 export async function POST(request: Request) {
   if (!isSupabaseAdminConfigured) return Response.json({ success: false, error: "Supabase admin credentials are not configured." }, { status: 503 });
-  const rawBody = await request.text();
+  const bodyResult = await readBoundedRequestBody(request, MAX_WEBHOOK_BODY_BYTES);
+  if (!bodyResult.ok) {
+    return Response.json(
+      { success: false, error: "Webhook request body exceeds the 64 KiB limit." },
+      { status: 413 },
+    );
+  }
+  const rawBody = bodyResult.text;
   const secret = process.env.N8N_WEBHOOK_SECRET;
   const timestamp = request.headers.get("x-fluxentiq-timestamp");
   const eventId = request.headers.get("x-fluxentiq-event-id");

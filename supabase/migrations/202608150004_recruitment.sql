@@ -40,6 +40,11 @@ create table if not exists public.candidate_evaluations (
   created_at     timestamptz not null default now()
 );
 
+-- The initial schema already owns the candidates table, so create the indexed
+-- app-facing stage column before creating the stage index.
+alter table public.candidates
+  add column if not exists stage public.recruitment_stage not null default 'applied';
+
 create index if not exists idx_candidates_org on public.candidates (organization_id);
 create index if not exists idx_candidates_stage on public.candidates (stage);
 create index if not exists idx_job_postings_org on public.job_postings (organization_id);

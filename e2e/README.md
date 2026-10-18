@@ -12,17 +12,26 @@ Playwright end-to-end suite for the Fluxentiq AI HR Management System
 | Python | 3.10+ (for `server.py`) |
 | Playwright browsers | `npx playwright install --with-deps` |
 
-Required environment variables (`.env.local`):
+The Playwright global setup can use a local Supabase stack, or a dedicated
+test project supplied via environment variables. GitHub Actions uses the local
+stack and creates disposable test credentials itself; no repository secrets
+or production project are required for CI. Before the server starts, CI also
+runs `E2E_PREPARE_LICENSE=1 node scripts/prepare-e2e-settings.mjs` so protected
+browser routes are accessible under a temporary trial license.
 
+For a local run, start Supabase and inspect its local connection values:
+
+```bash
+supabase start
+supabase db reset
+supabase status -o env
 ```
-NEXT_PUBLIC_SUPABASE_URL=…
-SUPABASE_SERVICE_ROLE_KEY=…
-SUPABASE_PROJECT_REF=…
-E2E_TEST_USER_EMAIL=…
-E2E_TEST_USER_PASSWORD=…
-E2E_BASE_URL=http://localhost:3000        # optional, defaults as shown
-E2E_WEBSERVER_COMMAND=…                   # optional, overrides the dev command
-```
+
+Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+(or the legacy anon key), `SUPABASE_SECRET_KEY` (or service-role key),
+`SUPABASE_PROJECT_REF=127` for the local API URL `http://127.0.0.1:54321`,
+`E2E_TEST_USER_EMAIL`, `E2E_TEST_USER_PASSWORD`, and `BRIDGE_SECRET_KEY`.
+Keep local credentials outside source control.
 
 ## 2. Local run
 
@@ -108,23 +117,33 @@ buffers in-memory (no binary fixtures committed) for upload/OCR flows.
 
 ## 8. Visual regression
 
-`visual-regression.spec.ts` uses `toHaveScreenshot`. Baselines live in
-`e2e/specs/__screenshots__`. Generate them once and commit:
+`visual-regression.spec.ts` uses Playwright's `toHaveScreenshot`. Baselines
+are committed under `e2e/specs/visual-regression.spec.ts-snapshots/` and run
+against deterministic demo-mode data. If they are absent, CI temporarily
+bootstraps them and uploads a `visual-regression-baselines` artifact for review;
+commit the reviewed PNGs so later runs perform real pixel-diff comparisons.
 
-```bash
-npx playwright test e2e/specs/visual-regression.spec.ts --update-snapshots
-```
+To deliberately refresh baselines, dispatch the CI workflow manually with
+`update_visual_snapshots=true`, review the uploaded artifact, and commit the
+resulting PNGs. Avoid routine auto-updates because they can hide regressions.
+`maxDiffPixelRatio` is 0.02.
 
-`maxDiffPixelRatio` is 0.02; adjust in the spec if your CI platform renders
-fonts with wider sub-pixel variance.
+## 9. CI and troubleshooting
 
-## 9. CI troubleshooting
+The CI workflow provisions a disposable local Supabase instance using the
+checked-in migrations and `supabase/seed.sql`. It generates a random E2E user
+password and bridge secret at run time and writes an ephemeral trial-license
+settings file before the test server starts. The file lives in the gitignored
+`data/` directory and is never committed. Do not connect test teardown or seed
+scripts to a production Supabase project.
 
-- **`supabase start` fails** — ensure the Docker daemon is running and ports
-  54322/54321 are free.
-- **Missing env** — `global-setup.ts` throws with the exact variable name; the
-  workflow supplies Supabase values from `supabase status -o env`.
-- **Visual diff flakes** — bump `maxDiffPixelRatio` (0.02 → 0.05) or mask the
-  live clock/avatar region rather than deleting baselines.
-- **Shard isolation** — each shard runs `global-setup` independently; test data
-  is `source_tag`-scoped so parallel workers do not collide.
+- **`supabase start` fails** — ensure the Docker daemon is available and ports
+  54321–54329 are free.
+- **Missing env locally** — `global-setup.ts` requires a URL, admin key,
+  project ref, test-user email, and password. In CI these values are generated
+  from `supabase status -o env`.
+- **Visual diffs** — review actual/expected screenshots and update baselines
+  only when the UI change is intentional.
+- **Shared seeded data** — tests inside each Playwright spec file run serially
+  because their `beforeAll`/`afterAll` hooks own deterministic fixture rows.
+  Independent spec files still run in separate workers.

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createAdminSupabaseClient, isSupabaseAdminConfigured } from "@/src/lib/supabase";
 import { claimWebhookReplay, verifyTimestampedHmac } from "@/lib/security/webhook-replay";
 import { resolveExternalApiKey } from "@/src/lib/security/webhookAuth";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +23,7 @@ const bridgePayloadSchema = z.object({
 });
 
 const MAX_PAYLOAD_CHARS = 8_000;
+const MAX_BRIDGE_WEBHOOK_BODY_BYTES = 64 * 1024;
 
 function failure(error: string, status: number) {
   return Response.json({ success: false, error }, { status });
@@ -39,7 +41,9 @@ function boundedPayload(value: unknown): unknown {
 export async function POST(request: Request) {
   if (!process.env.PYTHON_BRIDGE_WEBHOOK_SECRET) return failure("Python bridge webhook secret is not configured.", 503);
   if (!isSupabaseAdminConfigured) return failure("Python bridge storage is not configured.", 503);
-  const rawBody = await request.text();
+  const bodyResult = await readBoundedRequestBody(request, MAX_BRIDGE_WEBHOOK_BODY_BYTES);
+  if (!bodyResult.ok) return failure("Python bridge webhook body exceeds the 64 KiB limit.", 413);
+  const rawBody = bodyResult.text;
   const timestamp = request.headers.get("x-fluxentiq-timestamp");
   const eventId = request.headers.get("x-fluxentiq-event-id");
   const signature = request.headers.get("x-fluxentiq-bridge-signature") ?? request.headers.get("x-fluxentiq-bridge-secret");

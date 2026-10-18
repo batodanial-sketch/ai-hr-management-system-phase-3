@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createEmployee, type EmployeeInput } from "@/lib/actions";
+import { createEmployee, updateEmployee, type EmployeeInput } from "@/lib/actions";
 
 const DEPARTMENTS = [
   "Engineering",
@@ -86,10 +86,11 @@ export function EmployeeForm({
         router.push(`/employees/${result.id}`);
         router.refresh();
       } else if (employeeId) {
-        // Edit mode persists through the same action surface.
-        await createEmployee({ ...form });
+        await updateEmployee(employeeId, form);
         router.push(`/employees/${employeeId}`);
         router.refresh();
+      } else {
+        throw new Error("Employee ID is required to save profile edits.");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");

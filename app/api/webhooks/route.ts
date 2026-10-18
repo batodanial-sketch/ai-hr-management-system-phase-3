@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createWebhook, deleteWebhook, listWebhooks } from "@/lib/webhooks";
 import { recordAudit } from "@/lib/audit";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,11 +12,20 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json().catch(() => ({}))) as {
-    url?: string;
-    events?: string[];
-    secret?: string;
-  };
+  const bodyResult = await readBoundedRequestBody(request, 64 * 1024);
+  if (!bodyResult.ok) {
+    return NextResponse.json({ ok: false, message: "Webhook configuration body exceeds the 64 KiB limit." }, { status: 413 });
+  }
+  let body: { url?: string; events?: string[]; secret?: string };
+  try {
+    const parsed: unknown = JSON.parse(bodyResult.text);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return NextResponse.json({ ok: false, message: "Request body must be a JSON object." }, { status: 400 });
+    }
+    body = parsed as { url?: string; events?: string[]; secret?: string };
+  } catch {
+    return NextResponse.json({ ok: false, message: "Invalid JSON body." }, { status: 400 });
+  }
   if (!body.url) {
     return NextResponse.json({ ok: false, message: "url is required." }, { status: 400 });
   }

@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      update_visual_snapshots:
+        description: "Regenerate demo-mode visual baselines (review the uploaded artifact)"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -42,32 +48,122 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Unit tests (Jest)
+        run: npm run test:unit -- --runInBand
+
       - name: Preflight (8-gate validation suite)
         run: bash scripts/preflight.sh
 
       - name: Secret and server-boundary scan
         run: npm run security:scan
 
-  e2e-tests:
-    name: Playwright E2E
-    timeout-minutes: 60
+  e2e-smoke:
+    name: Playwright Hermetic Smoke
+    timeout-minutes: 35
     runs-on: ubuntu-latest
     needs: typecheck-and-build
-
     env:
-      # Injected via GitHub Secrets — never committed. `NEXT_PUBLIC_*` are read
-      # by the Next dev server at runtime; the Python bridge reads them via
-      # python-dotenv/os.getenv fallback. No .env.local exists in CI.
+      APP_ENV: development
+      E2E_PREPARE_LICENSE: "1"
+      E2E_BASE_URL: http://localhost:3000
+      E2E_WEBSERVER_COMMAND: "npm run start"
+      E2E_BRIDGE_COMMAND: "true"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build production app for deterministic smoke tests
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare a disposable trial license for browser tests
+        env:
+          E2E_PREPARE_LICENSE: "1"
+        run: node scripts/prepare-e2e-settings.mjs
+
+      - name: Check whether visual baselines need bootstrapping
+        id: visual-baselines
+        shell: bash
+        run: |
+          if [[ -f "e2e/specs/visual-regression.spec.ts-snapshots/dashboard-chromium-linux.png" &&
+                -f "e2e/specs/visual-regression.spec.ts-snapshots/analytics-chromium-linux.png" ]]; then
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # One-time bootstrap only when PNG fixtures are absent. The resulting
+      # images are uploaded for review and must be committed before relying on
+      # subsequent runs as pixel-regression gates.
+      - name: Bootstrap missing visual baselines
+        if: ${{ steps.visual-baselines.outputs.missing == 'true' }}
+        run: npx playwright test e2e/specs/visual-regression.spec.ts --update-snapshots
+
+      - name: Regenerate visual baselines on explicit manual run
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_visual_snapshots }}
+        run: npx playwright test e2e/specs/visual-regression.spec.ts --update-snapshots
+
+      # These specs use mocked AI streams or the no-Supabase demo fallback.
+      # RBAC override tests remain in the dev-server integration job because
+      # the security test hook is intentionally disabled for production builds.
+      - name: Run hermetic browser smoke tests
+        run: >-
+          npx playwright test
+          e2e/specs/workflow-builder.spec.ts
+          e2e/specs/copilot-chat.spec.ts
+          e2e/specs/visual-regression.spec.ts
+          e2e/visuals.spec.ts
+          tests/e2e/copilot-agent.spec.ts
+          tests/e2e/realtime-sync.spec.ts
+
+      - name: Upload smoke-test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload smoke-test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-results
+          path: test-results/
+          retention-days: 7
+
+      - name: Upload visual baselines for review
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-baselines
+          path: e2e/specs/visual-regression.spec.ts-snapshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  e2e-tests:
+    name: Playwright E2E
+    timeout-minutes: 75
+    runs-on: ubuntu-latest
+    needs: typecheck-and-build
+    env:
+      APP_ENV: development
+      E2E_PREPARE_LICENSE: "1"
+      E2E_SERIAL: "1"
       E2E_BASE_URL: http://localhost:3000
       E2E_BRIDGE_URL: http://localhost:8000
-      E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
-      E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
-      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-      BRIDGE_SECRET_KEY: ${{ secrets.BRIDGE_SECRET_KEY }}
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-      # Example.com is allow-listed so the bridge scraping job completes.
       PYTHON_BRIDGE_ALLOWED_SCRAPE_HOSTS: example.com
 
     steps:
@@ -87,6 +183,60 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 2.84.2
+
+      - name: Start disposable local Supabase stack
+        run: |
+          supabase start
+          supabase db reset
+
+      - name: Export local Supabase and E2E credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          status_file="$(mktemp)"
+          supabase status -o env > "$status_file"
+          set -a
+          # Supabase CLI emits shell-compatible KEY="value" entries.
+          source "$status_file"
+          set +a
+
+          api_url="${API_URL:-${SUPABASE_URL:-http://127.0.0.1:54321}}"
+          publishable_key="${PUBLISHABLE_KEY:-${ANON_KEY:-}}"
+          secret_key="${SECRET_KEY:-${SERVICE_ROLE_KEY:-}}"
+          if [[ -z "$api_url" || -z "$publishable_key" || -z "$secret_key" ]]; then
+            echo "::error::Supabase CLI did not expose the local API URL and public/admin keys."
+            exit 1
+          fi
+
+          test_password="$(openssl rand -hex 32)"
+          bridge_secret="$(openssl rand -hex 32)"
+
+          # GitHub does not automatically mask locally generated values. Mask
+          # every credential before writing it to GITHUB_ENV so action logs
+          # and failure diagnostics cannot reveal the ephemeral keys.
+          echo "::add-mask::$publishable_key"
+          echo "::add-mask::$secret_key"
+          echo "::add-mask::$test_password"
+          echo "::add-mask::$bridge_secret"
+
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$api_url"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$publishable_key"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$publishable_key"
+            echo "SUPABASE_SECRET_KEY=$secret_key"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$secret_key"
+            # The local API hostname is 127.0.0.1, so Supabase's browser
+            # storage key prefix is "sb-127-auth-token".
+            echo "SUPABASE_PROJECT_REF=127"
+            echo "E2E_TEST_USER_EMAIL=ci-e2e@fluxentiq.test"
+            echo "E2E_TEST_USER_PASSWORD=$test_password"
+            echo "BRIDGE_SECRET_KEY=$bridge_secret"
+          } >> "$GITHUB_ENV"
+
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
@@ -95,6 +245,11 @@ jobs:
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
+
+      - name: Prepare a disposable trial license for browser tests
+        env:
+          E2E_PREPARE_LICENSE: "1"
+        run: node scripts/prepare-e2e-settings.mjs
 
       - name: Run Playwright E2E
         run: npx playwright test

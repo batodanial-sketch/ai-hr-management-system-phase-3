@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import { E2E_EMP_ONE, E2E_ORG_ID } from "../../e2e/utils/supabase-test-seed";
 
 /**
  * Realtime dashboard feed — UI auto-updates on table mutations.
@@ -19,8 +20,6 @@ const hasSupabaseEnv = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
     (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
 );
-
-const E2E_ORG_ID = "11111111-1111-4111-8111-111111111111";
 
 test.describe("Realtime dashboard feed", () => {
   test("expenses feed renders and degrades gracefully without realtime", async ({ page }) => {
@@ -56,23 +55,31 @@ test.describe("Realtime dashboard feed", () => {
       .from("employees")
       .select("id")
       .eq("organization_id", E2E_ORG_ID)
-      .limit(1)
+      .eq("id", E2E_EMP_ONE)
       .maybeSingle();
     test.skip(!employee, "No seeded employee for the E2E org.");
 
     const merchant = `Realtime E2E ${Date.now()}`;
     await page.goto("/expenses");
     await expect(page.getByTestId("expenses-table")).toBeVisible();
+    // Server-rendered HTML can appear before client hydration. Wait for the
+    // live subscription itself so this test does not race the React effect.
+    await expect(page.getByTestId("realtime-status-expense_reports")).toHaveAttribute(
+      "data-status",
+      "subscribed",
+      { timeout: 15_000 },
+    );
 
     // Mutate the table from outside the browser (as a workflow/webhook would).
     const { error: insertError } = await admin.from("expense_reports").insert({
       organization_id: E2E_ORG_ID,
       employee_id: employee.id,
       merchant,
+      expense_date: new Date().toISOString().slice(0, 10),
       category: "Software",
       amount: 41,
       currency_code: "USD",
-      status: "pending",
+      status: "submitted",
     });
     expect(insertError).toBeNull();
 

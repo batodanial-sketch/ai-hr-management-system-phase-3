@@ -53,6 +53,7 @@ test.describe("Employee lifecycle", () => {
     const admin = createAdminClient();
     try {
       await employeeProfilePage.gotoProfile(E2E_EMP_TWO);
+      await employeeProfilePage.openEdit();
 
       await employeeProfilePage.setFirstName("E2E Updated");
       await employeeProfilePage.saveProfile();
@@ -70,7 +71,7 @@ test.describe("Employee lifecycle", () => {
     } finally {
       const { error } = await admin
         .from("employees")
-        .update({ first_name: "E2E", employment_status: "active" })
+        .update({ first_name: "E2E", employment_status: "active", status: "active" })
         .eq("id", E2E_EMP_TWO);
       if (error) {
         throw new Error(`Restore of ${E2E_EMP_TWO} failed: ${error.message}`);

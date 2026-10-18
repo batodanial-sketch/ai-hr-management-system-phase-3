@@ -13,6 +13,7 @@ import {
 } from "@/lib/webhooks/inbound";
 import { adminClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { claimWebhookReplay } from "@/lib/security/webhook-replay";
+import { readBoundedRequestBody } from "@/lib/security/bounded-request-body";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -195,8 +196,9 @@ export async function POST(
     return jsonError(`Unknown provider: ${rawProvider}.`, "UNKNOWN_PROVIDER", 404);
   }
 
-  const rawBody = await request.text();
-  if (Buffer.byteLength(rawBody, "utf8") > MAX_INBOUND_BODY_BYTES) return jsonError("Webhook body is too large.", "BODY_TOO_LARGE", 413);
+  const bodyResult = await readBoundedRequestBody(request, MAX_INBOUND_BODY_BYTES);
+  if (!bodyResult.ok) return jsonError("Webhook body is too large.", "BODY_TOO_LARGE", 413);
+  const rawBody = bodyResult.text;
 
   // ── 1. Signature verification (fail closed in production) ──────────────
   const verification = verificationFor(provider as InboundProvider, request, rawBody);

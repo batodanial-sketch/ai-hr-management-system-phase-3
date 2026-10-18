@@ -155,8 +155,30 @@ export async function getLeaveBalances(): Promise<LeaveBalance[]> {
   if (await shouldUseSeed()) {
     return seed.leaveBalances;
   }
+
   const memory = await getMemoryAdapter();
-  const rows = await memory.select<Row>("leave_balances");
+  const user = await getCurrentUser();
+  if (!user.id || !user.email) {
+    return [];
+  }
+
+  // Leave balances are personal HR data. Resolve the employee record inside
+  // the active organization first, then query only that employee's balances.
+  // Never return every employee's balance to an individual leave screen.
+  const employees = await memory.select<Row>("employees", await orgFilter(memory));
+  const normalizedEmail = user.email.toLowerCase();
+  const employee = employees.find((row) =>
+    text(row.email).toLowerCase() === normalizedEmail ||
+    text(row.work_email).toLowerCase() === normalizedEmail,
+  );
+  if (!employee) {
+    return [];
+  }
+
+  const rows = await memory.select<Row>("leave_balances", {
+    column: "employee_id",
+    value: text(employee.id),
+  });
   return rows
     .filter((row) => row.type === "pto" || row.type === "sick")
     .map((row) => ({

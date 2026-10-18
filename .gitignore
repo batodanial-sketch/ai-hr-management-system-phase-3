@@ -50,8 +50,7 @@ e2e/.auth/
 e2e/.auth/storageState.json
 **/storageState.json
 
-# visual regression baselines are generated, not committed (see e2e/README.md)
-# e2e/specs/__screenshots__/
+# Playwright visual regression baselines are checked-in test fixtures.
 
 /uploads
 

@@ -91,12 +91,18 @@ export class SupabaseAdapter implements MemoryAdapter {
     if (!this.configured) {
       return;
     }
-    const { error } = await this.client()
+    const { data, error } = await this.client()
       .from(table)
       .update(patch)
-      .eq(filter.column, filter.value);
+      .eq(filter.column, filter.value)
+      .select(filter.column);
     if (error) {
       throw new Error(`Supabase update on "${table}" failed: ${error.message}`);
+    }
+    if (!data || data.length === 0) {
+      throw new Error(
+        `Supabase update on "${table}" matched no rows; the record may be missing or row-level security denied the write.`,
+      );
     }
   }
 

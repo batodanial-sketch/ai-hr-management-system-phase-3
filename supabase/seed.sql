@@ -17,14 +17,14 @@ values (
 on conflict (id) do nothing;
 
 -- Employees
-insert into public.employees (id, organization_id, first_name, last_name, email, department, role, title, employment_status, start_date, location)
+insert into public.employees (id, organization_id, employee_number, first_name, last_name, email, work_email, department, role, title, status, employment_status, start_date, location)
 values
-  ('00000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'Ayesha', 'Rahman', 'ayesha.rahman@fluxentiq.test', 'Engineering', 'Backend Engineer', 'Staff Backend Engineer', 'active', '2022-03-14', 'Karachi, PK'),
-  ('00000000-0000-4000-8000-000000000002', '11111111-1111-4111-8111-111111111111', 'Daniel', 'Mbeki', 'daniel.mbeki@fluxentiq.test', 'Design', 'Product Designer', 'Senior Product Designer', 'active', '2021-11-02', 'Remote, ZA'),
-  ('00000000-0000-4000-8000-000000000003', '11111111-1111-4111-8111-111111111111', 'Sofia', 'Lindqvist', 'sofia.lindqvist@fluxentiq.test', 'People Ops', 'HR Business Partner', 'Lead HRBP', 'on_leave', '2020-06-22', 'Stockholm, SE'),
-  ('00000000-0000-4000-8000-000000000004', '11111111-1111-4111-8111-111111111111', 'Miguel', 'Torres', 'miguel.torres@fluxentiq.test', 'Engineering', 'Frontend Engineer', 'Frontend Engineer II', 'active', '2023-02-13', 'Mexico City, MX'),
-  ('00000000-0000-4000-8000-000000000005', '11111111-1111-4111-8111-111111111111', 'Priya', 'Nair', 'priya.nair@fluxentiq.test', 'Finance', 'Payroll Analyst', 'Payroll Analyst', 'active', '2022-08-01', 'Bengaluru, IN'),
-  ('00000000-0000-4000-8000-000000000006', '11111111-1111-4111-8111-111111111111', 'Omar', 'Haddad', 'omar.haddad@fluxentiq.test', 'Sales', 'Account Executive', 'Account Executive', 'terminated', '2021-01-18', 'Dubai, AE')
+  ('00000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'FTX-001', 'Ayesha', 'Rahman', 'ayesha.rahman@fluxentiq.test', 'ayesha.rahman@fluxentiq.test', 'Engineering', 'Backend Engineer', 'Staff Backend Engineer', 'active', 'active', '2022-03-14', 'Karachi, PK'),
+  ('00000000-0000-4000-8000-000000000002', '11111111-1111-4111-8111-111111111111', 'FTX-002', 'Daniel', 'Mbeki', 'daniel.mbeki@fluxentiq.test', 'daniel.mbeki@fluxentiq.test', 'Design', 'Product Designer', 'Senior Product Designer', 'active', 'active', '2021-11-02', 'Remote, ZA'),
+  ('00000000-0000-4000-8000-000000000003', '11111111-1111-4111-8111-111111111111', 'FTX-003', 'Sofia', 'Lindqvist', 'sofia.lindqvist@fluxentiq.test', 'sofia.lindqvist@fluxentiq.test', 'People Ops', 'HR Business Partner', 'Lead HRBP', 'on_leave', 'on_leave', '2020-06-22', 'Stockholm, SE'),
+  ('00000000-0000-4000-8000-000000000004', '11111111-1111-4111-8111-111111111111', 'FTX-004', 'Miguel', 'Torres', 'miguel.torres@fluxentiq.test', 'miguel.torres@fluxentiq.test', 'Engineering', 'Frontend Engineer', 'Frontend Engineer II', 'active', 'active', '2023-02-13', 'Mexico City, MX'),
+  ('00000000-0000-4000-8000-000000000005', '11111111-1111-4111-8111-111111111111', 'FTX-005', 'Priya', 'Nair', 'priya.nair@fluxentiq.test', 'priya.nair@fluxentiq.test', 'Finance', 'Payroll Analyst', 'Payroll Analyst', 'active', 'active', '2022-08-01', 'Bengaluru, IN'),
+  ('00000000-0000-4000-8000-000000000006', '11111111-1111-4111-8111-111111111111', 'FTX-006', 'Omar', 'Haddad', 'omar.haddad@fluxentiq.test', 'omar.haddad@fluxentiq.test', 'Sales', 'Account Executive', 'Account Executive', 'terminated', 'terminated', '2021-01-18', 'Dubai, AE')
 on conflict (id) do nothing;
 
 -- Job posting + candidates
@@ -41,18 +41,32 @@ values
   ('00000000-0000-4000-8000-000000000105', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000201', 'Ines', 'Marques', 'ines.marques@example.com', 'Backend Engineer', 'hired', 89, 'LinkedIn')
 on conflict (id) do nothing;
 
--- Leave balances + requests
-insert into public.leave_balances (id, employee_id, type, balance_days, used_days, year)
+-- Canonical leave types (required by the original schema's FK columns).
+insert into public.leave_types (id, organization_id, name, code, annual_allowance)
 values
-  ('00000000-0000-4000-8000-000000000301', '00000000-0000-4000-8000-000000000001', 'pto', 20, 6, 2025),
-  ('00000000-0000-4000-8000-000000000302', '00000000-0000-4000-8000-000000000001', 'sick', 10, 2, 2025)
+  ('00000000-0000-4000-8000-000000000911', '11111111-1111-4111-8111-111111111111', 'Paid Time Off', 'pto', 20),
+  ('00000000-0000-4000-8000-000000000912', '11111111-1111-4111-8111-111111111111', 'Sick Leave', 'sick', 10),
+  ('00000000-0000-4000-8000-000000000913', '11111111-1111-4111-8111-111111111111', 'Unpaid Leave', 'unpaid', 0)
 on conflict (id) do nothing;
 
-insert into public.leave_requests (id, organization_id, employee_id, employee_name, type, start_date, end_date, reason, status)
+-- Leave balances + requests
+insert into public.leave_balances (
+  id, organization_id, employee_id, leave_type_id, type, balance_days,
+  used_days, year, balance_year, opening_days, accrued_days, carried_days, source_tag
+)
 values
-  ('00000000-0000-4000-8000-000000000401', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000004', 'Miguel Torres', 'pto', '2025-03-10', '2025-03-12', 'Family visit', 'pending'),
-  ('00000000-0000-4000-8000-000000000402', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 'sick', '2025-03-01', '2025-03-02', 'Flu', 'approved'),
-  ('00000000-0000-4000-8000-000000000403', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000005', 'Priya Nair', 'pto', '2025-03-18', '2025-03-22', 'Annual leave', 'pending')
+  ('00000000-0000-4000-8000-000000000301', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000911', 'pto', 20, 6, 2025, 2025, 20, 0, 0, 'demo'),
+  ('00000000-0000-4000-8000-000000000302', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000912', 'sick', 10, 2, 2025, 2025, 10, 0, 0, 'demo')
+on conflict (id) do nothing;
+
+insert into public.leave_requests (
+  id, organization_id, employee_id, leave_type_id, employee_name, type,
+  start_date, end_date, total_days, reason, status, source_tag
+)
+values
+  ('00000000-0000-4000-8000-000000000401', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000004', '00000000-0000-4000-8000-000000000911', 'Miguel Torres', 'pto', '2025-03-10', '2025-03-12', 3, 'Family visit', 'pending', 'demo'),
+  ('00000000-0000-4000-8000-000000000402', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000912', 'Daniel Mbeki', 'sick', '2025-03-01', '2025-03-02', 2, 'Flu', 'approved', 'demo'),
+  ('00000000-0000-4000-8000-000000000403', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000005', '00000000-0000-4000-8000-000000000911', 'Priya Nair', 'pto', '2025-03-18', '2025-03-22', 5, 'Annual leave', 'pending', 'demo')
 on conflict (id) do nothing;
 
 -- Payroll runs + line items
@@ -62,11 +76,14 @@ values
   ('00000000-0000-4000-8000-000000000502', '11111111-1111-4111-8111-111111111111', '2025-02-01', '2025-02-28', 'completed', 'EUR')
 on conflict (id) do nothing;
 
-insert into public.payroll_line_items (id, payroll_run_id, employee_id, employee_name, gross_pay, deductions, net_pay, currency)
+insert into public.payroll_line_items (
+  id, organization_id, payroll_run_id, employee_id, employee_name,
+  gross_pay, deductions, net_pay, currency, source_tag
+)
 values
-  ('00000000-0000-4000-8000-000000000601', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000001', 'Ayesha Rahman', 5000, 1000, 4000, 'USD'),
-  ('00000000-0000-4000-8000-000000000602', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 6000, 1200, 4800, 'USD'),
-  ('00000000-0000-4000-8000-000000000603', '00000000-0000-4000-8000-000000000502', '00000000-0000-4000-8000-000000000003', 'Sofia Lindqvist', 4000, 800, 3200, 'EUR')
+  ('00000000-0000-4000-8000-000000000601', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000001', 'Ayesha Rahman', 5000, 1000, 4000, 'USD', 'demo'),
+  ('00000000-0000-4000-8000-000000000602', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000002', 'Daniel Mbeki', 6000, 1200, 4800, 'USD', 'demo'),
+  ('00000000-0000-4000-8000-000000000603', '11111111-1111-4111-8111-111111111111', '00000000-0000-4000-8000-000000000502', '00000000-0000-4000-8000-000000000003', 'Sofia Lindqvist', 4000, 800, 3200, 'EUR', 'demo')
 on conflict (id) do nothing;
 
 -- Lead intelligence (CRM)
